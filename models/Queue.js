@@ -1,8 +1,14 @@
 const mongoose = require("mongoose");
 
 const QueueSchema = new mongoose.Schema({
-  user_id: {
+  restaurant: {
     type: mongoose.Schema.Types.ObjectId,
+    ref: "Restaurant",
+    required: [true, "Queue must have a valid restaurant reference"],
+  },
+  user: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
     required: [true, "Queue must have a valid user reference"],
   },
   seatcount: {
@@ -15,4 +21,6 @@ const QueueSchema = new mongoose.Schema({
   },
 });
 
-module.exports = QueueSchema;
+QueueSchema.index({ restaurant: 1, createdAt: 1 });
+
+module.exports = mongoose.model("Queue", QueueSchema);

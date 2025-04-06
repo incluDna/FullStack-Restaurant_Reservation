@@ -1,9 +1,7 @@
 const mongoose = require("mongoose");
 const Reservation = require("./Reservation");
 const Review = require("./Review");
-const QueueSchema = require("./Queue");
-
-
+const Queue = require("./Queue");
 
 const RestaurantSchema = new mongoose.Schema(
   {
@@ -43,21 +41,22 @@ const RestaurantSchema = new mongoose.Schema(
     opentime: {
       type: String,
       required: [true, "Please add a Open Time"],
-      minlength: 5,
-      maxlength: [5, "Please label time in 24hr system"],
+      match: [
+        /^(?:[01]\d|2[0-3]):[0-5]\d$/,
+        "Time must be in the format HH:MM using a 24-hour clock",
+      ],
     },
     closetime: {
       type: String,
       required: [true, "Please add a Close Time"],
-      minlength: 5,
-      maxlength: [5, "Please label time in 24hr system"],
+      match: [
+        /^(?:[01]\d|2[0-3]):[0-5]\d$/,
+        "Time must be in the format HH:MM using a 24-hour clock",
+      ],
     },
     picture: {
       type: String,
       required: [true, "Please add a Picture Link"],
-    },
-    queue: {
-      type: [QueueSchema],
     },
   },
   {
@@ -67,6 +66,13 @@ const RestaurantSchema = new mongoose.Schema(
 );
 
 // reverse populate with virtuals
+RestaurantSchema.virtual("queues", {
+  ref: "Queue",
+  localField: "_id",
+  foreignField: "restaurant",
+  options: { sort: { createdAt: 1 } },
+  justOne: false,
+});
 RestaurantSchema.virtual("reservations", {
   ref: "Reservation",
   localField: "_id",

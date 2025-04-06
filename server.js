@@ -15,6 +15,7 @@ const reservations = require("./routes/reservations");
 const review = require("./routes/reviews");
 const auth = require("./routes/auth");
 
+// require models
 require("./models/Queue");
 require("./models/Reservation");
 require("./models/Restaurant");

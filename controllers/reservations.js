@@ -96,10 +96,10 @@ exports.addReservation = async (req, res, next) => {
         message: `No restaurant with the id of ${req.params.restaurantId}`,
       });
     }
-    const openHour = restaurant.opentime.slice(0, 2);
-    const closeHour = restaurant.closetime.slice(0, 2);
-    const openMin = restaurant.opentime.slice(3);
-    const closeMin = restaurant.closetime.slice(3);
+    const openHour = restaurant.openTime.slice(0, 2);
+    const closeHour = restaurant.closeTime.slice(0, 2);
+    const openMin = restaurant.openTime.slice(3);
+    const closeMin = restaurant.closeTime.slice(3);
     const openMinitues = parseInt(openHour) * 60 + parseInt(openMin);
     const closeMinitues = parseInt(closeHour) * 60 + parseInt(closeMin);
 

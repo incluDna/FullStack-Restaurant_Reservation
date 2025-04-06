@@ -16,7 +16,7 @@ const review = require("./routes/reviews");
 const auth = require("./routes/auth");
 
 // require models
-require("./models/Queue");
+// require("./models/Queue"); 
 require("./models/Reservation");
 require("./models/Restaurant");
 require("./models/Review");
@@ -40,8 +40,8 @@ app.use(cors());
 
 // use routes
 app.use("/api/restaurants", restaurants);
-app.use("/api/reservatins", reservations);
-app.use("/api/review", review);
+app.use("/api/reservations", reservations);
+app.use("/api/reviews", review);
 app.use("/api/auth", auth);
 
 // rate limiting

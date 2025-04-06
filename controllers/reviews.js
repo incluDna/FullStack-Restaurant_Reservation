@@ -123,7 +123,7 @@ exports.addReview = async (req, res, next) => {
         message: `The user with ID ${req.user.id} hasn't reserved any restaurants yet`,
       });
     }
-    if (existingReview) {
+    if (existingReview.length > 0) {
       return res.status(400).json({
         success: false,
         message: `This user already review`,

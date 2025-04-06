@@ -109,10 +109,10 @@ exports.getRestaurant = async (req, res, next) => {
  * @access Private
  */
 exports.createRestaurant = async (req, res, next) => {
-  const openHour = req.body.opentime.slice(0, 2);
-  const closeHour = req.body.closetime.slice(0, 2);
-  const openMin = req.body.opentime.slice(3);
-  const closeMin = req.body.closetime.slice(3);
+  const openHour = req.body.openTime.slice(0, 2);
+  const closeHour = req.body.closeTime.slice(0, 2);
+  const openMin = req.body.openTime.slice(3);
+  const closeMin = req.body.closeTime.slice(3);
   //console.log(parseInt(openHour));
   if (
     isNaN(parseInt(openHour)) ||

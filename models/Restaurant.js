@@ -1,7 +1,4 @@
 const mongoose = require("mongoose");
-const Reservation = require("./Reservation");
-const Review = require("./Review");
-const Queue = require("./Queue");
 
 const RestaurantSchema = new mongoose.Schema(
   {
@@ -64,6 +61,13 @@ const RestaurantSchema = new mongoose.Schema(
     toObject: { virtuals: true },
   }
 );
+
+RestaurantSchema.pre("validate", function (next) {
+  if (this.openTime && this.closeTime && this.openTime >= this.closeTime) {
+    this.invalidate("openTime", "Open time must be before close time");
+  }
+  next();
+});
 
 // reverse populate with virtuals
 RestaurantSchema.virtual("queues", {

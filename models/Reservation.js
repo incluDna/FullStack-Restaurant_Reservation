@@ -1,5 +1,4 @@
 const mongoose = require("mongoose");
-const Restaurant = require("./Restaurant");
 
 const ReservationSchema = new mongoose.Schema({
   resDate: {

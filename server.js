@@ -15,6 +15,12 @@ const reservations = require("./routes/reservations");
 const review = require("./routes/reviews");
 const auth = require("./routes/auth");
 
+require("./models/Queue");
+require("./models/Reservation");
+require("./models/Restaurant");
+require("./models/Review");
+require("./models/User");
+
 dotenv.config({ path: "./config/config.env" });
 
 connectDB();

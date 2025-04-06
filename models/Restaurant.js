@@ -24,7 +24,7 @@ const RestaurantSchema = new mongoose.Schema(
       type: String,
       required: [true, "Please add a province"],
     },
-    postalcode: {
+    postalCode: {
       type: String,
       required: [true, "Please add a postalcode"],
       maxlength: [5, "Postal Code cannot be more than 5 digits"],
@@ -38,7 +38,7 @@ const RestaurantSchema = new mongoose.Schema(
       type: String,
       required: [true, "Please add a region"],
     },
-    opentime: {
+    openTime: {
       type: String,
       required: [true, "Please add a Open Time"],
       match: [
@@ -46,7 +46,7 @@ const RestaurantSchema = new mongoose.Schema(
         "Time must be in the format HH:MM using a 24-hour clock",
       ],
     },
-    closetime: {
+    closeTime: {
       type: String,
       required: [true, "Please add a Close Time"],
       match: [

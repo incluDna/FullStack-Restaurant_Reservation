@@ -11,7 +11,7 @@ const QueueSchema = new mongoose.Schema({
     ref: "User",
     required: [true, "Queue must have a valid user reference"],
   },
-  seatcount: {
+  seatCount: {
     type: Number,
     required: [true, "Queue must have a seat-to-take amount"],
   },

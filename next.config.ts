@@ -1,7 +1,12 @@
-import type { NextConfig } from "next";
+/** @type {import('next').NextConfig} */
+const nextConfig = {
+    images:{
+        domains:['drive.google.com'], 
+    },
+    experimental:{
+        serverActions:true
+    }
 
-const nextConfig: NextConfig = {
-  /* config options here */
 };
 
 export default nextConfig;

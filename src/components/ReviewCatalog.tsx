@@ -5,7 +5,7 @@ import { Link, Rating } from "@mui/material";
 import { ReviewItem,MeanReviewItem, ProfileJson, RestaurantJson, ReviewJson,RestaurantItem,ProfileItem } from "../../interfaces";
 
 const pattaya = Pattaya({ weight: "400", subsets: ["thai", "latin"] });
-export default async function ReviewCatalogue({reviews,restaurant,meanReviews,profile}:
+export default async function ReviewCatalog({reviews,restaurant,meanReviews,profile}:
     {reviews:Promise<ReviewJson>,restaurant:Promise<RestaurantJson>,
         meanReviews:Promise<MeanReviewItem>,profile:Promise<ProfileJson>}) {
 
@@ -20,58 +20,17 @@ export default async function ReviewCatalogue({reviews,restaurant,meanReviews,pr
     <div className="">
       
       
+      <h1 className={pattaya.className} style={{ fontSize: "48px" }}>{restaurantready.data.name} Restaurant Reviews</h1>
+
             
-            <div>
-                <div style={{ width: '100px', height: '100px' ,position:'relative'}}>
-                  <Image src={restaurantready.data.picture} 
-                        alt='Product Picture'
-                        fill={true}
-                        className=""
-                        style={{ width: '100%', height: '100%' }}
-
-                    />  
-                </div>
-              
-              {/* ------------------ */}
-              <div>
-              <h1 className={pattaya.className} style={{ fontSize: "72px" }}>{restaurantready.data.name} Restaurant Reviews</h1>
-              <div>
-                {restaurantready.data.address}
-                {restaurantready.data.province}
-                {restaurantready.data.tel}
-                {restaurantready.data.openTime}
-                {restaurantready.data.shortLocation}
-              </div>
-                {restaurantready.data.district}
-                {restaurantready.data.postalcode}
-                {restaurantready.data.region}
-                {restaurantready.data.closeTime}
-              </div>
-                    
-            </div>
-            {/* ------------------ */}
-            {
-              (profileready.data.role=='admin')?
-                <div>
-                  <div>this is admin</div>
-                  <Link><button>manage reservations</button></Link>
-                  <Link><button>edit</button></Link>
-                  <Link><button>delete</button></Link>
-                </div>
-                :
-                <div>
-                  <Link><button>edit</button></Link>
-                  <Link><button>delete</button></Link>
-                </div>
-            }   
-            {/* ------------------ */}  
-
             <div className="">
               Reviews Ratings
-              {meanReviewsready.totalRating}
+              <div>{meanReviewsready.totalRating }/5.00 </div><div>from {meanReviewsready.count} reviews</div>
+              
               <div>
-                        <Rating readOnly defaultValue={meanReviewsready.totalRating}   />
-                  </div>
+                        <Rating readOnly defaultValue={meanReviewsready.totalRating} />
+                </div>
+                
             </div>
             
             <div style={{ display:"flex",flexDirection:"row",

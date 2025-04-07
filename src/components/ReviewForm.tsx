@@ -34,11 +34,11 @@ export default   function Reviewform({ session,profile}: { session: Session  ,pr
   const [Description, setDescription] = useState<string>('');
 
   const makeReview= () => {
-    console.log(session.user.token)
-    console.log(user)
-    console.log(rid)
-    console.log(reviewStar)
-    console.log(Description)
+    // console.log(session.user.token)
+    // console.log(user)
+    // console.log(rid)
+    // console.log(reviewStar)
+    // console.log(Description)
     if (user && rid && reviewStar&&Description) {
 
         addReviews(
@@ -66,7 +66,7 @@ export default   function Reviewform({ session,profile}: { session: Session  ,pr
   };
 
   return (
-    <main className="w-[100%] flex flex-col items-center space-y-4">
+    <main className="">
         {id?
         <div className={pattaya.className} style={{ fontSize: "96px" }}>Edit Review</div>
         :
@@ -75,16 +75,16 @@ export default   function Reviewform({ session,profile}: { session: Session  ,pr
       
       
 
-      <div className="w-[50%] space-y-2 bg-yellow-50 p-5 rounded-xl border border-green-600">
-        <div className="font-serif text-lg text-md text-left text-gray-600">
+      <div className="">
+        <div className="">
         Review Information
         </div>
         <div>
             
             
-            <div className="flex flex-col ">
-                <div className="flex flex-row px-2">
-                <div className="w-[30%]">Review Star:</div>
+            <div className="">
+                <div className="">
+                <div className="">Review Star:</div>
                 <Rating
                 name="reviewStar"
                 value={reviewStar}
@@ -93,11 +93,11 @@ export default   function Reviewform({ session,profile}: { session: Session  ,pr
                 }}
                 />
                 </div>
-                <div className="flex flex-row px-2">
-                <div className="w-[30%]">Description:</div>
+                <div className="">
+                <div className="">Description:</div>
                 
                 <TextField variant="standard" name="Description" label="Description"
-                className="flex justify-center w-[70%]" value={Description}
+                className="" value={Description}
                 onChange={(e) => {
                     setDescription(e.target.value );
                 }}

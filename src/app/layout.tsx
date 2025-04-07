@@ -1,5 +1,7 @@
 "use client";
 
+import './global.css'
+
 export default function RootLayout({
     children,
 }: Readonly<{

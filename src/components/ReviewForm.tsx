@@ -76,13 +76,13 @@ export default   function Reviewform({ session,profile}: { session: Session  ,pr
       
 
       <div className="">
-        <div className="">
+        <div className="text-left font-bold text-xl">
         Review Information
         </div>
         <div>
             
             
-            <div className="">
+            <div className="bg-[#FFECAD] rounded-xl shadow-md p-4">
                 <div className="">
                 <div className="">Review Star:</div>
                 <Rating
@@ -106,9 +106,10 @@ export default   function Reviewform({ session,profile}: { session: Session  ,pr
             </div>
                 </div>
             </div>
+            <br></br>
       <button
         className="font-serif
-        block rounded-md bg-sky-600 hover:bg-indigo-600 px-3 py-2 text-white shadow-sm"
+        block rounded-md bg-[#F89640] hover:bg-green-600 px-3 py-2 text-white shadow-sm"
         onClick={makeReview}
       >
         Review this Restaurant

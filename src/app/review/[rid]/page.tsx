@@ -1,5 +1,5 @@
 
-import { Pattaya } from "next/font/google";
+// import { Pattaya } from "next/font/google";
 import getRestaurant from '@/libs/getRestaurant';
 import { getServerSession } from "next-auth";
 import getReviewsforRestaurant from "@/libs/getReviewforRestaurant";
@@ -10,7 +10,7 @@ import { LinearProgress, Link } from "@mui/material";
 import { Suspense } from "react";
 import ReviewCatalogue from "@/components/ReviewCatalog";
 
-const pattaya = Pattaya({ weight: "400", subsets: ["thai", "latin"] });
+// const pattaya = Pattaya({ weight: "400", subsets: ["thai", "latin"] });
 
 export default async function Review({ params }: { params: { rid: string } }) {
 
@@ -27,7 +27,7 @@ export default async function Review({ params }: { params: { rid: string } }) {
   const profile= getUserProfile(session.user.token);
       
 
-//  console.log('meanreview:'+meanReviews)
+console.log('hello');
  
 
  return( 
@@ -35,7 +35,8 @@ export default async function Review({ params }: { params: { rid: string } }) {
       <Suspense fallback={<p>Loading ...<LinearProgress/></p>}>
       <ReviewCatalogue reviews={reviews} restaurant={restaurant} meanReviews={meanReviews} profile={profile}/>
       </Suspense>
-      <hr className="my-10"/>
+      
+
 
   </main>
 )

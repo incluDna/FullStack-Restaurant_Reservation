@@ -20,7 +20,7 @@ export default async function ManageReview() {
         <main className="">
             <Suspense fallback={<p>Loading ...<LinearProgress/></p>}>
             
-                <h1 className={`${pattaya.className} text-center text-4xl`} style={{ fontSize: "40px" }}>Reviews</h1>
+                {/*<h1 className={`${pattaya.className} w-1/4 text-3xl font-bold font-serif`} style={{ fontSize: "40px" }}>Reviews</h1>*/}
                 <ReviewCart reviews={review} profile={profile} session={session}/>
 
             </Suspense>

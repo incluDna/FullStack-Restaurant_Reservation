@@ -1,6 +1,7 @@
 'use client'
 
-import { Link, Rating } from "@mui/material";
+import Link from "next/link";
+import { Rating } from "@mui/material";
 import { ProfileJson } from "../../interfaces";
 
 export default function ReviewCard({ time, rating,description ,restaurant,restaurantid,profile}: 
@@ -9,25 +10,30 @@ export default function ReviewCard({ time, rating,description ,restaurant,restau
 
 
     return (
-        <div>
-            <h1>Restaurant: {restaurant}</h1>
-            <div>Time: {time}</div>
-            <div >
-                star: {rating}
-                <div><Rating readOnly defaultValue={rating}/></div>
-                
+        <div className="w-[400px] h-full bg-[#FFECAD] p-5 flex flex-col">
+            <div>
+                <h1 className='text-xl font-bold text-blue-700'>Restaurant: {restaurant}</h1>
+                <div className='font-semibold'>Time: {time}</div>
+                <div className='font-semibold'>
+                    star: {rating}
+                    <div><Rating readOnly defaultValue={rating}/></div>
+                    
+                </div>
+                <div className='font-semibold'>Description: {description}</div>
             </div>
-            <div>Description: {description}</div>
+            
 
             {/* {(profile.data.role=='admin')?null: */}
-                {/*<div>
+                <div className="flex flex-row mt-auto">
                     <Link href={`manage/add?id=${restaurantid}`} className="w-full" key={restaurantid}>
-                        <button>edit</button>
+                        <button className="px-4 py-1 bg-[#F89640] text-white shadow-md hover:bg-green-700 focus:outline-none">edit</button>
                     </Link>
-                    <button>remove</button>
-                </div>*/}
+                    <button className="px-4 py-1 bg-[#F89640] text-white shadow-md hover:bg-green-700 focus:outline-none">remove</button>
+                </div>
             {/* } */}
-
         </div>
     );
+    
 }
+
+   

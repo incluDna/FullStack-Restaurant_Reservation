@@ -1,13 +1,18 @@
 export default async function editReview(
     token: string,
     id: string,
-    updatedFields: {
-        reviewStar?: number;
-        Description?: string;
-    }
+    reviewStar?: number,
+    reviewText?: string
+    
 ) {
+    const updatedFields: any = {
+    };
+    if (reviewStar) updatedFields.reviewStar = String(reviewStar);
+    if (reviewText) updatedFields.reviewText = reviewText;
+
+    console.log(updatedFields)
     try {
-        const response = await fetch(`https://restaurant-reservation-backend-blush.vercel.app/api/v1/reviews/${id}`, {
+        const response = await fetch(`http://localhost:5000/api/reviews/${id}`, {
             method: "PUT",  
             headers: {
                 "Content-Type": "application/json",

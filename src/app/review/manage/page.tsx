@@ -13,6 +13,7 @@ const pattaya = Pattaya({ weight: "400", subsets: ["thai", "latin"] });
 export default async function ManageReview() {
     const session =await getServerSession(authOptions);
     if(!session)return null
+    
 
     const review= getReviews(session.user.token);
     const profile= getUserProfile(session.user.token);

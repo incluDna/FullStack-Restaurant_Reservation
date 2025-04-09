@@ -8,6 +8,8 @@ import { getServerSession, Session } from "next-auth";
 import { Pattaya } from "next/font/google";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
+import { useRouter } from 'next/router';
+import Link from "next/link";
 
 const pattaya = Pattaya({ weight: "400", subsets: ["thai", "latin"] }); 
 
@@ -17,7 +19,6 @@ export default   function Reviewform({ session,profile}: { session: Session  ,pr
   const urlParams = useSearchParams();
   const [rid, setRid] = useState<string>("");
   const [id, setId] = useState<string>("");
-
 
   useEffect(() => {
     const idFromUrl = urlParams.get("rid");
@@ -39,7 +40,8 @@ export default   function Reviewform({ session,profile}: { session: Session  ,pr
     // console.log(rid)
     // console.log(reviewStar)
     // console.log(Description)
-    if (user && rid && reviewStar&&Description) {
+
+    if (user && rid && (reviewStar&&Description)) {
 
         addReviews(
         
@@ -54,67 +56,72 @@ export default   function Reviewform({ session,profile}: { session: Session  ,pr
       alert("Add Review Successfully!");
 
       
+
+      
     }else if(id){
+      // console.log(reviewStar)
+      // console.log(Description)
         
-        const reviewData = {
-            ...(reviewStar && { reviewStar }),
-            ...(Description && { Description })
-          };
-            editReview(session.user.token, id, reviewData);
-          alert("Review updated ");
+
+        editReview(session.user.token, id, reviewStar,Description);
+        alert("Review updated ");
+
     }
   };
 
   return (
-    <main className="">
+    <div className="p-3 ">
         {id?
         <div className={pattaya.className} style={{ fontSize: "96px" }}>Edit Review</div>
         :
         <div className={pattaya.className} style={{ fontSize: "96px" }}>New Review</div>
         }
-      
-      
 
-      <div className="">
+      <div className="text-center">
         <div className="text-left font-bold text-xl">
         Review Information
         </div>
-        <div>
-            
-            
-            <div className="bg-[#FFECAD] rounded-xl shadow-md p-4">
-                <div className="">
-                <div className="">Review Star:</div>
-                <Rating
-                name="reviewStar"
-                value={reviewStar}
-                onChange={(e, newValue) => {
-                    setReviewStar(newValue??0); // เก็บค่า Rating ที่เลือก
-                }}
-                />
-                </div>
-                <div className="">
-                <div className="">Description:</div>
-                
-                <TextField variant="standard" name="Description" label="Description"
-                className="" value={Description}
-                onChange={(e) => {
-                    setDescription(e.target.value );
-                }}
-                />
-                </div>
+
+        <div className="m-3">
+            <div className="my-5">
+              <div className="text-xl  font-bold pt-5">Review Star</div>
+              <Rating
+              name="reviewStar"
+              value={reviewStar}
+              onChange={(e, newValue) => {
+                  setReviewStar(newValue??0); // เก็บค่า Rating ที่เลือก
+              }}
+              // precision={0.5}
+              style={{ fontSize: '60px' }}
+              />
             </div>
-                </div>
+
+            <div className="bg-[#FFECAD] p-5 w-[80%] m-auto ">
+
+              <div className="text-xl font-bold ">Description</div>
+              
+              <TextField variant="standard" name="Description" label="Description"
+              className=" w-[90%] "
+              value={Description}
+              onChange={(e) => {
+                  setDescription(e.target.value );
+              }}
+              multiline
+              />
+
             </div>
-            <br></br>
+        </div>
+      </div>
+      {/* <Link href={`/review/manage`}> */}
       <button
-        className="font-serif
-        block rounded-md bg-[#F89640] hover:bg-green-600 px-3 py-2 text-white shadow-sm"
+        className="font-serif m-autoblock rounded-md bg-[#F89640] 
+        hover:bg-green-600 px-3 py-2 text-white shadow-sm"
         onClick={makeReview}
       >
-        Review this Restaurant
+        Submit
       </button>
-    </main>
+      {/* </Link> */}
+    </div>
   );
 
 }

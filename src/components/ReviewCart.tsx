@@ -1,7 +1,5 @@
-import Link from "next/link";
 import { ProfileJson, ReviewItem, ReviewJson } from "../../interfaces";
 import { Session } from "next-auth";
-import { Rating } from '@mui/material';
 import ReviewCard from "./ReviewCard";
 
 
@@ -11,13 +9,13 @@ export default async function ReviewCart({ reviews, session,profile }:
     
     const reviewsready=await reviews
     const profileready=await profile
-    const onDelete = (rid: string) => {
-        alert('delete review')
-    };
+    
 
     return (
         
-        <div className="flex flex-row h-screen p-2 ">
+        // <div className="flex flex-row h-[calc(100vh-75px)] p-2 overflow-y-hidden">
+        <div className="flex flex-row h-[80vh] p-2 overflow-y-hidden">
+
             <div className="w-1/5 text-center h-full">
                 <h1 className="text-3xl font-bold font-serif">Reviews</h1>
                 {(profileready.data.role === 'admin') ? (
@@ -28,18 +26,20 @@ export default async function ReviewCart({ reviews, session,profile }:
             </div>
 
             {/* ซีกขวา */}
-            <div className="w-4/5 flex flex-row overflow-x-auto h-full">
+            <div className="w-4/5 flex flex-row overflow-x-auto h-full" >
                 
                 {reviewsready.data.map((review: ReviewItem) => (
-                    <div className="mx-3">
+                    <div className="mx-3" key={review._id}>
                         <ReviewCard 
-                            time="no time in database(be)" 
+                            time={review.createdAt}
                             rating={parseInt(review.reviewStar)} 
                             description={review.reviewText} 
                             restaurant="no restaurant name send(be)"
                             restaurantid={review.restaurant} 
                             profile={profileready}
-                            key={review.restaurant}
+                            reviewId={review._id??''}
+                            session={session}
+                            key={review._id}
                         />
                     </div>
                 ))}

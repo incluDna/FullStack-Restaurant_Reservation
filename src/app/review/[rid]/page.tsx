@@ -25,10 +25,7 @@ export default async function Review({ params }: { params: { rid: string } }) {
   const meanReviews= getMeanReviews(session.user.token,params.rid)
 
   const profile= getUserProfile(session.user.token);
-      
-
-console.log('hello');
- 
+       
 
  return( 
   <main className="text-center p-5 ">

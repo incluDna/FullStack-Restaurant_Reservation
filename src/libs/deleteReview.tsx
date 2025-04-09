@@ -4,7 +4,7 @@ export default async function deleteReview(
 
 ) {
     try {
-        const response = await fetch(`https://restaurant-reservation-backend-blush.vercel.app/api/v1/reviews/${id}`, {
+        const response = await fetch(`http://localhost:5000/api/reviews/${id}`, {
             method: "Delete",  
             headers: {
                 "Content-Type": "application/json",

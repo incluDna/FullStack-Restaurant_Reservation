@@ -47,6 +47,7 @@ export interface ReviewItem{
   restaurant: string,
   reviewStar: string,
   reviewText: string,
+  createdAt:string
 }
 export interface ReviewJson{
   success: boolean,
@@ -60,8 +61,8 @@ export interface ProfileItem{
   name: string,
   tel: string,
   email: string,
-  role: string  
-  createdAt:string,
+  role: string, 
+  createdAt:string
 
 }
 

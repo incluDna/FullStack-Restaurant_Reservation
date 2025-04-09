@@ -6,7 +6,7 @@ import ClientRating from "./ClientRating";
 import Link from "next/link";
 
 // const pattaya = Pattaya({ weight: "400", subsets: ["thai", "latin"] });
-export default async function ReviewCatalog({reviews,restaurant,meanReviews,profile}:
+export default async function ReviewCatalogExample({reviews,restaurant,meanReviews,profile}:
     {reviews:Promise<ReviewJson>,restaurant:Promise<RestaurantJson>,
         meanReviews:Promise<MeanReviewItem>,profile:Promise<ProfileJson>}) {
 

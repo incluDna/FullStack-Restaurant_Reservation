@@ -93,7 +93,7 @@ body {
 }
 body {
   color: rgb(var(--foreground-rgb));
-  /* margin-top: 75px; */
+  margin-top: 75px;
 } 
 
 a {

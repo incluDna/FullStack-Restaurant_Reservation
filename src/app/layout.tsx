@@ -1,6 +1,12 @@
 "use client";
 
-import './global.css'
+import TopMenu from '@/components/TopMenu';
+import { Agbalumo } from "next/font/google";
+import './global.css';
+const agbalumo = Agbalumo({
+    weight: '400',
+    subsets: ['latin'],
+  });
 
 export default function RootLayout({
     children,
@@ -9,7 +15,8 @@ export default function RootLayout({
 }>) {
     return (
         <html>
-            <body>
+            <body className={agbalumo.className}>
+                <TopMenu/>
                 {children}
             </body>
         </html>

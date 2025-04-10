@@ -44,7 +44,7 @@ export interface RestaurantJson{
 export interface ReviewItem{
   _id?: string,
   user: string,
-  restaurant: string,
+  restaurant: RestaurantItem,
   reviewStar: string,
   reviewText: string,
   createdAt:string
@@ -68,7 +68,7 @@ export interface ProfileItem{
 
 export interface ProfileJson{
   success: boolean,
-  data: ProfileItem[]
+  data: ProfileItem
 }
 
   export interface BookingItem {

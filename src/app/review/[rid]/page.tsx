@@ -9,7 +9,7 @@ import getUserProfile from "@/libs/getUserProfile";
 import { LinearProgress, Link } from "@mui/material";
 import { Suspense } from "react";
 import ReviewCatalogue from "@/components/ReviewCatalog";
-
+import ReviewCatalogExample from '@/components/ReviewCatalogExample';
 // const pattaya = Pattaya({ weight: "400", subsets: ["thai", "latin"] });
 
 export default async function Review({ params }: { params: { rid: string } }) {
@@ -31,6 +31,8 @@ export default async function Review({ params }: { params: { rid: string } }) {
   <main className="text-center p-5 ">
       <Suspense fallback={<p>Loading ...<LinearProgress/></p>}>
       <ReviewCatalogue reviews={reviews} restaurant={restaurant} meanReviews={meanReviews} profile={profile}/>
+      Delete later:
+      <ReviewCatalogExample reviews={reviews} restaurant={restaurant} meanReviews={meanReviews} profile={profile}/>
       </Suspense>
       
 

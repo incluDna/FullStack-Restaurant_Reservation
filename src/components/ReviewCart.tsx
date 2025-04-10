@@ -34,8 +34,8 @@ export default async function ReviewCart({ reviews, session,profile }:
                             time={review.createdAt}
                             rating={parseInt(review.reviewStar)} 
                             description={review.reviewText} 
-                            restaurant="no restaurant name send(be)"
-                            restaurantid={review.restaurant} 
+                            restaurant={review.restaurant.name}
+                            restaurantid={review.restaurant._id} 
                             profile={profileready}
                             reviewId={review._id??''}
                             session={session}

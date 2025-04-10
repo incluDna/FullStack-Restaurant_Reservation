@@ -36,7 +36,7 @@ export default async function ReviewCatalog({reviews,restaurant,meanReviews,prof
             
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
         {
-          reviewsready.data.slice(0,5).map((review:ReviewItem)=>(
+          reviewsready.data.map((review:ReviewItem)=>(
           <div className="bg-[#FFECAD] p-4"
           key={review._id}>
             <div className='text-left'>User : {review.user}</div>
@@ -51,16 +51,7 @@ export default async function ReviewCatalog({reviews,restaurant,meanReviews,prof
         }    
       </div>
 
-      {/* {reviewsready.data.length >= 5 && ( */}
-        <div className="col-span-full flex flex-row-reverse justify-start">
-          <Link href="">
-            <button className="font-serif rounded-md bg-[#F89640] 
-              hover:bg-green-600 px-4 py-2 text-white shadow-sm">
-              see more ..➤
-            </button>
-          </Link>
-        </div>
-      {/* )}       */}
+      
 
             
     </div>

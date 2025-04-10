@@ -44,23 +44,23 @@ export default async function ReviewCatalogExample({reviews,restaurant,meanRevie
             <div className='text-left'>
               <ClientRating rating={Number(review.reviewStar)}/>
             </div>
-            <div className='text-left'>Comment : {review.reviewText}</div>
+            <div className='text-left'>Description : {review.reviewText}</div>
                   
           </div>
           ))
         }    
       </div>
 
-      {/* {reviewsready.data.length >= 5 && ( */}
-        <div className="col-span-full flex flex-row-reverse justify-start">
+      {reviewsready.data.length > 5 && (
+        <div className="col-span-full flex flex-row-reverse justify-start p-10 m-5">
           <Link href="">
-            <button className="font-serif rounded-md bg-[#F89640] 
+            <button className="font-serif  bg-[#F89640] 
               hover:bg-green-600 px-4 py-2 text-white shadow-sm">
               see more ..➤
             </button>
           </Link>
         </div>
-      {/* )}       */}
+      )}       
 
             
     </div>

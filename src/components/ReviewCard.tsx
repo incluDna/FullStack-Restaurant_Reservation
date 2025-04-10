@@ -27,9 +27,9 @@ export default function ReviewCard({ time, rating,description ,restaurant,restau
             </div>
             
 
-            {/* {(profile.data.role=='admin')?null: */}
+             {(profile.data.role=='admin')?null: 
                 <div className="flex flex-row mt-auto">
-                    <Link href={`manage/add?id=${reviewId}`} className="w-full" >
+                    <Link href={`/reviews/new?id=${reviewId}`} className="w-full" >
                         <button className="px-4 py-1 bg-[#F89640] text-white shadow-md ">edit</button>
                     </Link>
                     <button className="px-4 py-1 bg-[#F89640] text-white shadow-md  "
@@ -39,7 +39,7 @@ export default function ReviewCard({ time, rating,description ,restaurant,restau
                     }}
                     >remove</button>
                 </div>
-            {/* } */}
+             } 
         </div>
     );
     

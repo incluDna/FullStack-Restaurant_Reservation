@@ -5,20 +5,12 @@ import getUserProfile from "@/libs/getUserProfile";
 
 export default async function addReviews() {
     const session =await getServerSession(authOptions);
-    if (!session || !session.user?.token) {
-        throw new Error("No session or token found.");
-    }
+    if(!session)return
     const profile=await getUserProfile(session.user.token);
     
-    
-    return (
-        <main className="p-10">
-            {
-            session?
-            <ReviewForm session={session} profile={profile}/>
-            :null
-            }
-            
-        </main>
+    return (  
+
+        <ReviewForm session={session} profile={profile}/>
+             
     )
 }

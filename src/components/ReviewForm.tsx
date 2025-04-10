@@ -1,21 +1,17 @@
 'use client'
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import addReviews from "@/libs/addReviews";
 import editReview from "@/libs/editReview";
-import getUserProfile from "@/libs/getUserProfile";
 import { Rating, TextField } from "@mui/material";
-import { getServerSession, Session } from "next-auth";
+import { Session } from "next-auth";
 import { Pattaya } from "next/font/google";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
-import { useRouter } from 'next/router';
-import Link from "next/link";
 
 const pattaya = Pattaya({ weight: "400", subsets: ["thai", "latin"] }); 
 
 
 export default   function Reviewform({ session,profile}: { session: Session  ,profile:any}) {
-          
+  const router = useRouter()
   const urlParams = useSearchParams();
   const [rid, setRid] = useState<string>("");
   const [id, setId] = useState<string>("");
@@ -43,7 +39,7 @@ export default   function Reviewform({ session,profile}: { session: Session  ,pr
 
     if (user && rid && (reviewStar&&Description)) {
 
-        addReviews(
+      addReviews(
         
         session.user.token,{
             user: user,
@@ -54,17 +50,18 @@ export default   function Reviewform({ session,profile}: { session: Session  ,pr
         
       );
       alert("Add Review Successfully!");
+      router.push(`/restaurants/${rid}`);
 
       
-
-      
-    }else if(id){
+    }else if(id && (reviewStar||Description)){
       // console.log(reviewStar)
       // console.log(Description)
-        
+      
 
-        editReview(session.user.token, id, reviewStar,Description);
-        alert("Review updated ");
+
+      editReview(session.user.token, id, reviewStar,Description);
+      alert("Review updated ");
+      router.push('/profile/view/review')
 
     }
   };

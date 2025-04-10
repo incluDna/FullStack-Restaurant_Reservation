@@ -44,7 +44,7 @@ export default async function ReviewCatalog({reviews,restaurant,meanReviews,prof
             <div className='text-left'>
               <ClientRating rating={Number(review.reviewStar)}/>
             </div>
-            <div className='text-left'>Comment : {review.reviewText}</div>
+            <div className='text-left'>Description : {review.reviewText}</div>
                   
           </div>
           ))

@@ -3,7 +3,6 @@ import ReviewCart from "@/components/ReviewCart"
 import getReviews from "@/libs/getReviews";
 import { getServerSession } from "next-auth";
 import { Pattaya } from "next/font/google";
-import getRestaurants from "@/libs/getRestaurants";
 import getUserProfile from "@/libs/getUserProfile";
 import { LinearProgress } from "@mui/material";
 import { Suspense } from "react";
@@ -17,13 +16,12 @@ export default async function ManageReview() {
 
     const review= getReviews(session.user.token);
     const profile= getUserProfile(session.user.token);
+
     return (
         <main className="">
             <Suspense fallback={<p>Loading ...<LinearProgress/></p>}>
-            
                 {/*<h1 className={`${pattaya.className} w-1/4 text-3xl font-bold font-serif`} style={{ fontSize: "40px" }}>Reviews</h1>*/}
                 <ReviewCart reviews={review} profile={profile} session={session}/>
-
             </Suspense>
             
         </main>

@@ -109,7 +109,6 @@ exports.addReservation = async (req, res, next) => {
       });
     }
 
-    // }
     // Add user ID to req.body
     req.body.user = req.user.id;
 
@@ -180,6 +179,7 @@ exports.updateReservation = async (req, res, next) => {
         message: `No reservation with the id of ${req.params.id}`,
       });
     }
+
     if (
       reservation.user.toString() !== req.user.id &&
       req.user.role !== "admin"
@@ -187,6 +187,36 @@ exports.updateReservation = async (req, res, next) => {
       return res.status(401).json({
         success: false,
         message: `User ${req.user.id} is not authorized to update this reservation`,
+      });
+    }
+
+    const restaurant = await Restaurant.findById(reservation.restaurant);
+    if (!restaurant) {
+      return res.status(404).json({
+        success: false,
+        message: `No restaurant with the id of ${reservation.restaurant}`,
+      });
+    }
+    if (
+      req.body.resDate &&
+      !checkValidTime(
+        restaurant.openTime,
+        restaurant.closeTime,
+        req.body.resDate
+      )
+    ) {
+      return res.status(400).json({
+        success: false,
+        msg: "Cannot update reservation: Invalid time",
+      });
+    }
+    if (
+      req.body.seatCount &&
+      req.body.seatCount > restaurant.seatPerReservationLimit
+    ) {
+      return res.status(400).json({
+        success: false,
+        message: `The seat count exceeds the limit of ${restaurant.seatPerReservationLimit}`,
       });
     }
 

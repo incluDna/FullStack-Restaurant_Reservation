@@ -2,6 +2,7 @@ import Link from "next/link"
 import { motion } from "framer-motion"
 
 export default function TopMenu() {
+
     return (
         <div className="w-full h-[60px] bg-[#FFECAD] absolute z-30 flex">
             {/* Logo */}
@@ -14,6 +15,8 @@ export default function TopMenu() {
 
             {/* Queue Stuff */}
 
+            {/* If logged in then show profile */}
+            
             {/* Login */}
             <Link href={'/login'}>
                 <motion.div className="h-full w-fit text-white bg-[#F89640] items-center flex px-16 absolute right-0"

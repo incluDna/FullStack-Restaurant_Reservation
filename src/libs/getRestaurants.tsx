@@ -1,14 +1,15 @@
-import { resolve } from "path";
+export default async function getRestaurants(page: number = 1, limit: number = 10) {
+  try {
+    const url = `${process.env.BACKEND_URL}/api/restaurants/?page=${page}&limit=${limit}&timestamp=${new Date().getTime()}`;
+    
+    const response = await fetch(url);
 
-export default async function getRestaurants() {
-    
-    const response = await fetch(`${process.env.BACKEND_URL}/api/restaurants`, { 
-        cache: "no-store",
-        next: { tags: ["restaurant"] } 
-    });
-    
-    if(!response.ok){
-        throw new Error("failed to loaded the restaurants")
+    if (!response.ok) {
+      throw new Error(`Failed to fetch restaurants: ${response.statusText}`);
     }
     return await response.json();
+  } catch (error) {
+    console.error("Error fetching restaurants:", error);
+    throw error;
+  }
 }

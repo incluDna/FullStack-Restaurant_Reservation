@@ -1,6 +1,7 @@
 const Restaurant = require("../models/Restaurant");
 const Reservation = require("../models/Reservation");
 const Review = require("../models/Review");
+const Queue = require("../models/Queue");
 
 /**
  * @description Get all restaurants
@@ -185,6 +186,7 @@ exports.deleteRestaurant = async (req, res, next) => {
       return res.status(400).json({ success: false });
     }
 
+    await Queue.deleteMany({ restaurant: req.params.id });
     await Reservation.deleteMany({ restaurant: req.params.id });
     await Review.deleteMany({ restaurant: req.params.id });
     await Restaurant.deleteOne({ _id: req.params.id });

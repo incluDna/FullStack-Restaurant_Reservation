@@ -96,23 +96,12 @@ exports.addReservation = async (req, res, next) => {
         message: `No restaurant with the id of ${req.params.restaurantId}`,
       });
     }
-    const openHour = restaurant.openTime.slice(0, 2);
-    const closeHour = restaurant.closeTime.slice(0, 2);
-    const openMin = restaurant.openTime.slice(3);
-    const closeMin = restaurant.closeTime.slice(3);
-    const openMinitues = parseInt(openHour) * 60 + parseInt(openMin);
-    const closeMinitues = parseInt(closeHour) * 60 + parseInt(closeMin);
-
-    const timePart = req.body.resDate.match(/T(\d{1,2}:\d{2})/)[1];
-    const reservationHour = timePart.slice(0, 2);
-    const reservationMin = timePart.slice(3);
-    const reserveMinitues =
-      parseInt(reservationHour) * 60 + parseInt(reservationMin);
-    // console.log(openMinitues);
-    // console.log(closeMinitues);
-    // console.log(reserveMinitues);
     if (
-      !(openMinitues <= reserveMinitues && reserveMinitues <= closeMinitues)
+      !checkValidTime(
+        restaurant.openTime,
+        restaurant.closeTime,
+        req.body.resDate
+      )
     ) {
       return res.status(400).json({
         success: false,
@@ -132,6 +121,30 @@ exports.addReservation = async (req, res, next) => {
       return res.status(400).json({
         success: false,
         message: `The user with ID ${req.user.id} has already made 3 reservations`,
+      });
+    }
+
+    const newResDate = new Date(req.body.resDate);
+
+    // Calculate the end time 60 minutes from newResDate
+    const endDate = new Date(newResDate.getTime() + 60 * 60 * 1000);
+
+    // Count reservations that are at the same restaurant and within the specified time window
+    const count = await Reservation.countDocuments({
+      restaurant: req.params.restaurantId, // Ensure the restaurant is correctly referenced
+      resDate: { $gte: newResDate, $lt: endDate }, // Find reservations from newResDate (inclusive) to 60 minutes later
+    });
+
+    if (count >= restaurant.reservationLimit) {
+      return res.status(400).json({
+        success: false,
+        message: `The restaurant with ID ${req.params.restaurantId} has reached its reservation limit`,
+      });
+    }
+    if (req.body.seatCount > restaurant.seatPerReservationLimit) {
+      return res.status(400).json({
+        success: false,
+        message: `The seat count exceeds the limit of ${restaurant.seatPerReservationLimit}`,
       });
     }
 
@@ -233,3 +246,23 @@ exports.deleteReservation = async (req, res, next) => {
     });
   }
 };
+
+function checkValidTime(openTime, closeTime, resDate) {
+  const openHour = openTime.slice(0, 2);
+  const closeHour = closeTime.slice(0, 2);
+  const openMin = openTime.slice(3);
+  const closeMin = closeTime.slice(3);
+  const openMiniutes = parseInt(openHour) * 60 + parseInt(openMin);
+  const closeMiniutes = parseInt(closeHour) * 60 + parseInt(closeMin);
+
+  const timePart = resDate.match(/T(\d{1,2}:\d{2})/)[1];
+  const reservationHour = timePart.slice(0, 2);
+  const reservationMin = timePart.slice(3);
+  const reserveMiniutes =
+    parseInt(reservationHour) * 60 + parseInt(reservationMin);
+
+  if (!(openMiniutes <= reserveMiniutes && reserveMiniutes <= closeMiniutes)) {
+    return false;
+  }
+  return true;
+}

@@ -105,7 +105,7 @@ exports.addReservation = async (req, res, next) => {
     ) {
       return res.status(400).json({
         success: false,
-        msg: "Cannot make reservation",
+        message: "Cannot make reservation",
       });
     }
 
@@ -207,7 +207,7 @@ exports.updateReservation = async (req, res, next) => {
     ) {
       return res.status(400).json({
         success: false,
-        msg: "Cannot update reservation: Invalid time",
+        message: "Cannot update reservation: Invalid time",
       });
     }
     if (

@@ -60,6 +60,16 @@ const RestaurantSchema = new mongoose.Schema(
       type: String,
       required: [true, "Please add a Picture Link"],
     },
+    reservationLimit: {
+      type: Number,
+      required: [true, "Please add a Reservation Limit"],
+      min: 0,
+    },
+    seatPerReservationLimit: {
+      type: Number,
+      required: [true, "Please add a Seat Per Reservation Limit"],
+      min: 0,
+    }
   },
   {
     toJSON: { virtuals: true },

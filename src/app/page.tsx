@@ -1,7 +1,6 @@
 "use client";
 
 import { motion, useInView } from 'framer-motion'
-import { useRef } from "react";
 
 export default function Home() {
 
@@ -16,7 +15,7 @@ export default function Home() {
             <span className="text-[#1FA49F]">C</span>
             <span className="text-[#F59C04]">A</span>
             <span className="text-[#1FA49F]">M</span>
-            <span className="text-[#5A2934]"> !</span>
+            <span className="text-[#F59C04]"> !</span>
           </h1>
           {/* #FF7B00 Old Button Hover Color */}
           <motion.button className="bg-[#F89640] text-white text-2xl px-[60px] py-5" 

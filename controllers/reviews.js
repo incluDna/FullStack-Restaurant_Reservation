@@ -1,6 +1,6 @@
 const Review = require("../models/Review");
 const Restaurant = require("../models/Restaurant");
-const Reserve = require("../models/Reservation");
+const Reservation = require("../models/Reservation");
 
 /**
  * @description Get all reviews
@@ -107,7 +107,7 @@ exports.addReview = async (req, res, next) => {
     req.body.user = req.user.id;
 
     // Check for existing reviews
-    const existingReserves = await Reserve.find({
+    const existingReservations = await Reservation.find({
       user: req.user.id,
       restaurant: req.params.restaurantId,
     });
@@ -117,10 +117,10 @@ exports.addReview = async (req, res, next) => {
     });
 
     // If the user is not an admin, they can only create 3 reviews
-    if (!existingReserves && req.user.role !== "admin") {
+    if (!existingReservations && req.user.role !== "admin") {
       return res.status(400).json({
         success: false,
-        message: `The user with ID ${req.user.id} hasn't reserved any restaurants yet`,
+        message: `The user with ID ${req.user.id} hasn't reserve any restaurants yet`,
       });
     }
     if (existingReview.length > 0) {
@@ -132,16 +132,16 @@ exports.addReview = async (req, res, next) => {
 
     // check review date after resDate
     //console.log(Date.now());
-    //console.log(new Date(existingReserves[(existingReserves.length-1)].resDate).getTime()) ;\
-    existingReserves.sort((a, b) => new Date(a.resDate) - new Date(b.resDate));
+    //console.log(new Date(existingReservations[(existingReservations.length-1)].resDate).getTime()) ;\
+    existingReservations.sort((a, b) => new Date(a.resDate) - new Date(b.resDate));
 
-    //console.log(existingReserves);
-    const dt = new Date(existingReserves[0].resDate).getTime();
+    //console.log(existingReservations);
+    const dt = new Date(existingReservations[0].resDate).getTime();
     //console.log(dt);
     if (Date.now() < dt) {
       return res.status(400).json({
         success: false,
-        message: `You can only review after the reservation date (${existingReserves[0].resDate})`,
+        message: `You can only review after the reservation date (${existingReservations[0].resDate})`,
       });
     }
 

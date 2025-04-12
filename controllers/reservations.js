@@ -282,16 +282,16 @@ function checkValidTime(openTime, closeTime, resDate) {
   const closeHour = closeTime.slice(0, 2);
   const openMin = openTime.slice(3);
   const closeMin = closeTime.slice(3);
-  const openMiniutes = parseInt(openHour) * 60 + parseInt(openMin);
-  const closeMiniutes = parseInt(closeHour) * 60 + parseInt(closeMin);
+  const openMinutes = parseInt(openHour) * 60 + parseInt(openMin);
+  const closeMinutes = parseInt(closeHour) * 60 + parseInt(closeMin);
 
   const timePart = resDate.match(/T(\d{1,2}:\d{2})/)[1];
   const reservationHour = timePart.slice(0, 2);
   const reservationMin = timePart.slice(3);
-  const reserveMiniutes =
+  const reserveMinutes =
     parseInt(reservationHour) * 60 + parseInt(reservationMin);
 
-  if (!(openMiniutes <= reserveMiniutes && reserveMiniutes <= closeMiniutes)) {
+  if (!(openMinutes <= reserveMinutes && reserveMinutes <= closeMinutes)) {
     return false;
   }
   return true;

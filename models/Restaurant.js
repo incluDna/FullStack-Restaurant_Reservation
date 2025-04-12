@@ -81,6 +81,15 @@ RestaurantSchema.pre("validate", function (next) {
   if (this.openTime && this.closeTime && this.openTime >= this.closeTime) {
     this.invalidate("openTime", "Open time must be before close time");
   }
+  if (!Number.isInteger(this.reservationLimit)) {
+    this.invalidate("reservationLimit", "Reservation limit must be an integer");
+  }
+  if (!Number.isInteger(this.seatPerReservationLimit)) {
+    this.invalidate(
+      "seatPerReservationLimit",
+      "Seat per reservation limit must be an integer"
+    );
+  }
   next();
 });
 

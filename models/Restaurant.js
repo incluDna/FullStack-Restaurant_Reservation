@@ -69,12 +69,12 @@ const RestaurantSchema = new mongoose.Schema(
       type: Number,
       required: [true, "Please add a Seat Per Reservation Limit"],
       min: 0,
-    }
+    },
   },
   {
     toJSON: { virtuals: true },
     toObject: { virtuals: true },
-  }
+  },
 );
 
 RestaurantSchema.pre("validate", function (next) {
@@ -87,7 +87,7 @@ RestaurantSchema.pre("validate", function (next) {
   if (!Number.isInteger(this.seatPerReservationLimit)) {
     this.invalidate(
       "seatPerReservationLimit",
-      "Seat per reservation limit must be an integer"
+      "Seat per reservation limit must be an integer",
     );
   }
   next();

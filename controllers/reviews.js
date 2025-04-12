@@ -133,7 +133,9 @@ exports.addReview = async (req, res, next) => {
     // check review date after resDate
     //console.log(Date.now());
     //console.log(new Date(existingReservations[(existingReservations.length-1)].resDate).getTime()) ;\
-    existingReservations.sort((a, b) => new Date(a.resDate) - new Date(b.resDate));
+    existingReservations.sort(
+      (a, b) => new Date(a.resDate) - new Date(b.resDate),
+    );
 
     //console.log(existingReservations);
     const dt = new Date(existingReservations[0].resDate).getTime();
@@ -259,7 +261,7 @@ exports.getReviewsForRestaurant = async (req, res, next) => {
 
     const totalRating = reviews.reduce(
       (sum, review) => sum + review.reviewStar,
-      0
+      0,
     );
     const meanRating = totalRating / reviews.length;
 

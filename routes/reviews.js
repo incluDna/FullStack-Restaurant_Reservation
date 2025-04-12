@@ -14,7 +14,7 @@ const { protect, authorize } = require("../middleware/auth");
 
 router
   .route("/")
-  .get(protect, authorize("admin", "user"), getReviews)
+  .get(protect, getReviews)
   .post(protect, authorize("admin", "user"), addReview);
 router
   .route("/:id")
@@ -23,6 +23,6 @@ router
   .delete(protect, authorize("admin", "user"), deleteReview);
 router
   .route("/means/:id")
-  .get(protect, authorize("admin", "user"), getReviewsForRestaurant);
+  .get(protect, getReviewsForRestaurant);
 
 module.exports = router;

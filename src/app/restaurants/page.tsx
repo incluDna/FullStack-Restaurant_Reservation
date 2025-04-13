@@ -59,7 +59,7 @@ export default function RestaurantCatalog() {
   }
 
   return (
-    <main className="flex flex-col w-full max-w-[var(--collection-1-content-width)] min-h-[var(--collection-1-content-height)] items-start gap-2.5 pt-24">
+    <main className="flex flex-col w-full max-w-[var(--collection-1-content-width)] min-h-[var(--collection-1-content-height)] items-start gap-2.5 p-5">
       <section className="flex flex-wrap justify-center gap-[var(--size-space-600)] p-[var(--size-space-1600)] w-full bg-white">
         {restaurants.map((restaurant) => (
           <RestaurantCard
@@ -74,7 +74,7 @@ export default function RestaurantCatalog() {
         ))}
       </section>
 
-      <div className="flex items-center justify-between gap-4 pt-[var(--size-space-1600)] pb-2.5 px-2.5 w-full">
+      <div className="fixed bottom-0 left-0 right-0 z-50 flex items-center justify-between gap-4 pt-[var(--size-space-1600)] pb-2.5 px-2.5 w-full">
         <button
           className="flex items-center justify-center gap-4 pr-[var(--size-space-1000)] pl-[var(--size-space-1000)] py-2 bg-[#C2C2C2] rounded-[75px] border-none text-[24px] font-semibold w-full max-w-[200px] ml-20 mt-16"
           onClick={handleGoBack}

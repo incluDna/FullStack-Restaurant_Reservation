@@ -1,6 +1,6 @@
 export default async function getReservations(token:string, restaurantId?:string) {
 
-    const response=await fetch(`${process.env.BACKEND_URL}/api/reservations/${restaurantId}`, {
+    const response=await fetch(`${process.env.BACKEND_URL}/api/restaurants/${restaurantId}/reservations`, {
         method:"GET",
         headers:{
             authorization:`Bearer ${token}`,

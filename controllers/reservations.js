@@ -8,28 +8,37 @@ const Restaurant = require("../models/Restaurant");
  */
 exports.getReservations = async (req, res, next) => {
   let query;
+
+  const restaurantPopulate = {
+    path: "restaurant",
+    select: "name province tel",
+  };
+
+  const userPopulate = {
+    path: "user",
+    select: "name tel",
+  };
   if (req.user.role !== "admin") {
     //general users can see only their reservations
-    query = Reservation.find({ user: req.user.id }).populate({
-      path: "restaurant",
-      select: "name province tel",
-    });
+    query = Reservation.find({ user: req.user.id })
+      .sort({ resDate: 1 })
+      .populate(restaurantPopulate)
+      .populate(userPopulate);;
   } else {
     if (req.params.restaurantId) {
       console.log(req.params.restaurantId);
-      query = Reservation.find({
-        restaurant: req.params.restaurantId,
-      }).populate({
-        path: "restaurant",
-        select: "name province tel",
-      });
+      query = Reservation.find({ restaurant: req.params.restaurantId })
+        .sort({ resDate: 1 })
+        .populate(restaurantPopulate)
+        .populate(userPopulate);
     } else {
       //if you are admin, you can see all reservations
-      query = Reservation.find().populate({
-        path: "restaurant",
-        select: "name province tel",
-      });
+      query = Reservation.find()
+        .sort({ resDate: 1 })
+        .populate(restaurantPopulate)
+        .populate(userPopulate);
     }
+
   }
   try {
     const reservations = await query;

@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import ReserveManageCard from "./card/managementComp/ReserveManageCard";
 import { Reservation, ReservationJSON } from "../../interfaces";
 import getReservations from "@/libs/getReservations";
+import deleteReservation from "@/libs/deleteReservation";
 
 export default function ReserveManageSection({ token, restaurantID }: { token?: string, restaurantID?: string }) {
     const [reservations, setReservations] = useState<Reservation[] | undefined>(
@@ -45,6 +46,19 @@ export default function ReserveManageSection({ token, restaurantID }: { token?: 
     if (error) {
         return <p>{error}</p>;
     }
+
+    const removeFunction = async (reservationId:string) => {
+        if (token && token !== null) {
+            const res = await deleteReservation(token, reservationId);
+            if (res.success) {
+                setPleaseReload(!pleaseReload);
+            }
+        } else {
+            alert("No token");
+            return;
+        }
+    };
+
     return (
         <div className="w-1/2 h-full bg-white p-5 flex flex-col gap-y-5">
             <div className="w-full h-3/2 text-center break-words text-xl font-bold">
@@ -54,14 +68,15 @@ export default function ReserveManageSection({ token, restaurantID }: { token?: 
             {
                 reservations?.map((reservation) =>
                 (
-                    <ReserveManageCard  
+                    <ReserveManageCard
                         key={reservation._id}
                         reserveDate={reservation.resDate}
                         reservationID={reservation._id}
                         userName={reservation.user.name}
                         userTel={reservation.user.tel}
-                        seatCount={reservation.seatCount
-                        } />
+                        seatCount={reservation.seatCount}
+                        removeFunction={removeFunction}
+                        />
 
                 )
                 )

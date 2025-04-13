@@ -1,12 +1,14 @@
-"using client"
+"use client"
 
 import Image from "next/image";
 
-export default function ReserveManageCard({ reserveDate, reservationID, userName, userTel, seatCount }: { reserveDate: Date, reservationID?: string, userName: string, userTel: string, seatCount: Number }) {
+export default function ReserveManageCard({ reserveDate, reservationID, userName, userTel, seatCount, removeFunction }
+    : { reserveDate: Date, reservationID?: string, userName: string, userTel: string, seatCount: Number, removeFunction: Function}) {
     const futureResColor = '[#FFECAD]';
     const lateResColor = 'gray-100'; // reservation is in the past
     const color = new Date(reserveDate).getTime() >= Date.now() ? futureResColor : lateResColor;
     // new Date() -> local date , reserveDate = UTC (2025-04-20T13:00:00.000Z etc.)
+    
     return (
         <div className={`w-full min-h-[200px] h-auto bg-${color} rounded-[30px] drop-shadow-md p-4 flex flex-row`}>
             <div className="grow h-full flex flex-col">
@@ -23,7 +25,7 @@ export default function ReserveManageCard({ reserveDate, reservationID, userName
                 </div>
             </div>
             <div className="w-[40px] h-full flex flex-col gap-y-3">
-                <div className="bg-white rounded-[40px] h-[40px] w-[40px] flex justify-center">
+                <div className="cursor-pointer bg-white rounded-[40px] h-[40px] w-[40px] flex justify-center">
                     <Image
                         src="/images/tick.svg"
                         alt=""
@@ -32,13 +34,14 @@ export default function ReserveManageCard({ reserveDate, reservationID, userName
                         style={{ objectFit: "contain" }}
                     />
                 </div>
-                <div className="bg-white rounded-[40px] h-[40px] w-[40px] flex justify-center">
+                <div className="cursor-pointer bg-white rounded-[40px] h-[40px] w-[40px] flex justify-center">
                     <Image
                         src="/images/cross.svg"
                         alt=""
                         width={40}
                         height={40}
                         style={{ objectFit: "contain" }}
+                        onClick={() => removeFunction(reservationID)}
                     />
                 </div>
             </div>

@@ -21,7 +21,7 @@ export default function ReserveManageCard() {
                         alt=""
                         width={35}
                         height={35}
-                        objectFit="contain"
+                        style={{objectFit: "contain"}}
                     />
                 </div>
                 <div className="bg-white rounded-[40px] h-[40px] w-[40px] flex justify-center">
@@ -30,7 +30,7 @@ export default function ReserveManageCard() {
                         alt=""
                         width={40}
                         height={40}
-                        objectFit="contain"
+                        style={{objectFit: "contain"}}
                     />
                 </div>
             </div>

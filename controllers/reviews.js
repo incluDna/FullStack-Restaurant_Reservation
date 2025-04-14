@@ -9,6 +9,11 @@ const Reservation = require("../models/Reservation");
  */
 exports.getReviews = async (req, res, next) => {
   let query;
+  const reqQuery = { ...req.query };
+
+  const removeFields = ["page", "limit"];
+  removeFields.forEach((param) => delete reqQuery[param]);
+
   if (req.user.role === "user") {
     if (req.params.restaurantId) {
       console.log(req.params.restaurantId);
@@ -36,12 +41,40 @@ exports.getReviews = async (req, res, next) => {
       });
     }
   }
+
+  const page = parseInt(req.query.page, 10) || 1;
+  const limit = parseInt(req.query.limit, 10) || 25;
+  const startIndex = (page - 1) * limit;
+  const endIndex = page * limit;
+
   try {
+    const total = await Restaurant.countDocuments();
+    const totalPages = Math.ceil(total / limit);
+    query = query.skip(startIndex).limit(limit);
+
     const reviews = await query;
+
+    const pagination = {};
+    // next
+    if (endIndex < total) {
+      pagination.next = {
+        page: page + 1,
+        limit,
+      };
+    }
+    // previous
+    if (startIndex > 0) {
+      pagination.prev = {
+        page: page - 1,
+        limit,
+      };
+    }
+
     res.status(200).json({
       success: true,
       count: reviews.length,
       data: reviews,
+      totalPages: totalPages,
     });
   } catch (error) {
     console.log(error);

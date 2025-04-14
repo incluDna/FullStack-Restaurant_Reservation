@@ -30,7 +30,7 @@ const MenuSchema = new mongoose.Schema({
     maxLength: 300,
   },
   tag: {
-    type: String,
+    type: [String],
     enum: [
       "Spicy",
       "Vegan",

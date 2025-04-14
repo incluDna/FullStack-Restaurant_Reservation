@@ -14,11 +14,11 @@ const { protect, authorize } = require("../middleware/auth");
 router
   .route("/")
   .get(getMenus)
-  .post(protect, authorize(["employee", "admin"]), createMenu);
+  .post(protect, authorize("employee", "admin"), createMenu);
 router
   .route("/:id")
   .get(getMenu)
-  .put(protect, authorize(["employee", "admin"]), updateMenu)
-  .delete(protect, authorize(["employee", "admin"]), deleteMenu);
+  .put(protect, authorize("employee", "admin"), updateMenu)
+  .delete(protect, authorize("employee", "admin"), deleteMenu);
 
 module.exports = router;

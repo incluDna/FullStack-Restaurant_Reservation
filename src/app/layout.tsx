@@ -17,7 +17,7 @@ export default function RootLayout({
         <html>
             <body className={agbalumo.className}>
                 <TopMenu/>
-                {children}
+                <main className="pt-[60px] w-[100vw] h-[100vh]">{children}</main>
             </body>
         </html>
   );

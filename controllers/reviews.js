@@ -48,7 +48,7 @@ exports.getReviews = async (req, res, next) => {
   const endIndex = page * limit;
 
   try {
-    const total = await Restaurant.countDocuments();
+    const total = await Review.countDocuments(query.getQuery());
     const totalPages = Math.ceil(total / limit);
     query = query.skip(startIndex).limit(limit);
 

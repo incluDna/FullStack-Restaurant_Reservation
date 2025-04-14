@@ -8,8 +8,7 @@ export default async function getMeanReviews(id: string) {
             return null;
         }
 
-        const data = await response.json();
-        return data?.totalRating ?? null; 
+        return await response.json();
     } catch (error) {
         console.error("Error fetching reviews:", error);
         return null; 

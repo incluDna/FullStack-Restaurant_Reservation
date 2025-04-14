@@ -1,9 +1,27 @@
 import { ChevronRight } from "lucide-react";
-import React from "react";
+import React, { Suspense } from "react";
 import getRestaurant from "@/libs/getRestaurant";
-export default async function RestaurantInfo({ params }: { params: { cid: string } }) {
+import ReviewCatalogExample from "@/components/ReviewCatalogExample";
+import { LinearProgress } from "@mui/material";
+import getMeanReviews from "@/libs/getMeanReview";
+import getUserProfile from "@/libs/getUserProfile";
+import getReviewsforRestaurant from "@/libs/getReviewforRestaurant";
+import { getServerSession } from "next-auth";
+export default async function RestaurantInfo({ params }: { params: { id: string } }) {
+  // const session = await getServerSession(authOptions);
+  // if (!session) return null
+  const token = 
+    // session.user.token;
+    // uncomment all above and delete line below when login/register is implemented  
+    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3ZmQyMjNkMzA1YjkzN2IxNWY5ODI3ZiIsImlhdCI6MTc0NDY0NTIxOCwiZXhwIjoxNzQ3MjM3MjE4fQ.w2QnoRKC8WnqQIVZAVRi5-gG5wijwCNpvLvdTa09mQ4';
+    // ** ^ edit and use test token here, this token was for John admin
+  const param = await params; //params should be awaited
+  const reviews = getReviewsforRestaurant(token, param.id)
+  const restaurant = getRestaurant(param.id, token);
+  const meanReviews = getMeanReviews(param.id);
+  const profile = getUserProfile(token);
 
-  const getRestaurantJSON = await getRestaurant(params.cid, )
+  const getRestaurantJSON = await getRestaurant(param.id, token);
 
   return (
     <main className="w-full bg-white">
@@ -103,56 +121,9 @@ export default async function RestaurantInfo({ params }: { params: { cid: string
         <h2 className="font-medium text-black text-[110px] leading-[154px]">
           Reviews Ratings
         </h2>
-
-        {/* Rating summary */}
-        <div className="flex justify-between items-start py-6 px-8 bg-[#ffebac] w-full">
-          <div className="flex items-center gap-10">
-            <div className="font-medium text-[55px] leading-[77px]">
-              <span className="text-black">{reviewsData.rating}</span>
-              <span className="text-[#f79540] text-[40px] leading-[56px]">
-                /5.0
-              </span>
-            </div>
-            <div className="font-medium text-black text-[55px] leading-[77px]">
-              {/* {renderStars(5)} */}
-            </div>
-          </div>
-          <div className="font-medium text-black text-[55px] leading-[77px]">
-            from {reviewsData.totalReviews} reviews
-          </div>
-        </div>
-
-        {/* Review cards */}
-        <div className="flex flex-wrap gap-6 w-full">
-          {reviewsData.reviews.map((review, index) => (
-            <div
-              key={index}
-              className="w-[592px] bg-[#ffebac] rounded-none border-none"
-            >
-              <div className="flex flex-col gap-2.5 p-6">
-                <h3 className="font-medium text-black text-[40px] leading-[56px]">
-                  {review.username}
-                </h3>
-                <div className="font-medium text-black text-[40px] leading-[56px]">
-                  {/* {renderStars(review.rating)} */}
-                </div>
-                <p className="font-medium text-black text-[25px] leading-[35px] whitespace-pre-line">
-                  {review.comment}
-                </p>
-              </div>
-            </div>
-          ))}
-
-          {/* See more button */}
-          <div className="flex-1 flex items-end justify-end h-[390px] pr-8 pb-8">
-            <button className="flex items-center gap-2.5 px-12 py-1 bg-[#ffebac] hover:bg-[#ffebac]/90 text-black rounded-[75px]">
-              <span className="font-medium text-[40px] leading-[56px]">
-                see more ..
-              </span>
-              <ChevronRight className="w-[91px] h-[91px]" />
-            </button>
-          </div>
-        </div>
+        <Suspense fallback={<p>Loading ...<LinearProgress /></p>}>
+          <ReviewCatalogExample reviews={reviews} restaurant={restaurant} meanReviews={meanReviews} profile={profile} />
+        </Suspense>
       </section>
     </main>
   );

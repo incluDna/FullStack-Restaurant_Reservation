@@ -1,10 +1,9 @@
-export default async function deleteRestaurant(
-    token: string,
+export default async function deleteReview(
     id: string,
-
+    token?: string,
 ) {
     try {
-        const response = await fetch(`${process.env.BACKEND_URL}/api/restaurants/${id}`, {
+        const response = await fetch(`${process.env.BACKEND_URL}/api/reviews/${id}`, {
             method: "Delete",  
             headers: {
                 "Content-Type": "application/json",
@@ -14,12 +13,12 @@ export default async function deleteRestaurant(
 
         if (!response.ok) {
             const errorMessage = await response.text();
-            throw new Error(`Failed to delete restaurant: ${errorMessage}`);
+            throw new Error(`Failed to delete review: ${errorMessage}`);
         }
 
         return await response.json();  
     } catch (error) {
-        console.error("Delete restaurant error:", error);
+        console.error("Delete review error:", error);
         throw error;
     }
 }

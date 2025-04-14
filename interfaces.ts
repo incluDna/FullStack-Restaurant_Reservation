@@ -1,5 +1,5 @@
 export interface Restaurant {
-  id: string;
+  _id: string;
   name: string;
   picture: string;
   address: string;
@@ -19,12 +19,12 @@ export interface Reservation {
   _id?: string;
   resDate: Date;
   user: {
-    id?: string;
+    _id?: string;
     name: string;
     tel: string;
   };
   restaurant: {
-    id?: string;
+    _id?: string;
     name: string;
     province: string;
     tel: string;
@@ -32,9 +32,50 @@ export interface Reservation {
   seatCount: number;
   createdAt: Date;
 }
+export interface Review{
+  _id?: string,
+  user: string,
+  restaurant:  {
+    _id?: string;
+    name: string;
+  },
+  reviewStar: string,
+  reviewText: string,
+  createdAt:string
+}
+export interface MeanReview{
+  success:string,
+  name:string,
+  totalRating:number,
+  count:number
+}
+
+export interface Profile{
+  _id?: string,
+  name: string,
+  tel: string,
+  email: string,
+  role: string, 
+  createdAt:string
+  
+}
+
+
+export interface ProfileJSON{
+  success: boolean,
+  data: Profile
+}
+
+export interface ReviewJSON{
+  success: boolean,
+  count: number,
+  pagination: Object,
+  data: Review[]
+}
 export interface RestaurantJSON {
-  count: number
-  data: Restaurant[]
+  success: boolean,
+  count: number,
+  data: Restaurant[],
   totalPages: number
 }
 

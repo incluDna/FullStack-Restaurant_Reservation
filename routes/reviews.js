@@ -21,8 +21,6 @@ router
   .get(protect, getReview)
   .put(protect, authorize("admin", "user"), updateReview)
   .delete(protect, authorize("admin", "user"), deleteReview);
-router
-  .route("/means/:id")
-  .get(protect, authorize("admin", "user"), getReviewsForRestaurant);
+router.route("/means/:id").get(getReviewsForRestaurant);
 
 module.exports = router;

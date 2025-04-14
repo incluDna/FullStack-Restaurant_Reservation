@@ -9,9 +9,12 @@ const Reservation = require("../models/Reservation");
  */
 exports.getReviews = async (req, res, next) => {
   let query;
-  if (req.user.role !== "admin") {
-    //general users can see only their reservations
+  const reqQuery = { ...req.query };
 
+  const removeFields = ["page", "limit"];
+  removeFields.forEach((param) => delete reqQuery[param]);
+
+  if (req.user.role === "user") {
     if (req.params.restaurantId) {
       console.log(req.params.restaurantId);
       query = Review.find({ restaurant: req.params.restaurantId }).populate({
@@ -32,19 +35,46 @@ exports.getReviews = async (req, res, next) => {
         select: "name",
       });
     } else {
-      //if you are admin, you can see all reservations
       query = Review.find().populate({
         path: "restaurant",
         select: "name",
       });
     }
   }
+
+  const page = parseInt(req.query.page, 10) || 1;
+  const limit = parseInt(req.query.limit, 10) || 25;
+  const startIndex = (page - 1) * limit;
+  const endIndex = page * limit;
+
   try {
+    const total = await Review.countDocuments(query.getQuery());
+    const totalPages = Math.ceil(total / limit);
+    query = query.skip(startIndex).limit(limit);
+
     const reviews = await query;
+
+    const pagination = {};
+    // next
+    if (endIndex < total) {
+      pagination.next = {
+        page: page + 1,
+        limit,
+      };
+    }
+    // previous
+    if (startIndex > 0) {
+      pagination.prev = {
+        page: page - 1,
+        limit,
+      };
+    }
+
     res.status(200).json({
       success: true,
       count: reviews.length,
       data: reviews,
+      totalPages: totalPages,
     });
   } catch (error) {
     console.log(error);
@@ -133,7 +163,9 @@ exports.addReview = async (req, res, next) => {
     // check review date after resDate
     //console.log(Date.now());
     //console.log(new Date(existingReservations[(existingReservations.length-1)].resDate).getTime()) ;\
-    existingReservations.sort((a, b) => new Date(a.resDate) - new Date(b.resDate));
+    existingReservations.sort(
+      (a, b) => new Date(a.resDate) - new Date(b.resDate)
+    );
 
     //console.log(existingReservations);
     const dt = new Date(existingReservations[0].resDate).getTime();
@@ -263,11 +295,11 @@ exports.getReviewsForRestaurant = async (req, res, next) => {
     );
     const meanRating = totalRating / reviews.length;
 
-    const review = await Restaurant.findById(req.params.id);
+    const restaurant = await Restaurant.findById(req.params.id);
     console.log(totalRating);
     res.status(200).json({
       success: true,
-      name: review.name,
+      name: restaurant.name,
       totalRating: meanRating.toFixed(2),
       count: reviews.length,
     });

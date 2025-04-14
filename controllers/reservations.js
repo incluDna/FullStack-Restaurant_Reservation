@@ -109,7 +109,7 @@ exports.addReservation = async (req, res, next) => {
       !checkValidTime(
         restaurant.openTime,
         restaurant.closeTime,
-        req.body.resDate
+        req.body.resDate,
       )
     ) {
       return res.status(400).json({
@@ -211,7 +211,7 @@ exports.updateReservation = async (req, res, next) => {
       !checkValidTime(
         restaurant.openTime,
         restaurant.closeTime,
-        req.body.resDate
+        req.body.resDate,
       )
     ) {
       return res.status(400).json({

@@ -39,9 +39,9 @@ export default function RestaurantCard({
     router.push(`/restaurants/${restaurantsID}`);
   };
   return (
-    <div className="flex w-[45%] h-[50vh] p-0 overflow-hidden border-0 rounded-none ml-8 mb-8">
+    <div className="flex w-[45%] h-[50vh] p-0 overflow-hidden border-0 rounded-[20px] ml-8 mb-8">
       {/* Left side - Image placeholder */}
-      <div className="w-1/2 h-96">
+      <div className="w-1/2 h-full">
           <img
             className=" w-full h-full object-cover"
             alt="restaurants"

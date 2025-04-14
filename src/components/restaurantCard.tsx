@@ -1,7 +1,9 @@
 import React from "react";
 import { Star } from "lucide-react";
-
+import { motion } from "framer-motion";
+import { useRouter } from "next/navigation";
 export default function RestaurantCard({
+  restaurantsID,
   restaurantName,
   imgSrc,
   location,
@@ -9,11 +11,12 @@ export default function RestaurantCard({
   rating,
   currentQueue,
 }: {
+  restaurantsID: string;
   restaurantName: string;
   imgSrc: string;
   location: string;
   openCloseTime: string;
-  rating: number;
+  rating: number | null;
   currentQueue: string;
 }) {
   // Generate star rating display dynamically based on the rating
@@ -23,31 +26,38 @@ export default function RestaurantCard({
       .map((_, i) => (
         <Star
           key={i}
-          className={`w-6 h-6 ${
-            i < Math.round(rating)
+          className={`w-6 h-6 ${i < Math.round(rating!)
               ? "fill-[#f79540] text-[#f79540]"
               : "text-gray-300"
-          }`}
+            }`}
         />
       ));
   };
+  const router = useRouter();
 
+  const seeInfo = () => {
+    router.push(`/restaurants/${restaurantsID}`);
+  };
   return (
-    <div className="flex h-[435px] w-[861px] p-0 overflow-hidden border-0 rounded-none ml-16 mb-8">
+    <div className="flex w-[45%] h-[50vh] p-0 overflow-hidden border-0 rounded-none ml-8 mb-8">
       {/* Left side - Image placeholder */}
-      <div className="flex w-[419px] items-center justify-center bg-[#ff7b00] text-[#faf9f6]">
-        <span className="font-medium text-5xl"><img className="h-full w-auto object-cover" alt="restaurants" src={imgSrc} /></span>
+      <div className="w-1/2 h-96">
+          <img
+            className=" w-full h-full object-cover"
+            alt="restaurants"
+            src={imgSrc}
+          />
       </div>
 
       {/* Right side - Restaurant information */}
-      <div className="flex flex-col justify-between p-4 flex-1 bg-[#C2C2C2]">
-        <div className="space-y-4">
+      <div className="flex flex-col w-1/2 justify-between p-4 flex-1 bg-[#FFECAD]">
+        <div className="space-y-2">
           {/* Restaurant name and details */}
           <div>
-            <h2 className="font-medium text-[35px] leading-[56px] w-[325px] text-[#333]">
+            <h2 className="font-medium text-[24px] leading-[47px] w-full text-[#333]">
               {restaurantName}
             </h2>
-            <p className="font-medium text-[25px] leading-[35px] w-[325px] text-[#555]">
+            <p className="font-medium text-[18px] w-full text-[#555]">
               {location}
               <br />
               {openCloseTime}
@@ -55,28 +65,32 @@ export default function RestaurantCard({
           </div>
 
           {/* Rating */}
-          <div className="flex items-center gap-2.5 px-4 py-3 bg-[#faf9f6] hover:bg-[#faf9f6] text-[#f79540] rounded-none">
-            <span className="font-medium text-[25px] leading-[35px] text-[#333]">
-              {rating}
+          <div className="flex items-center gap-2.5 px-4 py-2 bg-[#faf9f6] hover:bg-[#faf9f6] text-[#f79540] rounded-none">
+            <span className="font-medium text-[20px] leading-[35px] text-[#F89640]">
+              {rating === null ? "No Reviews" : rating}
             </span>
-            <span className="flex items-center">{renderStars()}</span>
+            {rating !== null && <span className="flex items-center">{renderStars()}</span>}
           </div>
 
           {/* Queue information */}
-          <div className="px-4 py-3 bg-[#faf9f6] hover:bg-[#faf9f6] text-[#f79540] rounded-none">
-            <span className="font-medium text-[25px] leading-[35px] text-[#333]">
+          <div className="px-4 py-2 bg-[#faf9f6] hover:bg-[#faf9f6] text-[#s] rounded-none">
+            <span className="font-medium text-[20px] leading-[35px] text-[#F89640]">
               Current queue: {currentQueue}
             </span>
           </div>
         </div>
 
         {/* Action button */}
-        <div className="p-0 mt-auto">
-          <button className="bg-[#595959]  text-white  rounded-none py-3 px-8 transition duration-200">
+        <div className="flex p-0 mt-auto">
+        <motion.button className="w-full bg-[#F89640] text-white text-2xl px-8 py-2"
+          whileHover={{ backgroundColor: "#5A2934", scale: 1.02 }}
+          transition={{ duration: 0.3 }}
+          onClick={seeInfo}
+          >
             <span className="font-medium text-[25px] leading-[35px]">
               See information
             </span>
-          </button>
+            </motion.button>
         </div>
       </div>
     </div>

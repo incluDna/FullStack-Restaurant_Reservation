@@ -10,8 +10,7 @@ const Queue = require("../models/Queue");
  */
 exports.getRestaurants = async (req, res, next) => {
   let query;
-  //copy req.query
-  const reqQuery = { ...req.query }; //string -> array of key value
+  const reqQuery = { ...req.query };
 
   // Fields to exclude
   const removeFields = ["select", "sort", "page", "limit"];
@@ -20,14 +19,14 @@ exports.getRestaurants = async (req, res, next) => {
   removeFields.forEach((param) => delete reqQuery[param]);
   console.log(reqQuery);
 
-  //query string
+  // query string
   let queryStr = JSON.stringify(reqQuery);
   queryStr = queryStr.replace(
     /\b(gt|gte|lt|lte|in)\b/g,
-    (match) => `$${match}`,
+    (match) => `$${match}`
   );
 
-  //finding resource
+  // finding resource
   query = Restaurant.find(JSON.parse(queryStr))
     .populate("reservations")
     .populate("reviews");
@@ -48,28 +47,29 @@ exports.getRestaurants = async (req, res, next) => {
     query = query.sort("-createdAt");
   }
 
-  //Pagination
+  // Pagination
   const page = parseInt(req.query.page, 10) || 1;
   const limit = parseInt(req.query.limit, 10) || 25;
   const startIndex = (page - 1) * limit;
   const endIndex = page * limit;
 
   try {
-    const total = await Restaurant.countDocuments(); //trycatch
+    const total = await Restaurant.countDocuments();
+    const totalPages = Math.ceil(total / limit);
     query = query.skip(startIndex).limit(limit);
-    //excutue query
+    // excutue query
     const restaurants = await query;
 
-    //Pagination result
+    // Pagination result
     const pagination = {};
-    //next
+    // next
     if (endIndex < total) {
       pagination.next = {
         page: page + 1,
         limit,
       };
     }
-    //previous
+    // previous
     if (startIndex > 0) {
       pagination.prev = {
         page: page - 1,
@@ -77,9 +77,12 @@ exports.getRestaurants = async (req, res, next) => {
       };
     }
 
-    res
-      .status(200)
-      .json({ success: true, count: restaurants.length, data: restaurants });
+    res.status(200).json({
+      success: true,
+      count: restaurants.length,
+      data: restaurants,
+      totalPages: totalPages,
+    });
   } catch (err) {
     res.status(400).json({ success: false });
   }
@@ -159,7 +162,7 @@ exports.updateRestaurant = async (req, res, next) => {
       {
         new: true,
         runValidators: true,
-      },
+      }
     );
 
     if (!restaurant) {

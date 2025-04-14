@@ -14,15 +14,13 @@ const { protect, authorize } = require("../middleware/auth");
 
 router
   .route("/")
-  .get(protect, getReviews)
+  .get(protect, authorize("admin", "user"), getReviews)
   .post(protect, authorize("admin", "user"), addReview);
 router
   .route("/:id")
   .get(protect, getReview)
   .put(protect, authorize("admin", "user"), updateReview)
   .delete(protect, authorize("admin", "user"), deleteReview);
-router
-  .route("/means/:id")
-  .get(protect, getReviewsForRestaurant);
+router.route("/means/:id").get(getReviewsForRestaurant);
 
 module.exports = router;

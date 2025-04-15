@@ -1,13 +1,15 @@
 'use client';
 import { motion } from "framer-motion";
 import { ChevronRight, Star } from "lucide-react";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Suspense } from "react";
 import { useParams } from "next/navigation";
 import getRestaurant from "@/libs/getRestaurant";
 import getReviewForRestaurant from "@/libs/getReviewForRestaurant";
 import getMeanReviews from "@/libs/getMeanReview";
 import addReservation from "@/libs/addReservations";
 import { MeanReview, RestaurantJSON, Review, ReviewJSON } from "../../../../interfaces";
+import { LinearProgress } from "@mui/material";
+import ReviewCatalogExample from "@/components/ReviewCatalogExample";
 export default function RestaurantInfo() {
   // const session = await getServerSession(authOptions);
   const token =
@@ -78,19 +80,19 @@ export default function RestaurantInfo() {
     return <div>Loading...</div>;
   }
 
-  const renderStars = (rating: number) => {
-    return Array(5)
-      .fill(0)
-      .map((_, i) => (
-        <Star
-          key={i}
-          className={`w-6 h-6 ${i < Math.round(rating)
-            ? "fill-[#f79540] text-[#f79540]"
-            : "text-gray-300"
-            }`}
-        />
-      ));
-  };
+  // const renderStars = (rating: number) => {
+  //   return Array(5)
+  //     .fill(0)
+  //     .map((_, i) => (
+  //       <Star
+  //         key={i}
+  //         className={`w-6 h-6 ${i < Math.round(rating)
+  //           ? "fill-[#f79540] text-[#f79540]"
+  //           : "text-gray-300"
+  //           }`}
+  //       />
+  //     ));
+  // };
 
   const totalReviews = reviewData.length;
 
@@ -221,12 +223,11 @@ export default function RestaurantInfo() {
         <h2 className="font-medium text-black text-[40px] sm:text-[70px] lg:text-[110px] mb-10">
           Reviews Ratings
         </h2>
-        {/* <Suspense fallback={<p>Loading ...<LinearProgress /></p>}>
-          <ReviewCatalogExample reviews={reviews} restaurant={restaurant} meanReviews={meanReviews} profile={profile} />
-        </Suspense> */}
+        <Suspense fallback={<p>Loading ...<LinearProgress /></p>}>
+          <ReviewCatalogExample reviews={reviewData} meanReviews={meanReview} />
+        </Suspense>
 
-        {/* Rating summary */}
-        <div className="flex flex-col sm:flex-row justify-between items-start gap-4 py-6 px-4 sm:px-8 bg-[#ffebac] w-full">
+        {/* <div className="flex flex-col sm:flex-row justify-between items-start gap-4 py-6 px-4 sm:px-8 bg-[#ffebac] w-full">
           <div className="flex items-center gap-6">
             <div className="text-[30px] sm:text-[40px] font-medium">
               <span className="text-black">{meanReview}</span>
@@ -241,7 +242,6 @@ export default function RestaurantInfo() {
           </div>
         </div>
 
-        {/* Review cards */}
         {reviewData.length > 0 && (
           <div className="flex flex-wrap gap-8 w-full">
             {reviewData.map((review: any) => (
@@ -263,7 +263,6 @@ export default function RestaurantInfo() {
           </div>
         )}
 
-        {/* See more button */}
         <div className="w-full flex justify-end pr-4 sm:pr-8 pt-4">
           <motion.button
             whileHover={{ backgroundColor: "#f79540", scale: 1.02 }}
@@ -273,7 +272,7 @@ export default function RestaurantInfo() {
             <span className="font-medium text-xl sm:text-2xl">see more ..</span>
             <ChevronRight className="w-6 h-6 sm:w-[50px] sm:h-[50px]" />
           </motion.button>
-        </div>
+        </div> */}
       </section>
     </main>
   );

@@ -50,7 +50,7 @@ export default function Register() {
         {/* Avatar */}
         <div className="text-center">
           <img
-            src="/images/SCAM_Group_logo.jpg" // <-- Replace with your actual image path
+            src="/images/SCAM_Group_logo.jpg" // <-- Replace this if your image path is different
             alt="Avatar"
             className="mx-auto w-20 h-20 rounded-full object-cover"
           />
@@ -80,6 +80,7 @@ export default function Register() {
               value={name}
               onChange={(e) => setName(e.target.value)}
               className="mt-1 w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-orange-400 focus:outline-none"
+              required
             />
           </div>
 
@@ -90,6 +91,7 @@ export default function Register() {
               value={telephone}
               onChange={(e) => setTelephone(e.target.value)}
               className="mt-1 w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-orange-400 focus:outline-none"
+              required
             />
           </div>
 
@@ -100,6 +102,7 @@ export default function Register() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               className="mt-1 w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-orange-400 focus:outline-none"
+              required
             />
           </div>
 
@@ -110,6 +113,7 @@ export default function Register() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               className="mt-1 w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-orange-400 focus:outline-none"
+              required
             />
           </div>
 

@@ -1,45 +1,48 @@
-"use client";
+'use client'
 
-import { useState } from "react";
-import Cookies from "js-cookie";
+import { useState } from 'react'
+import Cookies from 'js-cookie'
 
 export default function LoginPage() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
-  const [showError, setShowError] = useState(false);
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [error, setError] = useState('')
+  const [showError, setShowError] = useState(false)
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setShowError(false);
+    e.preventDefault()
+    setShowError(false)
+    setError('')
 
     try {
-      const response = await fetch("http://localhost:3000/api/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
+      const response = await fetch('http://localhost:3000/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password }),
-      });
+      })
 
-      if (!response.ok) {
-        const data = await response.json();
-        throw new Error(data.message || "Invalid credentials");
+      const data = await response.json()
+
+      if (!response.ok || !data.token) {
+        throw new Error(data.message || 'Invalid email or password')
       }
 
-      const data = await response.json();
-
-      Cookies.set("token", data.token, {
+      Cookies.set('token', data.token, {
         expires: 7,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: "Lax",
-      });
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'Lax',
+      })
 
-      console.log("Login success:", data);
+      console.log('Login success:', data)
+
+      // Optional: Redirect after login
+      // window.location.href = '/dashboard'
     } catch (err: any) {
-      setError(err.message);
-      setShowError(true);
-      setTimeout(() => setShowError(false), 3000);
+      setError(err.message || 'Login failed')
+      setShowError(true)
+      setTimeout(() => setShowError(false), 3000)
     }
-  };
+  }
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-white px-4">
@@ -52,16 +55,18 @@ export default function LoginPage() {
           />
         </div>
 
-        <h2 className="text-2xl font-bold text-gray-900 text-center">Sign in to your account</h2>
+        <h2 className="text-2xl font-bold text-gray-900 text-center">
+          Sign in to your account
+        </h2>
         <p className="mt-2 text-sm text-center text-gray-600">
-          Not a member?{" "}
-          <a href="#" className="font-medium text-[#63B6BB] hover:underline">
+          Not a member?{' '}
+          <a href="/register" className="font-medium text-[#63B6BB] hover:underline">
             Register
           </a>
         </p>
 
         {showError && (
-          <div className="mt-4 text-center text-sm text-red-600">
+          <div className="mt-4 px-4 py-2 text-center bg-red-100 text-red-700 border border-red-400 rounded-md text-sm font-medium">
             {error}
           </div>
         )}
@@ -74,6 +79,7 @@ export default function LoginPage() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               className="mt-1 w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500"
+              required
             />
           </div>
           <div>
@@ -83,14 +89,10 @@ export default function LoginPage() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               className="mt-1 w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500"
+              required
             />
           </div>
-          {/* <div className="flex items-center justify-between text-sm">
-            <label className="flex items-center">
-              <input type="checkbox" className="mr-2" />
-              Remember me
-            </label>
-          </div> */}
+
           <button
             type="submit"
             className="w-full bg-[#F28C28] text-white font-semibold py-2 rounded-md hover:opacity-90 transition"
@@ -100,5 +102,5 @@ export default function LoginPage() {
         </form>
       </div>
     </div>
-  );
+  )
 }

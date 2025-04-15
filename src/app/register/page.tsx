@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useState } from 'react'
+import userRegister from "@/libs/userRegister";
 
 export default function Register() {
   const [name, setName] = useState('')
@@ -22,16 +23,18 @@ export default function Register() {
     setSuccess(null)
 
     try {
-      const res = await fetch('http://localhost:3000/register', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, telephone, email, password }),
-      })
-
-      const data = await res.json()
-
-      if (!res.ok) throw new Error(data.message || 'Something went wrong.')
-
+      const res = await userRegister(name, email, telephone, password);
+      if (!res.success) throw new Error('Invalid Credential.');
+      if ("token" in res) {
+        // set cookie
+        await fetch("/api/auth", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ token: res.token, role: 'user' }),
+        });
+      }
       setSuccess('Registration successful!')
       setName('')
       setTelephone('')
@@ -68,8 +71,8 @@ export default function Register() {
         </div>
 
         {/* Feedback */}
-        {error && <div className="text-sm text-center text-red-600">{error}</div>}
-        {success && <div className="text-sm text-center text-green-600">{success}</div>}
+        {error && <div className="mt-4 px-4 py-2 text-center bg-red-100 text-red-700 border border-red-400 rounded-md text-sm font-medium">{error}</div>}
+        {success && <div className="mt-4 px-4 py-2 text-center bg-green-100 text-green-700 border border-green-400 rounded-md text-sm font-medium">{success}</div>}
 
         {/* Form */}
         <div className="space-y-4">

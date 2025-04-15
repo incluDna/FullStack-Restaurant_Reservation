@@ -30,7 +30,7 @@ export default async function getBestReviewedRestaurant(): Promise<Restaurant | 
     // 2. Fetch mean reviews for all restaurants
     const ratedRestaurants = await Promise.all(
       allRestaurants.map(async (restaurant) => {
-        const rating = await getMeanReviews(restaurant.id);
+        const rating = await getMeanReviews(restaurant._id);
         return {
           ...restaurant,
           rating: rating ?? 0,

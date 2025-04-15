@@ -1,4 +1,4 @@
-"use client";
+import './global.css';
 
 import TopMenu from '@/components/TopMenu';
 import { Agbalumo } from "next/font/google";

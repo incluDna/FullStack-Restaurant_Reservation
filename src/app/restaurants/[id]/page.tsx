@@ -6,8 +6,13 @@ import { useParams } from "next/navigation";
 import getRestaurant from "@/libs/getRestaurant";
 import getReviewForRestaurant from "@/libs/getReviewForRestaurant";
 import getMeanReviews from "@/libs/getMeanReview";
-
+import addReservation from "@/libs/addReservations";
 export default function RestaurantInfo() {
+  // const session = await getServerSession(authOptions);
+  const token =
+    // session.user.token;
+    // uncomment all above and delete line below when login/register is implemented  
+    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3ZjY4ZDQ0NjdiOTY0ZWRkNTQ2NzEyOCIsImlhdCI6MTc0NDY4NzA3NiwiZXhwIjoxNzQ3Mjc5MDc2fQ.Nt7Q3fBbw3v4fxVjXR2LlsrjHwBrpxarATwRELfm3Uc';
   const params = useParams();
   const rawId = params?.id;
   const id = Array.isArray(rawId) ? rawId[0] : rawId;
@@ -15,7 +20,6 @@ export default function RestaurantInfo() {
   const [restaurantData, setRestaurantData] = useState<any>(null);
   const [reviewData, setReviewData] = useState<any>(null);
   const [meanReview, setMeanReview] = useState<number>(0);
-
   useEffect(() => {
     if (!id) return;
 
@@ -35,6 +39,38 @@ export default function RestaurantInfo() {
 
     fetchData();
   }, [id]);
+  const [numberOfPeople, setNumberOfPeople] = useState<number>(1);
+  const [selectedDate, setSelectedDate] = useState<string>("");
+  const [selectedTime, setSelectedTime] = useState<string>("");
+  const [timeOptions, setTimeOptions] = useState<string[]>([]);
+  useEffect(() => {
+    // Generate valid time options (00, 15, 30, 45 minutes)
+    const times = [];
+    for (let hour = 0; hour < 24; hour++) {
+      for (let minute of [0, 15, 30, 45]) {
+        const time = new Date();
+        time.setHours(hour);
+        time.setMinutes(minute);
+        const timeString = time.toTimeString().slice(0, 5); // Format as HH:mm
+        times.push(timeString);
+      }
+    }
+    setTimeOptions(times);
+  }, []);
+
+  const handleReservation = () => {
+    if (!numberOfPeople || !selectedDate || !selectedTime) {
+      alert("Please fill out all fields.");
+      return;
+    }
+    const reservationDateString = `${selectedDate}T${selectedTime}:00.000Z`;
+    console.log(reservationDateString);  // Check what the resulting string looks like
+    
+    const reservationDate = new Date(reservationDateString);
+    console.log(reservationDate);  // Verify the resulting Date object
+    addReservation(token, reservationDate, "67f68d4467b964edd5467128", id!, numberOfPeople); //DONT FORGET
+  };
+
 
   if (!restaurantData || !reviewData) {
     return <div>Loading...</div>;
@@ -122,34 +158,58 @@ export default function RestaurantInfo() {
             Reserve table
           </h2>
 
-          <div className="flex flex-col gap-8 items-center">
-            <label className="font-medium text-black text-2xl sm:text-3xl lg:text-[40px] text-center">
-              How many people?
-            </label>
-            <input
-              type="number"
-              className="w-full max-w-[200px] h-[60px] p-2 bg-white border text-2xl"
-            />
-          </div>
 
           <div className="flex flex-col gap-8 items-center">
-            <label className="font-medium text-black text-2xl sm:text-3xl lg:text-[40px] text-center">
-              Select Date and Time
-            </label>
-            <input type="date" className="w-full max-w-[250px] h-[60px] p-2 bg-white border text-2xl" />
-            <input type="time" className="w-full max-w-[250px] h-[60px] p-2 bg-white border text-2xl" />
-          </div>
+            {/* Number of people */}
+            <div className="flex flex-col gap-8 items-center">
+              <label className="font-medium text-black text-2xl sm:text-3xl lg:text-[40px] text-center">
+                How many people?
+              </label>
+              <input
+                type="number"
+                value={numberOfPeople}
+                onChange={(e) => setNumberOfPeople(Number(e.target.value))}
+                className="w-full max-w-[200px] h-[60px] p-2 bg-white border text-2xl"
+              />
+            </div>
 
-          <div className="flex justify-center">
-            <motion.button
-             whileHover={{ backgroundColor: "#5A2934", scale: 1.02 }}
-             transition={{ duration: 0.3 }}
-              className="w-full max-w-[400px] h-[80px] bg-[#f79540]"
-            >
-              <span className="font-medium text-white text-3xl lg:text-[40px]">
-                reserve
-              </span>
-            </motion.button>
+            {/* Date and time */}
+            <div className="flex flex-col gap-8 items-center">
+              <label className="font-medium text-black text-2xl sm:text-3xl lg:text-[40px] text-center">
+                Select Date and Time
+              </label>
+              <input
+                type="date"
+                value={selectedDate}
+                onChange={(e) => setSelectedDate(e.target.value)}
+                className="w-full max-w-[250px] h-[60px] p-2 bg-white border text-2xl"
+              />
+              <select
+                value={selectedTime}
+                onChange={(e) => setSelectedTime(e.target.value)}
+                className="w-full max-w-[250px] h-[60px] p-2 bg-white border text-2xl"
+              >
+                {timeOptions.map((time) => (
+                  <option key={time} value={time}>
+                    {time}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {/* Reserve button */}
+            <div className="flex justify-center">
+              <motion.button
+                whileHover={{ backgroundColor: "#5A2934", scale: 1.02 }}
+                transition={{ duration: 0.3 }}
+                onClick={handleReservation}
+                className="w-full max-w-[400px] h-[80px] bg-[#f79540]"
+              >
+                <span className="font-medium text-white text-3xl lg:text-[40px]">
+                  reserve
+                </span>
+              </motion.button>
+            </div>
           </div>
         </div>
       </section>

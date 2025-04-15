@@ -7,12 +7,14 @@ import { useEffect, useState } from "react";
 import { Restaurant } from "../../interfaces";
 import { Star } from "lucide-react";
 import Skeleton from '@mui/material/Skeleton';
+import getMeanReviews from "@/libs/getMeanReview";
 
 export default function Home() {
   const router = useRouter();
   const [bestRestaurant, setBestRestaurant] = useState<Restaurant | null>(null);
+  const [bestReview, setBestReview] = useState<number | null>(null);
   const [error, setError] = useState<string | null>(null); // state for handling errors
-  const restaurantId = bestRestaurant?.id?.toString() || "";
+  const restaurantId = bestRestaurant?._id?.toString() || "";
 
   const renderStars = () => {
     return Array(5)
@@ -20,17 +22,16 @@ export default function Home() {
       .map((_, i) => (
         <Star
           key={i}
-          className={`w-6 h-6 ${
-            i < Math.round(bestRestaurant?.rating!)
-              ? "fill-[#f79540] text-[#f79540]"
-              : "text-gray-300"
-          }`}
+          className={`w-6 h-6 ${i < Math.round(bestReview!)
+            ? "fill-[#f79540] text-[#f79540]"
+            : "text-gray-300"
+            }`}
         />
       ));
   };
 
   const seeInfo = () => {
-    router.push(`/restaurants/${bestRestaurant?.id}`);
+    router.push(`/restaurants/${bestRestaurant?._id}`);
   };
 
   useEffect(() => {
@@ -56,9 +57,25 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
-    if (bestRestaurant) {
+    const fetchBestReview = async () => {
+      if (bestRestaurant) {
+        try {
+          const reviewResponse = await getMeanReviews(bestRestaurant._id);
+          const review = reviewResponse.count == 0 ? null : reviewResponse.totalRating;
+          console.log(`Fetched review for restaurant ${bestRestaurant._id}:`, review);
+          setBestReview(review);
+        } catch (err) {
+          // If getMeanReviews fails, default to review = null
+          setBestReview(null);
+        }
+      } else {
+        setBestReview(null);
+      }
+
       console.log("Best restaurant:", bestRestaurant);
-    }
+    };
+    fetchBestReview();
+
   }, [bestRestaurant]);
 
   return (
@@ -121,9 +138,9 @@ export default function Home() {
                 {/* Rating */}
                 <div className="flex items-center gap-2.5 px-4 py-3 bg-[#FFECAD] text-[#F89640] w-1/2">
                   <span className="font-medium text-[20px] leading-[35px]">
-                    {bestRestaurant.rating === null
+                    {bestReview === null
                       ? "No Reviews"
-                      : bestRestaurant.rating}
+                      : bestReview}
                   </span>
                   {bestRestaurant.rating !== null && (
                     <span className="flex items-center">

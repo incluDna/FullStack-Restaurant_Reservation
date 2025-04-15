@@ -1,62 +1,103 @@
+"use client";
+
+import { useState } from "react";
+import Cookies from "js-cookie";
+
 export default function LoginPage() {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const [showError, setShowError] = useState(false);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setShowError(false);
+
+    try {
+      const response = await fetch("http://localhost:3001/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
+
+      if (!response.ok) {
+        const data = await response.json();
+        throw new Error(data.message || "Invalid credentials");
+      }
+
+      const data = await response.json();
+
+      Cookies.set("token", data.token, {
+        expires: 7,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "Lax",
+      });
+
+      console.log("Login success:", data);
+    } catch (err: any) {
+      setError(err.message);
+      setShowError(true);
+      setTimeout(() => setShowError(false), 3000);
+    }
+  };
+
   return (
-    <div className="flex min-h-screen">
-      {/* Left Section */}
-      <div className="flex flex-col justify-center px-8 py-12 w-full max-w-md mx-auto lg:w-1/2">
-        <div className="mx-auto w-full max-w-sm">
-          <div className="mb-6 text-center">
-            <svg className="mx-auto h-10 w-auto text-[#f8b040]" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M12 0C5.371 0 0 5.373 0 12c0 6.627 5.371 12 12 12s12-5.373 12-12C24 5.373 18.629 0 12 0z" />
-            </svg>
-          </div>
-
-          <h2 className="text-2xl font-bold text-gray-900 text-center">Sign in to your account</h2>
-          <p className="mt-2 text-sm text-center text-gray-600">
-            Not a member?{" "}
-            <a href="#" className="font-medium text-[#f8b040] hover:underline">
-              Start a 14 day free trial
-            </a>
-          </p>
-
-          <form className="mt-8 space-y-5">
-            <div>
-              <label className="block text-sm font-medium text-gray-700">Email address</label>
-              <input
-                type="email"
-                className="mt-1 w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700">Password</label>
-              <input
-                type="password"
-                className="mt-1 w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500"
-              />
-            </div>
-            <div className="flex items-center justify-between text-sm">
-              <label className="flex items-center">
-                <input type="checkbox" className="mr-2" />
-                Remember me
-              </label>
-              <a href="#" className="text-[#f8b040] hover:underline">Forgot password?</a>
-            </div>
-            <button
-              type="submit"
-              className="w-full bg-[#f8b040] text-white py-2 rounded-md hover:bg-indigo-700"
-            >
-              Sign in
-            </button>
-          </form>
+    <div className="flex items-center justify-center min-h-screen bg-white px-4">
+      <div className="w-full max-w-md">
+        <div className="mb-6 text-center">
+          <img
+            src="/images/SCAM_Group_logo.jpg"
+            alt="Your Logo"
+            className="mx-auto h-20 w-20 rounded-full object-cover"
+          />
         </div>
-      </div>
 
-      {/* Right image */}
-      <div className="hidden lg:block lg:w-1/2">
-        <img
-          src="/images/login-bg.png"
-          className="h-full w-full object-cover"
-          alt="Login background"
-        />
+        <h2 className="text-2xl font-bold text-gray-900 text-center">Sign in to your account</h2>
+        <p className="mt-2 text-sm text-center text-gray-600">
+          Not a member?{" "}
+          <a href="#" className="font-medium text-[#63B6BB] hover:underline">
+            Register
+          </a>
+        </p>
+
+        {showError && (
+          <div className="mt-4 text-center text-sm text-red-600">
+            {error}
+          </div>
+        )}
+
+        <form className="mt-8 space-y-5" onSubmit={handleSubmit}>
+          <div>
+            <label className="block text-sm font-medium text-gray-700">Email address</label>
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="mt-1 w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700">Password</label>
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="mt-1 w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500"
+            />
+          </div>
+          {/* <div className="flex items-center justify-between text-sm">
+            <label className="flex items-center">
+              <input type="checkbox" className="mr-2" />
+              Remember me
+            </label>
+          </div> */}
+          <button
+            type="submit"
+            className="w-full bg-[#F28C28] text-white font-semibold py-2 rounded-md hover:opacity-90 transition"
+          >
+            Sign in
+          </button>
+        </form>
       </div>
     </div>
   );

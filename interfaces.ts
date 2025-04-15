@@ -39,7 +39,7 @@ export interface Review{
     _id?: string;
     name: string;
   },
-  reviewStar: string,
+  reviewStar: number,
   reviewText: string,
   createdAt:string
 }
@@ -69,7 +69,6 @@ export interface ProfileJSON{
 export interface ReviewJSON{
   success: boolean,
   count: number,
-  pagination: Object,
   data: Review[]
 }
 export interface RestaurantJSON {
@@ -84,3 +83,10 @@ export interface ReservationJSON {
   count: number
   data: Reservation[]
 }
+
+export interface ReviewJSON {
+  count: number
+  data: Restaurant[]
+}
+
+

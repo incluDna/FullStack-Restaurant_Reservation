@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import RestaurantCard from "@/components/restaurantCard";
-import { Restaurant, RestaurantJSON } from "../../../interfaces";
+import { MeanReview, Restaurant, RestaurantJSON } from "../../../interfaces";
 import getRestaurants from "@/libs/getRestaurants";
 import getMeanReviews from "@/libs/getMeanReview";
 import { useRouter } from "next/navigation";
@@ -28,13 +28,15 @@ export default function RestaurantCatalog() {
         // Fetch reviews for each restaurant
         const fetchReviews = async () => {
           const reviewsPromises = response.data.map(async (restaurant) => {
-            const review = await getMeanReviews(restaurant.id);
-            console.log(`Fetched review for restaurant ${restaurant.id}:`, review);
-
-            return {
-              id: restaurant.id,
-              review: review ?? null // If no review found, set to null
-            };
+            try {
+              const reviewResponse = await getMeanReviews(restaurant._id);
+              const review = reviewResponse.count==0?null:reviewResponse.totalRating;
+              console.log(`Fetched review for restaurant ${restaurant._id}:`, review);
+              return { id: restaurant._id, review };
+            } catch (err) {
+              // If getMeanReviews fails, default to review = null
+              return { id: restaurant._id, review: null };
+            }
           });
 
           const reviews = await Promise.all(reviewsPromises);
@@ -88,7 +90,7 @@ export default function RestaurantCatalog() {
     <main className="flex flex-col w-full items-start pt-32">
       <section className="flex flex-wrap justify-center w-full bg-white">
         {restaurants.map((restaurant) => {
-          const restaurantId = restaurant.id?.toString() || ''; // Force to string or fallback to empty string
+          const restaurantId = restaurant._id?.toString() || ''; // Force to string or fallback to empty string
           const reviewRating = reviewsMap[restaurantId] ?? null; // Use null if no review
 
           return (
@@ -118,8 +120,8 @@ export default function RestaurantCatalog() {
             .. go back
           </span>
         </motion.button>
-         <motion.button className="flex items-center justify-center gap-4 pr-[var(--size-space-1000)] pl-[var(--size-space-1000)] py-2 bg-[#C2C2C2] rounded-[75px] border-none text-[24px] font-semibold w-full max-w-[200px] mr-8 mt-16 hover:bg-[#999]"
-         initial={{ backgroundColor: "#C2C2C2" }}
+        <motion.button className="flex items-center justify-center gap-4 pr-[var(--size-space-1000)] pl-[var(--size-space-1000)] py-2 bg-[#C2C2C2] rounded-[75px] border-none text-[24px] font-semibold w-full max-w-[200px] mr-8 mt-16 hover:bg-[#999]"
+          initial={{ backgroundColor: "#C2C2C2" }}
           whileHover={{ backgroundColor: "#999", scale: 1.02 }}
           transition={{ duration: 0.3 }}
           onClick={handleSeeMore}>
@@ -127,7 +129,7 @@ export default function RestaurantCatalog() {
             See More ..
           </span>
           <ArrowRight className="h-6 w-6" />
-         </motion.button>
+        </motion.button>
       </div>
     </main>
   );

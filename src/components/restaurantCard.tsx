@@ -2,6 +2,7 @@ import React from "react";
 import { Star } from "lucide-react";
 import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 export default function RestaurantCard({
   restaurantsID,
   restaurantName,
@@ -81,17 +82,20 @@ export default function RestaurantCard({
         </div>
 
         {/* Action button */}
-        <div className="flex p-0 mt-auto">
-        <motion.button className="w-full bg-[#F89640] text-white text-2xl px-8 py-2"
+        {/* <Link href={`/restaurants?id=${restaurantsID}`} passHref> */}
+      <div className="flex p-0 mt-auto">
+        <motion.button
+          className="w-full bg-[#F89640] text-white text-2xl px-8 py-2"
           whileHover={{ backgroundColor: "#5A2934", scale: 1.02 }}
           transition={{ duration: 0.3 }}
           onClick={seeInfo}
-          >
-            <span className="font-medium text-[25px] leading-[35px]">
-              See information
-            </span>
-            </motion.button>
-        </div>
+        >
+          <span className="font-medium text-[25px] leading-[35px]">
+            See information
+          </span>
+        </motion.button>
+      </div>
+    {/* </Link> */}
       </div>
     </div>
   );

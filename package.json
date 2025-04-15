@@ -18,7 +18,7 @@
     "@types/redux-persist": "^4.0.0",
     "cookie": "^1.0.2",
     "dayjs": "^1.11.13",
-    "framer-motion": "^12.6.3",
+    "framer-motion": "^12.6.5",
     "lucide-react": "^0.487.0",
     "next": "15.2.3",
     "next-auth": "^4.24.11",

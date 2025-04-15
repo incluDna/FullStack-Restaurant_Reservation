@@ -55,9 +55,9 @@ export default function Register() {
 
   return (
     <div
-      className={`flex items-start justify-center min-h-screen w-full bg-[#FFECAD] pt-[40px] pb-[50px]`}
+      className={`flex items-start justify-center min-h-screen w-full bg-[#fcd08a] pt-[40px] pb-[50px]`}
     >
-      <div className="w-full max-w-[900px] min-h-[950px] bg-[#ffffff] rounded-[50px] p-[40px] mx-4">
+      <div className="w-full max-w-[900px] min-h-[950px] bg-[#ffffff] rounded-[40px] p-[40px] mx-4">
         <div className="text-center text-[30px] font-bold mb-[15px]">- Register -</div>
         <div className="space-y-10">
           {formFields.map((field) => (

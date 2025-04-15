@@ -1,117 +1,127 @@
 'use client'
-import { Button, Input } from "@mui/material";
-import React, { useState } from "react";
-import { Inria_Serif } from "next/font/google";
-import userRegister from "@/libs/userRegister";
-import { User } from "../../../interface";
 
-const formFields = [
-  { id: "name", label: "Name" },
-  { id: "telephone", label: "Telephone Number" },
-  { id: "email", label: "Email" },
-  { id: "password", label: "Password", type: "password" },
-];
-
-const inriaSerif = Inria_Serif({
-  weight: ["300", "700"],
-  subsets: ["latin"],
-});
+import React, { useState } from 'react'
 
 export default function Register() {
-  const [name, setName] = useState<string>("");
-  const [tel, setTel] = useState<string>("");
-  const [email, setEmail] = useState<string>("");
-  const [password, setPassword] = useState<string>("");
-  const [loading, setLoading] = useState<boolean>(false);
-  const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState<string | null>(null);
+  const [name, setName] = useState('')
+  const [telephone, setTelephone] = useState('')
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+  const [success, setSuccess] = useState<string | null>(null)
 
-  const register = async () => {
-    if (name && tel && email && password) {
-      try {
-        setLoading(true); 
-        setError(null); 
-
-        const item: User = {
-          name: name,
-          telephone: tel,
-          email: email,
-          password: password,
-        };
-
-        const result = await userRegister(name, email, tel, password); 
-
-        setLoading(false); 
-        setSuccess("Registration successful!"); 
-
-      } catch (error) {
-        setLoading(false);
-        setError("Registration failed. Please try again.");
-      }
-    } else {
-      setError("Please fill in all fields.");
+  const handleRegister = async () => {
+    if (!name || !telephone || !email || !password) {
+      setError('Please fill in all fields.')
+      return
     }
-  };
+
+    setLoading(true)
+    setError(null)
+    setSuccess(null)
+
+    try {
+      const res = await fetch('http://localhost:3000/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, telephone, email, password }),
+      })
+
+      const data = await res.json()
+
+      if (!res.ok) throw new Error(data.message || 'Something went wrong.')
+
+      setSuccess('Registration successful!')
+      setName('')
+      setTelephone('')
+      setEmail('')
+      setPassword('')
+    } catch (err: any) {
+      setError(err.message)
+    } finally {
+      setLoading(false)
+    }
+  }
 
   return (
-    <div
-      className={`flex items-start justify-center min-h-screen w-full bg-[#fcd08a] pt-[40px] pb-[50px]`}
-    >
-      <div className="w-full max-w-[900px] min-h-[950px] bg-[#ffffff] rounded-[40px] p-[40px] mx-4">
-        <div className="text-center text-[30px] font-bold mb-[15px]">- Register -</div>
-        <div className="space-y-10">
-          {formFields.map((field) => (
-            <div key={field.id} className="space-y-2 pt-[5px] flex flex-col items-center">
-              <div className="w-full max-w-[650px] mt-[1px]" style={{ fontWeight: "550" }}>
-                <label htmlFor={field.id} className="block text-[25px] text-[#242424]">
-                  {field.label}
-                </label>
-              </div>
-              <div className="w-full flex justify-center mt-[10px]">
-                <Input
-                  id={field.id}
-                  type={field.type || "text"}
-                  value={
-                    field.id === "name"
-                      ? name
-                      : field.id === "telephone"
-                      ? tel
-                      : field.id === "email"
-                      ? email
-                      : password
-                  }
-                  onChange={(e) =>
-                    field.id === "name"
-                      ? setName(e.target.value)
-                      : field.id === "telephone"
-                      ? setTel(e.target.value)
-                      : field.id === "email"
-                      ? setEmail(e.target.value)
-                      : setPassword(e.target.value)
-                  }
-                  disableUnderline
-                  className="h-[74px] bg-[#E5DEC6] rounded-[30px] !text-[22px] w-full max-w-[700px] text-center pl-[30px] pr-[30px]"
-                />
-              </div>
-            </div>
-          ))}
+    <div className="flex items-center justify-center min-h-screen bg-white px-4">
+      <div className="w-full max-w-md bg-white shadow-xl rounded-xl p-8 space-y-6">
+        {/* Avatar */}
+        <div className="text-center">
+          <img
+            src="/images/SCAM_Group_logo.jpg" // <-- Replace with your actual image path
+            alt="Avatar"
+            className="mx-auto w-20 h-20 rounded-full object-cover"
+          />
+        </div>
 
-          {error && <div className="text-[#F60404] text-[25px] text-center pt-[1px]">{error}</div>}
-          {success && <div className="text-[#04F630] text-[25px] text-center pt-[1px]">{success}</div>}
+        {/* Heading */}
+        <div className="text-center">
+          <h2 className="text-2xl font-bold text-gray-900">Create your account</h2>
+          <p className="mt-2 text-sm text-gray-600">
+            Already have an account?{' '}
+            <a href="/auth/login" className="text-[#63B6BB] font-medium hover:underline">
+              Sign in
+            </a>
+          </p>
+        </div>
 
-          <div className="flex justify-center !mt-[50px]">
-            <Button
-              onClick={register} 
-              variant="contained"
-              disableElevation
-              className={`!bg-[#F89640] hover:!bg-[#A4530C] text-[#e0e5de] !text-[25px] w-[360px] sm:w-[243px] h-[74px] !rounded-[30px] normal-case`}
-              disabled={loading}
-            >
-              {loading ? "Registering..." : "Register"}
-            </Button>
+        {/* Feedback */}
+        {error && <div className="text-sm text-center text-red-600">{error}</div>}
+        {success && <div className="text-sm text-center text-green-600">{success}</div>}
+
+        {/* Form */}
+        <div className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700">Name</label>
+            <input
+              type="text"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              className="mt-1 w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-orange-400 focus:outline-none"
+            />
           </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700">Telephone</label>
+            <input
+              type="tel"
+              value={telephone}
+              onChange={(e) => setTelephone(e.target.value)}
+              className="mt-1 w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-orange-400 focus:outline-none"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700">Email</label>
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="mt-1 w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-orange-400 focus:outline-none"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700">Password</label>
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="mt-1 w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-orange-400 focus:outline-none"
+            />
+          </div>
+
+          <button
+            onClick={handleRegister}
+            disabled={loading}
+            className="w-full bg-[#F28C28] text-white font-semibold py-2 rounded-md hover:opacity-90 transition"
+          >
+            {loading ? 'Registering...' : 'Register'}
+          </button>
         </div>
       </div>
     </div>
-  );
+  )
 }

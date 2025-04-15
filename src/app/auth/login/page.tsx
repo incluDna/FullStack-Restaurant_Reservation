@@ -14,7 +14,7 @@ export default function LoginPage() {
     setShowError(false);
 
     try {
-      const response = await fetch("http://localhost:3001/api/auth/login", {
+      const response = await fetch("http://localhost:3000/api/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
@@ -43,7 +43,7 @@ export default function LoginPage() {
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-white px-4">
-      <div className="w-full max-w-md">
+      <div className="w-full max-w-md bg-white shadow-xl rounded-xl p-8 space-y-6">
         <div className="mb-6 text-center">
           <img
             src="/images/SCAM_Group_logo.jpg"

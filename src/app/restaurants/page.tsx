@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from "react";
-import RestaurantCard from "@/components/restaurantCard";
+import RestaurantCard from "@/components/RestaurantCard";
 import { Restaurant, RestaurantJSON } from "../../../interfaces";
 import getRestaurants from "@/libs/getRestaurants";
 import getMeanReviews from "@/libs/getMeanReview";
@@ -29,7 +29,7 @@ export default function RestaurantCatalog() {
         const fetchReviews = async () => {
           const reviewsPromises = response.data.map(async (restaurant) => {
             const review = await getMeanReviews(restaurant.id);
-            console.log(`Fetched review for restaurant ${restaurant.id}:`, review);
+            // console.log(`Fetched review for restaurant ${restaurant.id}:`, review);
 
             return {
               id: restaurant.id,

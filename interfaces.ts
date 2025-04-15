@@ -32,6 +32,14 @@ export interface Reservation {
   seatCount: number;
   createdAt: Date;
 }
+
+export interface Review {
+  _id: string;
+  username: string;
+  reviewStar: number;
+  reviewText: string;
+}
+
 export interface RestaurantJSON {
   count: number
   data: Restaurant[]
@@ -43,3 +51,10 @@ export interface ReservationJSON {
   count: number
   data: Reservation[]
 }
+
+export interface ReviewJSON {
+  count: number
+  data: Restaurant[]
+}
+
+

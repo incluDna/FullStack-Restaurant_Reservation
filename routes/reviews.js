@@ -14,11 +14,11 @@ const { protect, authorize } = require("../middleware/auth");
 
 router
   .route("/")
-  .get(protect, authorize("admin", "user"), getReviews)
+  .get(getReviews)
   .post(protect, authorize("admin", "user"), addReview);
 router
   .route("/:id")
-  .get(protect, getReview)
+  .get(getReview)
   .put(protect, authorize("admin", "user"), updateReview)
   .delete(protect, authorize("admin", "user"), deleteReview);
 router.route("/means/:id").get(getReviewsForRestaurant);

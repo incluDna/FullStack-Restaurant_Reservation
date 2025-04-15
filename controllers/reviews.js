@@ -14,19 +14,23 @@ exports.getReviews = async (req, res, next) => {
   const removeFields = ["page", "limit"];
   removeFields.forEach((param) => delete reqQuery[param]);
 
-  if (req.user.role === "user") {
+  if (!("user" in req) || req.user.role != "admin") {
     if (req.params.restaurantId) {
       console.log(req.params.restaurantId);
       query = Review.find({ restaurant: req.params.restaurantId }).populate({
         path: "restaurant",
         select: "name",
       });
-    } else {
+    } else if (req.user.id) {
       query = Review.find({ user: req.user.id }).populate({
         path: "restaurant",
         select: "name reviews",
       });
     }
+    else return response.status(401).json({
+      success: false,
+      message: `You must be logged in to view your reviews.`,
+    });
   } else {
     if (req.params.restaurantId) {
       console.log(req.params.restaurantId);
@@ -296,7 +300,6 @@ exports.getReviewsForRestaurant = async (req, res, next) => {
     const meanRating = totalRating / reviews.length;
 
     const restaurant = await Restaurant.findById(req.params.id);
-    console.log(totalRating);
     res.status(200).json({
       success: true,
       name: restaurant.name,

@@ -286,13 +286,6 @@ exports.getReviewsForRestaurant = async (req, res, next) => {
     // Find all reviews for the given restaurant ID
     const reviews = await Review.find({ restaurant: restaurantID });
 
-    if (reviews.length === 0) {
-      return res.status(404).json({
-        success: false,
-        message: `No reviews found for restaurant with ID ${restaurantID}`,
-      });
-    }
-
     const totalRating = reviews.reduce(
       (sum, review) => sum + review.reviewStar,
       0

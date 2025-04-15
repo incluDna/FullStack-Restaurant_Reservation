@@ -85,8 +85,8 @@ export interface ReservationJSON {
 }
 
 export interface ReviewJSON {
-  count: number
-  data: Restaurant[]
+  count: number,
+  data: Review[]
 }
 
 

@@ -1,0 +1,9 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+@import url('https://fonts.googleapis.com/css2?family=Agbalumo&display=swap');
+
+body {
+    font-family: 'Agbalumo', sans-serif;
+    line-height: 1;
+  }

@@ -1,178 +1,125 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Cookies from 'js-cookie';
 
-interface User {
-  name: string;
-  email: string;
-  telephone: string;
-}
-
-interface Reservation {
-  id: number;
-  date: string;
-  time: string;
-  service: string;
-  status: 'Confirmed' | 'Pending' | 'Cancelled';
-}
-
 export default function ProfilePage() {
-  const [user, setUser] = useState<User>({
+  const [formData, setFormData] = useState({
     name: '',
-    email: '',
     telephone: '',
   });
 
-  const [reservations, setReservations] = useState<Reservation[]>([]);
-  const [editing, setEditing] = useState(false);
-  const [loading, setLoading] = useState(true);
-
-  const token = Cookies.get('token');
-
-  useEffect(() => {
-    if (!token) {
-      alert('Please log in first.');
-      return;
-    }
-
-    const fetchProfile = async () => {
-      try {
-        const res = await fetch('/api/users/me', {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        if (res.status === 401) throw new Error('Unauthorized');
-        const data = await res.json();
-        setUser(data);
-      } catch (err) {
-        alert('Failed to load profile.');
-      }
-    };
-
-    const fetchReservations = async () => {
-      try {
-        const res = await fetch('/api/reservations', {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        const data = await res.json();
-        setReservations(data);
-      } catch {
-        alert('Failed to load reservations');
-      }
-    };
-
-    Promise.all([fetchProfile(), fetchReservations()]).finally(() => setLoading(false));
-  }, [token]);
-
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setUser({ ...user, [e.target.name]: e.target.value });
+    setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleUpdate = async (e: React.FormEvent) => {
+  // Optional: fetch current user info on page load
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        const token = Cookies.get('token');
+        const res = await fetch('/api/users/me', {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+          },
+        });
+
+        if (res.status === 401) {
+          alert('Session expired. Please log in again.');
+          return;
+        }
+
+        const data = await res.json();
+        setFormData({
+          name: data.name || '',
+          telephone: data.telephone || '',
+        });
+      } catch (err) {
+        console.error('Failed to load profile:', err);
+      }
+    };
+
+    fetchProfile();
+  }, []);
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
     try {
-      const res = await fetch('/api/users/me', {
+      const token = Cookies.get('token');
+      const response = await fetch('/api/users/me', {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
+          'Authorization': `Bearer ${token}`,
         },
-        body: JSON.stringify(user),
+        body: JSON.stringify({
+          name: formData.name,
+          telephone: formData.telephone,
+        }),
       });
-      if (!res.ok) throw new Error('Update failed');
+
+      if (!response.ok) {
+        const errorData = await response.json();
+
+        if (response.status === 401) {
+          alert('Invalid credentials. Please log in again.');
+        } else {
+          throw new Error(errorData.message || 'Failed to update profile');
+        }
+
+        return;
+      }
+
+      const result = await response.json();
       alert('Profile updated successfully!');
-      setEditing(false);
-    } catch {
-      alert('Failed to update profile');
+      console.log('Updated profile:', result);
+    } catch (error: any) {
+      console.error('Update error:', error);
+      alert(error.message || 'Something went wrong');
     }
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 p-6">
-      <div className="max-w-4xl mx-auto space-y-8">
-        {/* Profile Section */}
-        <div className="bg-white p-6 rounded-xl shadow-md">
-          <div className="flex justify-between items-center mb-4">
-            <h2 className="text-xl font-bold text-gray-800">Profile Information</h2>
-            {!editing && (
-              <button
-                className="text-sm text-blue-600 hover:underline"
-                onClick={() => setEditing(true)}
-              >
-                Edit
-              </button>
-            )}
+    <div className="min-h-screen bg-gray-100 flex items-center justify-center">
+      <div className="bg-white p-8 rounded-xl shadow-md w-full max-w-md">
+        <h2 className="text-2xl font-bold text-gray-800 mb-6">Edit Profile</h2>
+        <form onSubmit={handleSubmit} className="space-y-5">
+          {/* Name */}
+          <div>
+            <label className="block mb-1 text-sm font-medium text-gray-700">Name</label>
+            <input
+              type="text"
+              name="name"
+              value={formData.name}
+              onChange={handleChange}
+              className="w-full border px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="John Doe"
+              required
+            />
           </div>
 
-          {editing ? (
-            <form onSubmit={handleUpdate} className="space-y-4">
-              {['name', 'email', 'telephone'].map((field) => (
-                <div key={field}>
-                  <label className="block text-sm font-medium text-gray-700 capitalize">{field}</label>
-                  <input
-                    type="text"
-                    name={field}
-                    value={(user as any)[field]}
-                    onChange={handleChange}
-                    className="mt-1 w-full border px-4 py-2 rounded-lg"
-                    required
-                  />
-                </div>
-              ))}
-              <div className="flex gap-2">
-                <button
-                  type="submit"
-                  className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
-                >
-                  Save
-                </button>
-                <button
-                  type="button"
-                  className="bg-gray-300 text-gray-800 px-4 py-2 rounded"
-                  onClick={() => setEditing(false)}
-                >
-                  Cancel
-                </button>
-              </div>
-            </form>
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div><label className="text-gray-500 text-sm">Name</label><p>{user.name}</p></div>
-              <div><label className="text-gray-500 text-sm">Email</label><p>{user.email}</p></div>
-              <div><label className="text-gray-500 text-sm">Phone</label><p>{user.telephone}</p></div>
-            </div>
-          )}
-        </div>
+          {/* Telephone */}
+          <div>
+            <label className="block mb-1 text-sm font-medium text-gray-700">Telephone</label>
+            <input
+              type="tel"
+              name="telephone"
+              value={formData.telephone}
+              onChange={handleChange}
+              className="w-full border px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="+66 812345678"
+              required
+            />
+          </div>
 
-        {/* Reservations Section */}
-        <div className="bg-white p-6 rounded-xl shadow-md">
-          <h2 className="text-xl font-bold mb-4 text-gray-800">Your Reservations</h2>
-          {reservations.length === 0 ? (
-            <p className="text-gray-500">No reservations found.</p>
-          ) : (
-            <ul className="divide-y divide-gray-200">
-              {reservations.map((res) => (
-                <li key={res.id} className="py-4 flex justify-between items-center">
-                  <div>
-                    <p className="text-gray-800 font-semibold">{res.service}</p>
-                    <p className="text-sm text-gray-500">{res.date} at {res.time}</p>
-                  </div>
-                  <span
-                    className={`text-sm font-medium px-3 py-1 rounded-full ${
-                      res.status === 'Confirmed'
-                        ? 'bg-green-100 text-green-700'
-                        : res.status === 'Pending'
-                        ? 'bg-yellow-100 text-yellow-700'
-                        : 'bg-red-100 text-red-700'
-                    }`}
-                  >
-                    {res.status}
-                  </span>
-                </li>
-              ))}
-            </ul>
-          )}
-        </div>
+          <button
+            type="submit"
+            className="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition"
+          >
+            Save Changes
+          </button>
+        </form>
       </div>
     </div>
   );

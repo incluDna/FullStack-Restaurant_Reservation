@@ -1,46 +1,47 @@
 'use client'
 
 import { useState } from 'react'
-import Cookies from 'js-cookie'
+import userLogin from '@/libs/userLogin'
+import getUserProfile from '@/libs/getUserProfile'
 
 export default function LoginPage() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
-  const [error, setError] = useState('')
-  const [showError, setShowError] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+  const [success, setSuccess] = useState<string | null>(null)
+
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    setShowError(false)
-    setError('')
+    setError(null)
+    setSuccess(null)
+
 
     try {
-      const response = await fetch('http://localhost:3000/api/auth/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password }),
-      })
+      const res = await userLogin(email, password);
 
-      const data = await response.json()
-
-      if (!response.ok || !data.token) {
-        throw new Error(data.message || 'Invalid email or password')
+      if (!res.success || !('token' in res)) {
+        throw new Error('Invalid email or password')
       }
-
-      Cookies.set('token', data.token, {
-        expires: 7,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'Lax',
-      })
-
-      console.log('Login success:', data)
-
+      const token = res.token;
+      const profile = await getUserProfile(token);
+      if (profile.success && "data" in profile && "role" in profile.data) {
+        // set cookie
+        await fetch("/api/auth", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ token, role: profile.data.role }),
+        });
+      }
+      else throw new Error('Something\'s gone wrong.');
+      setSuccess('Login successful!')
       // Optional: Redirect after login
       // window.location.href = '/dashboard'
     } catch (err: any) {
       setError(err.message || 'Login failed')
-      setShowError(true)
-      setTimeout(() => setShowError(false), 3000)
+      setTimeout(() => setError(null), 3000)
     }
   }
 
@@ -65,11 +66,10 @@ export default function LoginPage() {
           </a>
         </p>
 
-        {showError && (
-          <div className="mt-4 px-4 py-2 text-center bg-red-100 text-red-700 border border-red-400 rounded-md text-sm font-medium">
-            {error}
-          </div>
-        )}
+        {/* Feedback */}
+        {error && <div className="mt-4 px-4 py-2 text-center bg-red-100 text-red-700 border border-red-400 rounded-md text-sm font-medium">{error}</div>}
+        {success && <div className="mt-4 px-4 py-2 text-center bg-green-100 text-green-700 border border-green-400 rounded-md text-sm font-medium">{success}</div>}
+
 
         <form className="mt-8 space-y-5" onSubmit={handleSubmit}>
           <div>

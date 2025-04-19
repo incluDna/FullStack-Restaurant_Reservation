@@ -95,4 +95,9 @@ export interface ReviewJSON {
   data: Review[]
 }
 
-
+export interface User {
+  name: string;
+  tel: string;
+  email: string;
+  password: string;
+}

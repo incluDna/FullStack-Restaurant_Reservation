@@ -4,14 +4,9 @@ import React, { useEffect, useState } from 'react';
 import { getAuthCookie } from '@/libs/getAuthCookie';
 import getUserProfile from '@/libs/getUserProfile';
 import getReservations from '@/libs/getReservations';
-import { Reservation } from '../../../interfaces';
+import { Reservation, User } from '../../../interfaces';
 import updateUserProfile from '@/libs/updateUserProfile';
 
-interface User {
-  name: string;
-  email: string;
-  tel: string;
-}
 
 
 export default function ProfilePage() {
@@ -19,6 +14,7 @@ export default function ProfilePage() {
     name: '',
     email: '',
     tel: '',
+    password: ''
   });
 
   const [reservations, setReservations] = useState<Reservation[]>([]);
@@ -37,13 +33,14 @@ export default function ProfilePage() {
         setToken(newToken);
         setRole(role || null);
   
-        const [userProfile, reservationJSON] = await Promise.all([
-          getUserProfile(newToken),
-          getReservations(newToken),
-        ]);
+        // const [userProfile, reservationJSON] = await Promise.all([
+        //   getUserProfile(newToken),
+        //   getReservations(newToken),
+        // ]);
+        const userProfile = await getUserProfile(newToken);
         console.log(user.name);
         setUser(userProfile.data);
-        setReservations(reservationJSON.data);
+        // setReservations(reservationJSON.data);
       } catch (err) {
         console.error(err);
       }
@@ -75,58 +72,39 @@ export default function ProfilePage() {
     <div className="min-h-screen bg-gray-100 p-6">
       <div className="max-w-4xl mx-auto space-y-8">
         {/* Profile Section */}
-        <div className="bg-white p-6 rounded-xl shadow-md">
-          <div className="flex justify-between items-center mb-4">
-            <h2 className="text-xl font-bold text-gray-800">Profile Information</h2>
-            {!editing && (
-              <button
-                className="text-sm text-blue-600 hover:underline"
-                onClick={() => setEditing(true)}
-              >
-                Edit
-              </button>
-            )}
-          </div>
-
-          {editing ? (
-            <form onSubmit={handleUpdate} className="space-y-4">
-              {['name', 'email', 'tel'].map((field) => (
-                <div key={field}>
-                  <label className="block text-sm font-medium text-gray-700 capitalize">{field}</label>
-                  <input
-                    type="text"
-                    name={field}
-                    value={(user as any)[field]}
-                    onChange={handleChange}
-                    className="mt-1 w-full border px-4 py-2 rounded-lg"
-                    required
-                  />
+        <div className="flex flex-col w-[1920px] h-[1080px] items-center relative">
+          <div className="flex items-center self-stretch w-full relative flex-1 grow gap-[var(--size-space-0)]">
+            <div className="inline-flex flex-col items-start justify-between pt-[var(--size-space-1200)] pb-[var(--size-space-1200)] px-0 relative self-stretch flex-[0_0_auto] bg-[#75c3cc]">
+              <div className="inline-flex flex-col items-start gap-[var(--size-space-800)] pr-[var(--size-space-1200)] pl-[var(--size-space-1200)] py-0 relative flex-[0_0_auto]">
+                <div className="flex flex-col justify-center items-center w-[299px] h-[263px] text-white">
+                  <div className="text-[45px] font-medium leading-[77px] mb-2">
+                    Your profile
+                  </div>
+                  <div className="text-[30px] font-medium leading-[56px] mb-1">
+                    {user.name}
+                  </div>
+                  <div className="text-[30px] font-medium leading-[56px] mb-1">
+                    {user.email}
+                  </div>
+                  <div className="text-[30px] font-medium leading-[56px]">
+                    {user.tel}
+                  </div>
                 </div>
-              ))}
-              <div className="flex gap-2">
-                <button
-                  type="submit"
-                  className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
-                >
-                  Save
-                </button>
-                <button
-                  type="button"
-                  className="bg-gray-300 text-gray-800 px-4 py-2 rounded"
-                  onClick={() => setEditing(false)}
-                >
-                  Cancel
+
+                <button className="!flex-[0_0_auto] !bg-[#f79540]">
+                  edit
                 </button>
               </div>
-            </form>
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div><label className="text-gray-500 text-sm">Name</label><p>{user.name}</p></div>
-              <div><label className="text-gray-500 text-sm">Email</label><p>{user.email}</p></div>
-              <div><label className="text-gray-500 text-sm">Phone</label><p>{user.tel}</p></div>
+
+              <div className="flex flex-col items-start relative self-stretch w-full flex-[0_0_auto] gap-[var(--size-space-0)]">
+                <button className="!self-stretch !w-full">Reservation</button>
+                <button className="!self-stretch !w-full">Review</button>
+              </div>
             </div>
-          )}
+
+          </div>
         </div>
+
 
         {/* Reservations Section */}
         <div className="bg-white p-6 rounded-xl shadow-md">

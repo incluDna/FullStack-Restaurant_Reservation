@@ -8,13 +8,19 @@ import getMeanReviews from "@/libs/getMeanReview";
 import { useRouter } from "next/navigation";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import { motion } from "framer-motion";
+import { getAuthCookie } from "@/libs/getAuthCookie";
+import getUserProfile from "@/libs/getUserProfile";
 export default function RestaurantCatalog() {
   const [restaurants, setRestaurants] = useState<Restaurant[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [page, setPage] = useState(1);
+  const [token, setToken] = useState<string | null>(null);
+  const [role, setRole] = useState<string | null>(null);
+  const [profile, setProfile] = useState<any>(null);
   const [totalPages, setTotalPages] = useState(1);
   const [reviewsMap, setReviewsMap] = useState<{ [key: string]: number | null }>({}); // Store reviews for each restaurant
+
   const router = useRouter();
 
   useEffect(() => {
@@ -29,8 +35,8 @@ export default function RestaurantCatalog() {
         const fetchReviews = async () => {
           const reviewsPromises = response.data.map(async (restaurant) => {
             try {
-              const reviewResponse = await getMeanReviews(restaurant._id);
-              const review = reviewResponse.count==0?null:reviewResponse.totalRating;
+              const reviewResponse = await getMeanReviews(restaurant._id || "");
+              const review = reviewResponse.count == 0 ? null : reviewResponse.totalRating;
               console.log(`Fetched review for restaurant ${restaurant._id}:`, review);
               return { id: restaurant._id, review };
             } catch (err) {
@@ -43,7 +49,9 @@ export default function RestaurantCatalog() {
           // console.log("Reviews fetched:", reviews); 
 
           const reviewsMap = reviews.reduce<{ [key: string]: number | null }>((acc, { id, review }) => {
-            acc[id.toString()] = review;
+            if (id !== undefined) {
+              acc[id.toString()] = review;
+            }
             return acc;
           }, {});
 
@@ -61,6 +69,26 @@ export default function RestaurantCatalog() {
 
     fetchRestaurants();
   }, [page]);
+
+  useEffect(() => {
+    async function fetchToken() {
+      try {
+        const data = await getAuthCookie();
+        if (data.success) {
+          setToken(data.token);
+          setRole(data.role || null);
+          const userProfile = await getUserProfile(data.token);
+          setProfile(userProfile);
+        } else {
+          console.error("Auth error:", data.error);
+        }
+      } catch (err) {
+        console.error("Failed to fetch auth cookie", err);
+      }
+    }
+
+    fetchToken();
+  }, []);
 
   const handleGoBack = () => {
     if (page > 1) {
@@ -87,7 +115,18 @@ export default function RestaurantCatalog() {
   }
 
   return (
-    <main className="flex flex-col w-full items-start pt-32">
+    <main className="flex flex-col w-full items-start pt-12">
+      {profile?.data?.role === 'admin' && (
+        <div className="flex justify-end w-full pr-16 mb-8">
+          <motion.button
+            whileHover={{ backgroundColor: "black", scale: 1.02 }}
+            transition={{ duration: 0.3 }}
+            onClick={() => router.push(`/restaurants/create`)}
+            className="w-[65px] h-[65px] bg-[#3d3c3a] text-white text-xl border-0 rounded-none"
+          >
+          </motion.button>
+        </div>
+      )}
       <section className="flex flex-wrap justify-center w-full bg-white">
         {restaurants.map((restaurant) => {
           const restaurantId = restaurant._id?.toString() || ''; // Force to string or fallback to empty string

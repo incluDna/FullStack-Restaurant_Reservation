@@ -26,6 +26,18 @@ const UserSchema = new mongoose.Schema({
     enum: ["user", "employee", "admin"],
     default: "user",
   },
+  employedAt:{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Restaurant",
+    validate: {
+      validator: function (value) {
+        // If role is employee, workAtRestaurant must be defined
+        // If not an employee, doesn’t need a restaurant.
+        return this.role !== 'employee' || value !== undefined;
+      },
+      message: "Employees must have a restaurant they work at",
+    },
+  },
   password: {
     type: String,
     required: [true, "Please add a password"],

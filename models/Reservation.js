@@ -25,4 +25,11 @@ const ReservationSchema = new mongoose.Schema({
   },
 });
 
+ReservationSchema.pre("validate", function (next) {
+  if (!Number.isInteger(this.seatCount)) {
+    this.invalidate("seatCount", "Seat count must be an integer");
+  }
+  next();
+});
+
 module.exports = mongoose.model("Reservation", ReservationSchema);

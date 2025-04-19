@@ -60,16 +60,35 @@ const RestaurantSchema = new mongoose.Schema(
       type: String,
       required: [true, "Please add a Picture Link"],
     },
+    reservationLimit: {
+      type: Number,
+      required: [true, "Please add a Reservation Limit"],
+      min: 0,
+    },
+    seatPerReservationLimit: {
+      type: Number,
+      required: [true, "Please add a Seat Per Reservation Limit"],
+      min: 0,
+    },
   },
   {
     toJSON: { virtuals: true },
     toObject: { virtuals: true },
-  }
+  },
 );
 
 RestaurantSchema.pre("validate", function (next) {
   if (this.openTime && this.closeTime && this.openTime >= this.closeTime) {
     this.invalidate("openTime", "Open time must be before close time");
+  }
+  if (!Number.isInteger(this.reservationLimit)) {
+    this.invalidate("reservationLimit", "Reservation limit must be an integer");
+  }
+  if (!Number.isInteger(this.seatPerReservationLimit)) {
+    this.invalidate(
+      "seatPerReservationLimit",
+      "Seat per reservation limit must be an integer",
+    );
   }
   next();
 });

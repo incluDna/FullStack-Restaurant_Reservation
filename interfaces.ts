@@ -59,6 +59,12 @@ export interface Profile{
   createdAt:string
   
 }
+export interface AuthCookie {
+  success: boolean;
+  token?: string;
+  role?: string;
+  error?: string;
+}
 
 
 export interface ProfileJSON{

@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { serialize } from "cookie";
+import { cookies } from "next/headers";
 
 export async function POST(req: Request) {
   const { token, role } = await req.json();
@@ -25,4 +26,16 @@ export async function POST(req: Request) {
   response.headers.append("Set-Cookie", roleCookie);
 
   return response;
+}
+// GET: Retrieve cookies
+export async function GET() {
+  const cookieStore = await cookies(); 
+  const token = cookieStore.get("token")?.value;
+  const role = cookieStore.get("role")?.value;
+
+  if (!token || !role) {
+    return NextResponse.json({ success: false, message: "No auth cookie found" }, { status: 401 });
+  }
+
+  return NextResponse.json({ success: true, token, role });
 }

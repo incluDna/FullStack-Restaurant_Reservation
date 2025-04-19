@@ -8,12 +8,10 @@ export default async function addReservation(
   seatCount: number
 ) {
   // Log the input to verify
-
-
-  // Convert resDate to ISO string if it's a Date object (it should already be a valid Date string when serialized in JSON)
-  const formattedDate = new Date("2023-04-04T13:00:00.000Z");  // .toISOString() ensures the Date is in a proper ISO format
-  console.log(userId, formattedDate, seatCount);
-
+  console.log("Reservation Date:", resDate);
+  
+  const formattedDate = resDate.toISOString(); 
+  console.log("Formatted Reservation Date (ISO 8601):", formattedDate);
   const response = await fetch(`${process.env.BACKEND_URL}/api/restaurants/${restaurantId}/reservations`, {
     method: "POST",
     headers: {
@@ -26,6 +24,7 @@ export default async function addReservation(
       seatCount: seatCount,
     }),
   });
+
   
   if (!response.ok) {
     throw new Error("Failed to add the reservation");

@@ -1,7 +1,7 @@
 export default async function addRestaurants(token:string,
-    {name,address,district,province,postalCode,shortLocation,tel,region,openTime,closeTime,picture}:
+    {name,address,district,province,postalCode,shortLocation,tel,region,openTime,closeTime,picture, seatPerReservationLimit, reservationLimit}:
     {name:string,address:string,district:string,province:string,postalCode:string,shortLocation:string,
-        tel:string,region:string,openTime:string,closeTime:string,picture:string}
+        tel:string,region:string,openTime:string,closeTime:string,picture:string, seatPerReservationLimit: number, reservationLimit:number}
 ) {
 
     const response=await fetch(`${process.env.BACKEND_URL}/api/restaurants`, {
@@ -21,7 +21,9 @@ export default async function addRestaurants(token:string,
             region: region,
             openTime: openTime,    
             closeTime: closeTime,    
-            picture: picture
+            picture: picture,
+            seatPerReservationLimit: seatPerReservationLimit,
+            reservationLimit: reservationLimit
         })
     });
 

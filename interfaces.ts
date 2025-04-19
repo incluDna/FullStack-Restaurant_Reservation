@@ -13,6 +13,9 @@ export interface Restaurant {
   closeTime: string;
   rating?: number;
   queue?: string;
+  seatPerReservationLimit: number
+  reservationLimit: number
+
 }
 
 export interface Reservation {

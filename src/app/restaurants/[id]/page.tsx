@@ -364,8 +364,9 @@ export default function RestaurantInfo() {
           </div>
         </section>
       )}
-      {/* Edit button for Admin */}
-      {profile?.data?.role === 'admin' && (
+      {/* Edit button for Admin & Employee */}
+      {(profile?.data?.role === 'admin' || 
+        (profile?.data?.role === 'employee' && id === profile?.data?.employedAt )) && (
         <div className="flex justify-end items-center gap-4 p-8 mr-8">
           {/* Larger Manage Reservation Button */}
           <motion.button

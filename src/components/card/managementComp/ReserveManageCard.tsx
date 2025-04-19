@@ -27,15 +27,6 @@ export default function ReserveManageCard({ reserveDate, reservationID, userName
             <div className="w-[40px] h-full flex flex-col gap-y-3">
                 <div className="cursor-pointer bg-white rounded-[40px] h-[40px] w-[40px] flex justify-center">
                     <Image
-                        src="/images/tick.svg"
-                        alt=""
-                        width={35}
-                        height={35}
-                        style={{ objectFit: "contain" }}
-                    />
-                </div>
-                <div className="cursor-pointer bg-white rounded-[40px] h-[40px] w-[40px] flex justify-center">
-                    <Image
                         src="/images/cross.svg"
                         alt=""
                         width={40}

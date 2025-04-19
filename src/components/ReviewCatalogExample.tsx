@@ -53,7 +53,7 @@ export default async function ReviewCatalogExample({reviews,restaurant,meanRevie
 
       {reviewsready.data.length > 5 && (
         <div className="col-span-full flex flex-row-reverse justify-start p-10 m-5">
-          <Link href="">
+          <Link href={`/restaurants/${restaurantready.data._id}/reviews?page=1`}>
             <button className="font-serif  bg-[#F89640] 
               hover:bg-green-600 px-4 py-2 text-white shadow-sm">
               see more ..➤

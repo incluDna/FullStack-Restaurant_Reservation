@@ -39,7 +39,7 @@ export interface RestaurantJson{
     success: boolean,
     count: number,
     pagination: Object,
-    data: RestaurantItem[]
+    data: RestaurantItem
 }
 export interface ReviewItem{
   _id?: string,
@@ -52,8 +52,8 @@ export interface ReviewItem{
 export interface ReviewJson{
   success: boolean,
   count: number,
-  pagination: Object,
-  data: ReviewItem[]
+  data: ReviewItem[],
+  totalPages:number
 }
 
 export interface ProfileItem{

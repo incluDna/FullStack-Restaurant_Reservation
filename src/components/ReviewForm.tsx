@@ -4,6 +4,7 @@ import editReview from "@/libs/editReview";
 import { Rating, TextField } from "@mui/material";
 import { Session } from "next-auth";
 import { Pattaya } from "next/font/google";
+import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
@@ -109,7 +110,7 @@ export default   function Reviewform({ session,profile}: { session: Session  ,pr
             </div>
         </div>
       </div>
-      {/* <Link href={`/review/manage`}> */}
+      <Link href={`/review/manage`}> 
       <button
         className="font-serif m-autoblock rounded-md bg-[#F89640] 
         hover:bg-green-600 px-3 py-2 text-white shadow-sm"
@@ -117,7 +118,7 @@ export default   function Reviewform({ session,profile}: { session: Session  ,pr
       >
         Submit
       </button>
-      {/* </Link> */}
+      </Link> 
     </div>
   );
 

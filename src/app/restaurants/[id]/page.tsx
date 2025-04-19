@@ -13,7 +13,7 @@ export default async function restaurant({ params }: { params: { id: string } })
   const session =await getServerSession(authOptions);
   if(!session)return null
 
-  const reviews= getReviewsforRestaurant(session.user.token,params.id)
+  const reviews= getReviewsforRestaurant(session.user.token,params.id,1)
   const restaurant= getRestaurant(params.id,session.user.token);
   const meanReviews= getMeanReviews(session.user.token,params.id)
   const profile= getUserProfile(session.user.token);

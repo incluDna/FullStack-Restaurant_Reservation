@@ -18,20 +18,22 @@ exports.getReservations = async (req, res, next) => {
     path: "user",
     select: "name tel",
   };
-  if (req.user.role !== "admin") {
+  if (req.user.role === "user") {
     //general users can see only their reservations
+    //employee?? Make reservation ??
     query = Reservation.find({ user: req.user.id })
       .sort({ resDate: 1 })
       .populate(restaurantPopulate)
       .populate(userPopulate);;
   } else {
     if (req.params.restaurantId) {
+      //admin & employee
       console.log(req.params.restaurantId);
       query = Reservation.find({ restaurant: req.params.restaurantId })
         .sort({ resDate: 1 })
         .populate(restaurantPopulate)
         .populate(userPopulate);
-    } else {
+    } else if(req.user.role === "admin") {
       //if you are admin, you can see all reservations
       query = Reservation.find()
         .sort({ resDate: 1 })

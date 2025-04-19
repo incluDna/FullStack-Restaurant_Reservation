@@ -31,10 +31,9 @@ export default function LoginPage() {
         await setAuthCookie(token, profile.data.role);
       }
       else throw new Error('Something\'s gone wrong.');
-      setTimeout(() => { setSuccess('Login successful!') }, 500);
-      router.push('/');
-      setTimeout(() => { location.reload();}, 100); // delay refresh to navigate to '/' first
-
+      setSuccess('Login successful!')
+      // Optional: Redirect after login
+      window.location.href = '/'
     } catch (err: any) {
       setError(err.message || 'Login failed')
       setTimeout(() => setError(null), 3000)

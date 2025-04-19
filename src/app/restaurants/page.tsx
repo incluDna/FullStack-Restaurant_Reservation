@@ -115,7 +115,7 @@ export default function RestaurantCatalog() {
   }
 
   return (
-    <main className="flex flex-col w-full items-start pt-12">
+    <main className="flex flex-col w-full items-start pt-20">
       {profile?.data?.role === 'admin' && (
         <div className="flex justify-end w-full pr-16 mb-8">
           <motion.button
@@ -129,8 +129,8 @@ export default function RestaurantCatalog() {
       )}
       <section className="flex flex-wrap justify-center w-full bg-white">
         {restaurants.map((restaurant) => {
-          const restaurantId = restaurant._id?.toString() || ''; // Force to string or fallback to empty string
-          const reviewRating = reviewsMap[restaurantId] ?? null; // Use null if no review
+          const restaurantId = restaurant._id?.toString() || ''; 
+          const reviewRating = reviewsMap[restaurantId] ?? null; 
 
           return (
             <RestaurantCard
@@ -147,8 +147,8 @@ export default function RestaurantCatalog() {
         })}
       </section>
 
-      <div className="flex items-center justify-between gap-4 pt-[var(--size-space-1600)] pb-2.5 px-2.5 w-full mb-16">
-        <motion.button className="flex items-center justify-center gap-4 pr-[var(--size-space-1000)] pl-[var(--size-space-1000)] py-2 bg-[#C2C2C2] rounded-[75px] border-none text-[24px] font-semibold w-full max-w-[200px] ml-20 mt-16"
+      <div className="flex items-center justify-between gap-4 pt-[var(--size-space-1600)] pb-2.5 px-2.5 w-full mb-12">
+        <motion.button className="flex items-center justify-center gap-4 pr-[var(--size-space-1000)] pl-[var(--size-space-1000)] py-2 bg-[#C2C2C2] rounded-[75px] border-none text-[24px] font-semibold w-full max-w-[200px] ml-20 mt-12"
           initial={{ backgroundColor: "#C2C2C2" }}
           whileHover={{ backgroundColor: "#999", scale: 1.02 }}
           transition={{ duration: 0.3 }}
@@ -159,7 +159,7 @@ export default function RestaurantCatalog() {
             .. go back
           </span>
         </motion.button>
-        <motion.button className="flex items-center justify-center gap-4 pr-[var(--size-space-1000)] pl-[var(--size-space-1000)] py-2 bg-[#C2C2C2] rounded-[75px] border-none text-[24px] font-semibold w-full max-w-[200px] mr-8 mt-16 hover:bg-[#999]"
+        <motion.button className="flex items-center justify-center gap-4 pr-[var(--size-space-1000)] pl-[var(--size-space-1000)] py-2 bg-[#C2C2C2] rounded-[75px] border-none text-[24px] font-semibold w-full max-w-[200px] mr-8 mt-12 hover:bg-[#999]"
           initial={{ backgroundColor: "#C2C2C2" }}
           whileHover={{ backgroundColor: "#999", scale: 1.02 }}
           transition={{ duration: 0.3 }}

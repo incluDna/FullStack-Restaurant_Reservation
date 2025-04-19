@@ -324,6 +324,13 @@ export default function RestaurantInfo() {
                     type="date"
                     value={selectedDate}
                     onChange={(e) => setSelectedDate(e.target.value)}
+                    min={(() => {
+                      const today = new Date();
+                      const year = today.getFullYear();
+                      const month = String(today.getMonth() + 1).padStart(2, "0");
+                      const day = String(today.getDate()).padStart(2, "0");
+                      return `${year}-${month}-${day}`;
+                    })()}
                     className="w-40 h-10 p-2  text-gray-700 bg-white border"
                   />
                   <select
@@ -365,65 +372,65 @@ export default function RestaurantInfo() {
         </section>
       )}
       {/* Edit button for Admin & Employee */}
-      {(profile?.data?.role === 'admin' || 
-        (profile?.data?.role === 'employee' && id === profile?.data?.employedAt )) && (
-        <div className="flex justify-end items-center gap-4 p-8 mr-8">
-          {/* Larger Manage Reservation Button */}
-          <motion.button
-            whileHover={{ backgroundColor: "#5A2934", scale: 1.02 }}
-            transition={{ duration: 0.3 }}
-            className="w-fit px-12 h-16 text-2xl font-bold bg-[#f79540] text-white rounded"
-            onClick={() => router.push(`/restaurants/${id}/management`)}
-          >
-            Manage Reservation
-          </motion.button>
+      {(profile?.data?.role === 'admin' ||
+        (profile?.data?.role === 'employee' && id === profile?.data?.employedAt)) && (
+          <div className="flex justify-end items-center gap-4 p-8 mr-8">
+            {/* Larger Manage Reservation Button */}
+            <motion.button
+              whileHover={{ backgroundColor: "#5A2934", scale: 1.02 }}
+              transition={{ duration: 0.3 }}
+              className="w-fit px-12 h-16 text-2xl font-bold bg-[#f79540] text-white rounded"
+              onClick={() => router.push(`/restaurants/${id}/management`)}
+            >
+              Manage Reservation
+            </motion.button>
 
-          {/* Show Edit and Delete buttons only when not in edit mode */}
-          {!isEditable && (
-            <>
-              <motion.button
-                whileHover={{ backgroundColor: "black", scale: 1.02 }}
-                transition={{ duration: 0.3 }}
-                onClick={() => setIsEditable(true)}
-                className="w-[65px] h-[65px] bg-[#3d3c3a] text-white text-xl border-0 rounded-none"
-              >
-                Edit
-              </motion.button>
-              <motion.button
-                whileHover={{ backgroundColor: "black", scale: 1.02 }}
-                transition={{ duration: 0.3 }}
-                onClick={handleDelete}
-                className="w-[65px] h-[65px] bg-[#3d3c3a] text-white text-xl border-0 rounded-none"
-              >
-                Delete
-              </motion.button>
-            </>
-          )}
+            {/* Show Edit and Delete buttons only when not in edit mode */}
+            {!isEditable && (
+              <>
+                <motion.button
+                  whileHover={{ backgroundColor: "black", scale: 1.02 }}
+                  transition={{ duration: 0.3 }}
+                  onClick={() => setIsEditable(true)}
+                  className="w-[65px] h-[65px] bg-[#3d3c3a] text-white text-xl border-0 rounded-none"
+                >
+                  Edit
+                </motion.button>
+                <motion.button
+                  whileHover={{ backgroundColor: "black", scale: 1.02 }}
+                  transition={{ duration: 0.3 }}
+                  onClick={handleDelete}
+                  className="w-[65px] h-[65px] bg-[#3d3c3a] text-white text-xl border-0 rounded-none"
+                >
+                  Delete
+                </motion.button>
+              </>
+            )}
 
-          {/* Show Save and Cancel buttons only when in edit mode */}
-          {isEditable && (
-            <>
-              <motion.button
-                whileHover={{ backgroundColor: "#5A2934", scale: 1.02 }}
-                transition={{ duration: 0.3 }}
-                onClick={handleSave}
-                className="w-fit px-12 h-16 text-2xl font-bold bg-[#f79540] text-white rounded"
-              >
-                Save
-              </motion.button>
+            {/* Show Save and Cancel buttons only when in edit mode */}
+            {isEditable && (
+              <>
+                <motion.button
+                  whileHover={{ backgroundColor: "#5A2934", scale: 1.02 }}
+                  transition={{ duration: 0.3 }}
+                  onClick={handleSave}
+                  className="w-fit px-12 h-16 text-2xl font-bold bg-[#f79540] text-white rounded"
+                >
+                  Save
+                </motion.button>
 
-              <motion.button
-                whileHover={{ backgroundColor: "#5A2934", scale: 1.02 }}
-                transition={{ duration: 0.3 }}
-                onClick={() => setIsEditable(false)} // Deactivate edit mode
-                className="w-fit px-12 h-16 text-2xl font-bold bg-[#f79540] text-white rounded"
-              >
-                Cancel
-              </motion.button>
-            </>
-          )}
-        </div>
-      )}
+                <motion.button
+                  whileHover={{ backgroundColor: "#5A2934", scale: 1.02 }}
+                  transition={{ duration: 0.3 }}
+                  onClick={() => setIsEditable(false)} // Deactivate edit mode
+                  className="w-fit px-12 h-16 text-2xl font-bold bg-[#f79540] text-white rounded"
+                >
+                  Cancel
+                </motion.button>
+              </>
+            )}
+          </div>
+        )}
 
       {/* Reviews section */}
       <section className="flex flex-col gap-6 px-4 lg:px-12 pb-12">

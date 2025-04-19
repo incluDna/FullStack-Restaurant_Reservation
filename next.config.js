@@ -4,7 +4,7 @@ const nextConfig = {
       domains: ['drive.google.com', 'lh3.googleusercontent.com'],
   },
   experimental : {
-      serverActions: true
+      serverActions: {},
   },
   env: {
       FRONTEND_URL: process.env.FRONTEND_URL,

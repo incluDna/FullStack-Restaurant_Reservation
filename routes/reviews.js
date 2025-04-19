@@ -10,11 +10,11 @@ const {
 
 const router = express.Router({ mergeParams: true });
 
-const { protect, authorize } = require("../middleware/auth");
+const { protect, authorize, optionalAuth } = require("../middleware/auth");
 
 router
   .route("/")
-  .get(getReviews)
+  .get(optionalAuth, getReviews)
   .post(protect, authorize("admin", "user"), addReview);
 router
   .route("/:id")

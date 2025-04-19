@@ -117,3 +117,29 @@ const sendTokenResponse = (user, statusCode, res) => {
     token,
   });
 };
+
+/**
+ * @description Update logged in user data
+ * @route PUT /api/auth/update
+ * @access Private
+ */
+exports.updateUser = async (req, res, next) => {
+  try {
+    const { name, email, tel } = req.body;
+
+    const fieldsToUpdate = { name, email, tel };
+
+    const user = await User.findByIdAndUpdate(req.user.id, fieldsToUpdate, {
+      new: true,
+      runValidators: true,
+    });
+
+    res.status(200).json({
+      success: true,
+      data: user,
+    });
+  } catch (err) {
+    console.error(err.stack);
+    res.status(400).json({ success: false, msg: 'User update failed' });
+  }
+};

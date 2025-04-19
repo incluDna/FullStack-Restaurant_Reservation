@@ -3,13 +3,14 @@
 import { useState } from 'react'
 import userLogin from '@/libs/userLogin'
 import getUserProfile from '@/libs/getUserProfile'
-
+import { setAuthCookie } from '@/libs/setAuthCookie'
+import { useRouter } from 'next/navigation'
 export default function LoginPage() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState<string | null>(null)
-
+  const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -27,18 +28,13 @@ export default function LoginPage() {
       const profile = await getUserProfile(token);
       if (profile.success && "data" in profile && "role" in profile.data) {
         // set cookie
-        await fetch("/api/auth", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ token, role: profile.data.role }),
-        });
+        await setAuthCookie(token, profile.data.role);
       }
       else throw new Error('Something\'s gone wrong.');
-      setSuccess('Login successful!')
-      // Optional: Redirect after login
-      // window.location.href = '/dashboard'
+      setTimeout(() => { setSuccess('Login successful!') }, 500);
+      router.push('/');
+      setTimeout(() => { location.reload();}, 100); // delay refresh to navigate to '/' first
+
     } catch (err: any) {
       setError(err.message || 'Login failed')
       setTimeout(() => setError(null), 3000)

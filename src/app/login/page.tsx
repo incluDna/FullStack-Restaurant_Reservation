@@ -38,7 +38,7 @@ export default function LoginPage() {
       else throw new Error('Something\'s gone wrong.');
       setSuccess('Login successful!')
       // Optional: Redirect after login
-      // window.location.href = '/dashboard'
+      window.location.href = '/'
     } catch (err: any) {
       setError(err.message || 'Login failed')
       setTimeout(() => setError(null), 3000)

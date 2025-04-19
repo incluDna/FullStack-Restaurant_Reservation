@@ -139,7 +139,7 @@ export default function ProfilePage() {
                 <li key={res._id} className="py-4 flex justify-between items-center">
                   <div>
                     <p className="text-gray-800 font-semibold">{res.restaurant.name}</p>
-                    <p className="text-sm text-gray-500">{new Date(res.resDate).toDateString()} at {new Date(res.resDate).toTimeString().slice(0,5)}</p>
+                    <p className="text-sm text-gray-500">{new Date(res.resDate).toLocaleDateString('en-US', { timeZone: 'UTC' })} at {new Date(res.resDate).toLocaleTimeString('no-nb', { timeZone: 'UTC' , hour:'2-digit', minute:'2-digit'})}</p>
                     <p className="text-sm text-gray-500">number of seats : {res.seatCount}</p>
                   </div>
                 </li>

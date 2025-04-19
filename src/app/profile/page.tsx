@@ -130,7 +130,9 @@ export default function ProfilePage() {
 
         {/* Reservations Section */}
         <div className="bg-white p-6 rounded-xl shadow-md">
-          <h2 className="text-xl font-bold mb-4 text-gray-800">Your Reservations</h2>
+          <h2 className="text-xl font-bold mb-4 text-gray-800">
+            {role=='admin'?'All user\'s Reservations':'Your Reservations'}
+            </h2>
           {reservations.length === 0 ? (
             <p className="text-gray-500">No reservations found.</p>
           ) : (

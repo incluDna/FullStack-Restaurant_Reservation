@@ -129,8 +129,8 @@ export default function RestaurantCatalog() {
       )}
       <section className="flex flex-wrap justify-center w-full bg-white">
         {restaurants.map((restaurant) => {
-          const restaurantId = restaurant._id?.toString() || ''; 
-          const reviewRating = reviewsMap[restaurantId] ?? null; 
+          const restaurantId = restaurant._id?.toString() || '';
+          const reviewRating = reviewsMap[restaurantId] ?? null;
 
           return (
             <RestaurantCard
@@ -148,27 +148,36 @@ export default function RestaurantCatalog() {
       </section>
 
       <div className="flex items-center justify-between gap-4 pt-[var(--size-space-1600)] pb-2.5 px-2.5 w-full mb-12">
-        <motion.button className="flex items-center justify-center gap-4 pr-[var(--size-space-1000)] pl-[var(--size-space-1000)] py-2 bg-[#C2C2C2] rounded-[75px] border-none text-[24px] font-semibold w-full max-w-[200px] ml-20 mt-12"
-          initial={{ backgroundColor: "#C2C2C2" }}
-          whileHover={{ backgroundColor: "#999", scale: 1.02 }}
-          transition={{ duration: 0.3 }}
-          onClick={handleGoBack}
-        >
-          <ArrowLeft className="h-6 w-6" />
-          <span className="font-semibold text-black text-[24px] leading-[56px]">
-            .. go back
-          </span>
-        </motion.button>
-        <motion.button className="flex items-center justify-center gap-4 pr-[var(--size-space-1000)] pl-[var(--size-space-1000)] py-2 bg-[#C2C2C2] rounded-[75px] border-none text-[24px] font-semibold w-full max-w-[200px] mr-8 mt-12 hover:bg-[#999]"
-          initial={{ backgroundColor: "#C2C2C2" }}
-          whileHover={{ backgroundColor: "#999", scale: 1.02 }}
-          transition={{ duration: 0.3 }}
-          onClick={handleSeeMore}>
-          <span className="font-semibold text-black text-[24px] leading-[56px]">
-            See More ..
-          </span>
-          <ArrowRight className="h-6 w-6" />
-        </motion.button>
+        {
+          page != 1 ?
+            <motion.button className="flex items-center justify-center gap-4 pr-[var(--size-space-1000)] pl-[var(--size-space-1000)] py-2 bg-[#C2C2C2] rounded-[75px] border-none text-[24px] font-semibold w-full max-w-[200px] ml-20 mt-12"
+              initial={{ backgroundColor: "#C2C2C2" }}
+              whileHover={{ backgroundColor: "#999", scale: 1.02 }}
+              transition={{ duration: 0.3 }}
+              onClick={handleGoBack}
+            >
+              <ArrowLeft className="h-6 w-6" />
+              <span className="font-semibold text-black text-[24px] leading-[56px]">
+                .. go back
+              </span>
+            </motion.button>
+            : <div className="flex items-center justify-center gap-4 pr-[var(--size-space-1000)] pl-[var(--size-space-1000)] py-2 w-full max-w-[200px] ml-20 mt-12"/>
+        }
+        {
+
+          (page < totalPages - 1) ?
+            <motion.button className="flex items-center justify-center gap-4 pr-[var(--size-space-1000)] pl-[var(--size-space-1000)] py-2 bg-[#C2C2C2] rounded-[75px] border-none text-[24px] font-semibold w-full max-w-[200px] mr-8 mt-12 hover:bg-[#999]"
+              initial={{ backgroundColor: "#C2C2C2" }}
+              whileHover={{ backgroundColor: "#999", scale: 1.02 }}
+              transition={{ duration: 0.3 }}
+              onClick={handleSeeMore}>
+              <span className="font-semibold text-black text-[24px] leading-[56px]">
+                See More ..
+              </span>
+              <ArrowRight className="h-6 w-6" />
+            </motion.button>
+            : null
+        }
       </div>
     </main>
   );

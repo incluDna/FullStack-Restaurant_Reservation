@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 import React, { useState, useEffect, Suspense } from "react";
 import { useParams } from "next/navigation";
 import getRestaurant from "@/libs/getRestaurant";
-import getReviewForRestaurant from "@/libs/getReviewforRestaurant";
+import getReviewForRestaurant from "@/libs/getReviewForRestaurant";
 import getMeanReviews from "@/libs/getMeanReview";
 import addReservation from "@/libs/addReservations";
 import { MeanReview, RestaurantJSON, Review, ReviewJSON } from "../../../../interfaces";

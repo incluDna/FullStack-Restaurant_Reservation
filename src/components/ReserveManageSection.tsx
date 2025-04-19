@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import ReserveManageCard from "./card/managementComp/ReserveManageCard";
 import { Reservation, ReservationJSON } from "../../interfaces";
-import getReservations from "@/libs/getReservations";
+import getReservationsByRestaurant from "@/libs/getReservationsByRestaurant";
 import deleteReservation from "@/libs/deleteReservation";
 
 export default function ReserveManageSection({ token, restaurantID }: { token?: string, restaurantID?: string }) {
@@ -30,7 +30,7 @@ export default function ReserveManageSection({ token, restaurantID }: { token?: 
     useEffect(() => {
         const fetchReservations = async () => {
             try {
-                const response: ReservationJSON = await getReservations(token, restaurantID);
+                const response: ReservationJSON = await getReservationsByRestaurant(token, restaurantID);
                 setReservations(response.data);
                 setLoading(false);
                 console.log(reservations);

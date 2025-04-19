@@ -39,3 +39,28 @@ export async function GET() {
 
   return NextResponse.json({ success: true, token, role });
 }
+
+// DELETE: Clear cookies
+export async function DELETE() {
+  const deleteTokenCookie = serialize("token", "", {
+    httpOnly: true,
+    secure: true,
+    maxAge: 0,
+    path: "/",
+    sameSite: "strict",
+  });
+
+  const deleteRoleCookie = serialize("role", "", {
+    httpOnly: true,
+    secure: true,
+    maxAge: 0,
+    path: "/",
+    sameSite: "strict",
+  });
+
+  const response = NextResponse.json({ success: true, message: "Cookies cleared" });
+  response.headers.append("Set-Cookie", deleteTokenCookie);
+  response.headers.append("Set-Cookie", deleteRoleCookie);
+
+  return response;
+}

@@ -12,7 +12,7 @@ export async function getAuthCookie() {
     const data = await res.json();
     return data;
   } catch (error) {
-    console.error("Failed to fetch auth cookie", error);
+    console.log("no token", error);
     return { success: false, token: null, role: null };
   }
 }

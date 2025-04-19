@@ -128,7 +128,7 @@ exports.addReservation = async (req, res, next) => {
     if (existingReservations.length >= 3 && req.user.role !== "admin") {
       return res.status(400).json({
         success: false,
-        message: `The user with ID ${req.user.id} has already made 3 reservations`,
+        message: `${req.user.name} has already made 3 reservations`,
       });
     }
 
@@ -146,7 +146,7 @@ exports.addReservation = async (req, res, next) => {
     if (count >= restaurant.reservationLimit) {
       return res.status(400).json({
         success: false,
-        message: `The restaurant with ID ${req.params.restaurantId} has reached its reservation limit`,
+        message: `Sorry, ${restaurant.name} is fully booked at this time. Please choose a different time slot.`,
       });
     }
     if (req.body.seatCount > restaurant.seatPerReservationLimit) {

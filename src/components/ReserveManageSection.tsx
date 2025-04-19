@@ -60,7 +60,7 @@ export default function ReserveManageSection({ token, restaurantID }: { token?: 
     };
 
     return (
-        <div className="w-1/2 h-full bg-white p-5 flex flex-col gap-y-5">
+        <div className="w-1/2 h-fit bg-white p-5 flex flex-col gap-y-5">
             <div className="w-full h-3/2 text-center break-words text-xl font-bold">
                 {/* Date: {date} Not sure if we still implement picking date*/}
                 Reservation

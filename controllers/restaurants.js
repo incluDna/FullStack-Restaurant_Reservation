@@ -1,6 +1,7 @@
 const Restaurant = require("../models/Restaurant");
 const Reservation = require("../models/Reservation");
 const Review = require("../models/Review");
+const Queue = require("../models/Queue");
 
 /**
  * @description Get all restaurants
@@ -9,8 +10,7 @@ const Review = require("../models/Review");
  */
 exports.getRestaurants = async (req, res, next) => {
   let query;
-  //copy req.query
-  const reqQuery = { ...req.query }; //string -> array of key value
+  const reqQuery = { ...req.query };
 
   // Fields to exclude
   const removeFields = ["select", "sort", "page", "limit"];
@@ -19,14 +19,14 @@ exports.getRestaurants = async (req, res, next) => {
   removeFields.forEach((param) => delete reqQuery[param]);
   console.log(reqQuery);
 
-  //query string
+  // query string
   let queryStr = JSON.stringify(reqQuery);
   queryStr = queryStr.replace(
     /\b(gt|gte|lt|lte|in)\b/g,
     (match) => `$${match}`
   );
 
-  //finding resource
+  // finding resource
   query = Restaurant.find(JSON.parse(queryStr))
     .populate("reservations")
     .populate("reviews");
@@ -47,28 +47,29 @@ exports.getRestaurants = async (req, res, next) => {
     query = query.sort("-createdAt");
   }
 
-  //Pagination
+  // Pagination
   const page = parseInt(req.query.page, 10) || 1;
   const limit = parseInt(req.query.limit, 10) || 25;
   const startIndex = (page - 1) * limit;
   const endIndex = page * limit;
 
   try {
-    const total = await Restaurant.countDocuments(); //trycatch
+    const total = await Restaurant.countDocuments();
+    const totalPages = Math.ceil(total / limit);
     query = query.skip(startIndex).limit(limit);
-    //excutue query
+    // excutue query
     const restaurants = await query;
 
-    //Pagination result
+    // Pagination result
     const pagination = {};
-    //next
+    // next
     if (endIndex < total) {
       pagination.next = {
         page: page + 1,
         limit,
       };
     }
-    //previous
+    // previous
     if (startIndex > 0) {
       pagination.prev = {
         page: page - 1,
@@ -76,9 +77,12 @@ exports.getRestaurants = async (req, res, next) => {
       };
     }
 
-    res
-      .status(200)
-      .json({ success: true, count: restaurants.length, data: restaurants });
+    res.status(200).json({
+      success: true,
+      count: restaurants.length,
+      data: restaurants,
+      totalPages: totalPages,
+    });
   } catch (err) {
     res.status(400).json({ success: false });
   }
@@ -185,6 +189,7 @@ exports.deleteRestaurant = async (req, res, next) => {
       return res.status(400).json({ success: false });
     }
 
+    await Queue.deleteMany({ restaurant: req.params.id });
     await Reservation.deleteMany({ restaurant: req.params.id });
     await Review.deleteMany({ restaurant: req.params.id });
     await Restaurant.deleteOne({ _id: req.params.id });

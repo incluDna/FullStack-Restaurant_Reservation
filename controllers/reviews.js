@@ -1,6 +1,6 @@
 const Review = require("../models/Review");
 const Restaurant = require("../models/Restaurant");
-const Reserve = require("../models/Reservation");
+const Reservation = require("../models/Reservation");
 
 /**
  * @description Get all reviews
@@ -9,21 +9,28 @@ const Reserve = require("../models/Reservation");
  */
 exports.getReviews = async (req, res, next) => {
   let query;
-  if (req.user.role !== "admin") {
-    //general users can see only their reservations
+  const reqQuery = { ...req.query };
 
+  const removeFields = ["page", "limit"];
+  removeFields.forEach((param) => delete reqQuery[param]);
+
+  if (!("user" in req) || req.user.role != "admin") {
     if (req.params.restaurantId) {
       console.log(req.params.restaurantId);
       query = Review.find({ restaurant: req.params.restaurantId }).populate({
         path: "restaurant",
         select: "name",
       });
-    } else {
+    } else if (req.user.id) {
       query = Review.find({ user: req.user.id }).populate({
         path: "restaurant",
         select: "name reviews",
       });
     }
+    else return response.status(401).json({
+      success: false,
+      message: `You must be logged in to view your reviews.`,
+    });
   } else {
     if (req.params.restaurantId) {
       console.log(req.params.restaurantId);
@@ -32,19 +39,46 @@ exports.getReviews = async (req, res, next) => {
         select: "name",
       });
     } else {
-      //if you are admin, you can see all reservations
       query = Review.find().populate({
         path: "restaurant",
         select: "name",
       });
     }
   }
+
+  const page = parseInt(req.query.page, 10) || 1;
+  const limit = parseInt(req.query.limit, 10) || 25;
+  const startIndex = (page - 1) * limit;
+  const endIndex = page * limit;
+
   try {
+    const total = await Review.countDocuments(query.getQuery());
+    const totalPages = Math.ceil(total / limit);
+    query = query.skip(startIndex).limit(limit);
+
     const reviews = await query;
+
+    const pagination = {};
+    // next
+    if (endIndex < total) {
+      pagination.next = {
+        page: page + 1,
+        limit,
+      };
+    }
+    // previous
+    if (startIndex > 0) {
+      pagination.prev = {
+        page: page - 1,
+        limit,
+      };
+    }
+
     res.status(200).json({
       success: true,
       count: reviews.length,
       data: reviews,
+      totalPages: totalPages,
     });
   } catch (error) {
     console.log(error);
@@ -107,7 +141,7 @@ exports.addReview = async (req, res, next) => {
     req.body.user = req.user.id;
 
     // Check for existing reviews
-    const existingReserves = await Reserve.find({
+    const existingReservations = await Reservation.find({
       user: req.user.id,
       restaurant: req.params.restaurantId,
     });
@@ -117,7 +151,7 @@ exports.addReview = async (req, res, next) => {
     });
 
     // If the user is not an admin, they can only create 3 reviews
-    if (!existingReserves && req.user.role !== "admin") {
+    if (existingReservations.length === 0 && req.user.role !== "admin") {
       return res.status(400).json({
         success: false,
         message: `The user with ID ${req.user.id} hasn't reserved any restaurants yet`,
@@ -132,16 +166,18 @@ exports.addReview = async (req, res, next) => {
 
     // check review date after resDate
     //console.log(Date.now());
-    //console.log(new Date(existingReserves[(existingReserves.length-1)].resDate).getTime()) ;\
-    existingReserves.sort((a, b) => new Date(a.resDate) - new Date(b.resDate));
+    //console.log(new Date(existingReservations[(existingReservations.length-1)].resDate).getTime()) ;\
+    existingReservations.sort(
+      (a, b) => new Date(a.resDate) - new Date(b.resDate)
+    );
 
-    //console.log(existingReserves);
-    const dt = new Date(existingReserves[0].resDate).getTime();
+    //console.log(existingReservations);
+    const dt = new Date(existingReservations[0].resDate).getTime();
     //console.log(dt);
     if (Date.now() < dt) {
       return res.status(400).json({
         success: false,
-        message: `You can only review after the reservation date (${existingReserves[0].resDate})`,
+        message: `You can only review after the reservation date (${existingReservations[0].resDate})`,
       });
     }
 
@@ -250,24 +286,16 @@ exports.getReviewsForRestaurant = async (req, res, next) => {
     // Find all reviews for the given restaurant ID
     const reviews = await Review.find({ restaurant: restaurantID });
 
-    if (reviews.length === 0) {
-      return res.status(404).json({
-        success: false,
-        message: `No reviews found for restaurant with ID ${restaurantID}`,
-      });
-    }
-
     const totalRating = reviews.reduce(
       (sum, review) => sum + review.reviewStar,
       0
     );
     const meanRating = totalRating / reviews.length;
 
-    const review = await Restaurant.findById(req.params.id);
-    console.log(totalRating);
+    const restaurant = await Restaurant.findById(req.params.id);
     res.status(200).json({
       success: true,
-      name: review.name,
+      name: restaurant.name,
       totalRating: meanRating.toFixed(2),
       count: reviews.length,
     });

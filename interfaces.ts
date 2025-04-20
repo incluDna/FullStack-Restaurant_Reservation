@@ -124,4 +124,9 @@ export interface ReviewJSON {
   totalPages:number
 }
 
-
+export interface User {
+  name: string;
+  tel: string;
+  email: string;
+  password: string;
+}

@@ -1,6 +1,9 @@
 export default async function updateUserProfile(token:string | null,
-    {name, email,tel}:
-    {name:string,email:string,tel:string}
+    updatedData: {
+      name?:string,
+      email?:string,
+      tel?:string
+    }
 ){
     const response =await fetch(`${process.env.BACKEND_URL}/api/auth/me`,{
         method: 'PUT',
@@ -8,7 +11,7 @@ export default async function updateUserProfile(token:string | null,
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
         },
-        body:JSON.stringify({name, email, tel})
+        body:JSON.stringify(updatedData)
       })
 
     if(!response.ok){

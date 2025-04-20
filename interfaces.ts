@@ -70,6 +70,7 @@ export interface User {
 }
 
 export interface Menu {
+  _id?:string;
   name: string;
   restaurant: string;
   picture: string;
@@ -116,3 +117,8 @@ export interface ReviewJSON {
 }
 
 
+export interface MenuJSON {
+  success: boolean
+  count: number,
+  data: Menu[]
+}

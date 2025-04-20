@@ -78,11 +78,6 @@ export default function RestaurantMenuPage() {
                   <div key={t} className="w-5 h-5 bg-gray-300 rounded" title={tag}></div>
                 ))}
               </div>
-
-              {/* Action button */}
-              <button className="mt-4 bg-[#F89640] text-white py-1 rounded hover:bg-[#5A2934] transition">
-                เลือก
-              </button>
             </div>
           </div>
         ))}

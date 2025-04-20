@@ -266,7 +266,7 @@ exports.deleteReservation = async (req, res, next) => {
     }
     if (
       reservation.user.toString() !== req.user.id &&
-      req.user.role !== "admin"
+      req.user.role === "user"
     ) {
       return res.status(401).json({
         success: false,

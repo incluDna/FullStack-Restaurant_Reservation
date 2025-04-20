@@ -69,12 +69,6 @@ export interface Profile{
   createdAt:string
   
 }
-export interface User {
-  name: string;
-  telephone: string;
-  email: string;
-  password: string;
-}
 
 export interface Menu {
   name: string;

@@ -46,7 +46,7 @@ export default function TopMenu() {
     }, [profile]);
 
     return (
-        <div className="w-full h-[60px] bg-[#FFECAD] absolute z-30 flex">
+        <div className="w-full h-[60px] bg-[#FFECAD] fixed top-0 left-0 z-30 flex">
             {/* Logo */}
             <motion.div
                 className="h-full w-[60px] flex-shrink-0 flex items-center justify-center bg-[#F89640]"

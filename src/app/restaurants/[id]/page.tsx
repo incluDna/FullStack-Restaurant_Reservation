@@ -136,14 +136,9 @@ export default function RestaurantInfo() {
           {filteredMenu?.map((item, i) => (
             <MenuCard
               key={i}
-              id={i.toString()}
-              name={item.name}
-              price={item.price}
-              description={item.description}
-              image={item.picture}
-              isEmployee={isEmployee}
-              onEdit={() => console.log('Edit:', item.name)}
-              onDelete={() => console.log('Delete:', item.name)}
+              menu={item}
+              role={role}
+              token={token}
             />
           ))}
         </div>

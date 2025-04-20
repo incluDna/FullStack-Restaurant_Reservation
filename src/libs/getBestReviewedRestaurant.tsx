@@ -3,45 +3,57 @@ import getMeanReviews from "./getMeanReview";
 import { Restaurant, RestaurantJSON } from "../../interfaces";
 
 export default async function getBestReviewedRestaurant(): Promise<Restaurant | null> {
-  const limit = 10;
   let page = 1;
+  const limit = 10;
   let allRestaurants: Restaurant[] = [];
-  let hasMore = true;
 
   try {
     // 1. Fetch all restaurants across pages
-    while (hasMore) {
-      const restaurantResponse: RestaurantJSON = await getRestaurants(page, limit);
+    while (true) {
+      const restaurantResponse: RestaurantJSON = await getRestaurants(page);
       const restaurants = restaurantResponse.data;
 
-      if (!restaurants || restaurants.length === 0) {
-        hasMore = false;
-      } else {
-        allRestaurants.push(...restaurants);
-        page++;
-        if (page > restaurantResponse.totalPages) {
-          hasMore = false;
-        }
-      }
+      console.log(`Page ${page} - received ${restaurants.length} restaurants`);
+
+      if (!restaurants || restaurants.length === 0) break;
+
+      allRestaurants.push(...restaurants);
+
+      if (page >= restaurantResponse.totalPages) break;
+
+      page++;
     }
+    // console.log(allRestaurants.length)
+    // allRestaurants.forEach((r) => {
+    //   console.log(
+    //     JSON.stringify({ name: r.name })
+    //   );
+    // });
 
     if (allRestaurants.length === 0) return null;
 
     // 2. Fetch mean reviews for all restaurants
     const ratedRestaurants = await Promise.all(
       allRestaurants.map(async (restaurant) => {
-        const rating = await getMeanReviews(restaurant._id);
+        const ratingData = await getMeanReviews(restaurant._id || "");
+        const rating = parseFloat(ratingData?.totalRating) || 0;
         return {
           ...restaurant,
-          rating: rating ?? 0,
+          rating,
         };
       })
     );
 
     // 3. Sort by rating and return the best one
     ratedRestaurants.sort((a, b) => (b.rating ?? 0) - (a.rating ?? 0));
-    return ratedRestaurants[0];
 
+    // Debug
+    console.log("=== SORTED RESTAURANTS ===");
+    ratedRestaurants.forEach((r, i) => {
+      console.log(`${i + 1}. ${r.name} → rating:`, r.rating, typeof r.rating);
+    });
+
+    return ratedRestaurants[0];
   } catch (error) {
     console.error("Error getting best-rated restaurant:", error);
     return null;

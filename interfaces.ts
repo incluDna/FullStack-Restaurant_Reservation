@@ -1,5 +1,5 @@
 export interface Restaurant {
-  _id: string;
+  _id?: string;
   name: string;
   picture: string;
   address: string;
@@ -13,6 +13,9 @@ export interface Restaurant {
   closeTime: string;
   rating?: number;
   queue?: string;
+  seatPerReservationLimit: number
+  reservationLimit: number
+
 }
 
 export interface Reservation {
@@ -58,6 +61,29 @@ export interface Profile{
   role: string, 
   createdAt:string
   
+}
+export interface User {
+  name: string;
+  telephone: string;
+  email: string;
+  password: string;
+}
+
+export interface Menu {
+  name: string;
+  restaurant: string;
+  picture: string;
+  price: number;
+  type: string;
+  description: string;
+  tag: string[];
+}
+
+export interface AuthCookie {
+  success: boolean;
+  token?: string;
+  role?: string;
+  error?: string;
 }
 
 

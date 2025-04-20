@@ -1,15 +1,39 @@
-export default async function getRestaurants(page: number = 1, limit: number = 10) {
+export default async function getRestaurants(page = 1, limit = 10) {
   try {
-    const url = `${process.env.BACKEND_URL}/api/restaurants/?page=${page}&limit=${limit}&timestamp=${new Date().getTime()}`;
-    
-    const response = await fetch(url);
+    const allRestaurants: any[] = [];
+    let currentPage = 1;
+    let hasMore = true;
 
-    if (!response.ok) {
-      throw new Error(`Failed to fetch restaurants: ${response.statusText}`);
+    // Loop through pages until no more data
+    while (hasMore) {
+      const res = await fetch(`${process.env.BACKEND_URL}/api/restaurants?page=${currentPage}&limit=100`);
+      if (!res.ok) throw new Error(`Failed at page ${currentPage}`);
+
+      const data = await res.json();
+      allRestaurants.push(...data.data);
+
+      hasMore = data.data.length > 0 && currentPage < data.totalPages;
+      currentPage++;
     }
-    return await response.json();
+
+    // Deduplicate by name + address (adjust as needed)
+    const unique = Array.from(new Map(allRestaurants.map(item => [item.name + item.address, item])).values());
+
+    // Sort alphabetically
+    const sorted = unique.sort((a, b) => a.name.localeCompare(b.name));
+
+    // Paginate locally
+    const start = (page - 1) * limit;
+    const paginated = sorted.slice(start, start + limit);
+
+    return {
+      success: true,
+      count: sorted.length,
+      totalPages: Math.ceil(sorted.length / limit),
+      data: paginated
+    };
   } catch (error) {
-    console.error("Error fetching restaurants:", error);
+    console.error("Error fetching full restaurant list:", error);
     throw error;
   }
 }

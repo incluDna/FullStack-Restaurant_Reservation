@@ -5,7 +5,7 @@ import RestaurantCard from "@/components/restaurantCard";
 import { MeanReview, Restaurant, RestaurantJSON } from "../../../interfaces";
 import getRestaurants from "@/libs/getRestaurants";
 import getMeanReviews from "@/libs/getMeanReview";
-import { useRouter } from "next/navigation";
+import { useRouter , useSearchParams } from "next/navigation";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import { motion } from "framer-motion";
 import { getAuthCookie } from "@/libs/getAuthCookie";
@@ -22,7 +22,15 @@ export default function RestaurantCatalog() {
   const [reviewsMap, setReviewsMap] = useState<{ [key: string]: number | null }>({}); // Store reviews for each restaurant
 
   const router = useRouter();
-
+  const searchParams = useSearchParams();
+  const pageParam = searchParams.get('page'); // string | null
+  useEffect(() => {
+    setLoading(false);
+    const parsedPage = parseInt(pageParam || '');
+    if (!isNaN(parsedPage)) {
+      setPage(parsedPage);
+    }
+  }, [pageParam]);
   useEffect(() => {
     const fetchRestaurants = async () => {
       try {
@@ -69,7 +77,7 @@ export default function RestaurantCatalog() {
 
     fetchRestaurants();
   }, [page]);
-
+  
   useEffect(() => {
     async function fetchToken() {
       try {

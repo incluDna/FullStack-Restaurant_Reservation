@@ -40,7 +40,7 @@ export default function RestaurantCard({
     router.push(`/restaurants/${restaurantsID}`);
   };
   return (
-    <div className="flex w-[45%] h-[50vh] p-0 overflow-hidden border-0 rounded-[20px] ml-8 mb-8">
+    <div className="flex w-[45%] h-[50vh] p-0 drop-shadow-lg overflow-hidden border-0 rounded-[20px] ml-8 mb-8">
       {/* Left side - Image placeholder */}
       <div className="w-1/2 h-full">
           <img
@@ -58,7 +58,7 @@ export default function RestaurantCard({
             <h2 className="font-medium text-[24px] leading-[47px] w-full text-[#333]">
               {restaurantName}
             </h2>
-            <p className="font-medium text-[18px] w-full text-[#555]">
+            <p className="font-inter font-semibold text-[18px] w-full text-[#555]">
               {location}
               <br />
               {openCloseTime}
@@ -66,16 +66,16 @@ export default function RestaurantCard({
           </div>
 
           {/* Rating */}
-          <div className="flex items-center gap-2.5 px-4 py-2 bg-[#faf9f6] hover:bg-[#faf9f6] text-[#f79540] rounded-none">
-            <span className="font-medium text-[20px] leading-[35px] text-[#F89640]">
+          <div className="font-inter flex items-center gap-2.5 px-4 py-2 bg-[#faf9f6] hover:bg-[#faf9f6] text-[#f79540] rounded-none">
+            <span className="font-semibold text-[20px] leading-[35px] text-[#F89640]">
               {rating === null ? "No Reviews" : rating}
             </span>
             {rating !== null && <span className="flex items-center">{renderStars()}</span>}
           </div>
 
           {/* Queue information */}
-          <div className="px-4 py-2 bg-[#faf9f6] hover:bg-[#faf9f6] text-[#s] rounded-none">
-            <span className="font-medium text-[20px] leading-[35px] text-[#F89640]">
+          <div className="font-inter px-4 py-2 bg-[#faf9f6] hover:bg-[#faf9f6] text-[#s] rounded-none">
+            <span className="font-semibold text-[20px] leading-[35px] text-[#F89640]">
               Current queue: {currentQueue}
             </span>
           </div>

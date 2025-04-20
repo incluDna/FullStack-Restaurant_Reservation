@@ -53,6 +53,13 @@ export interface MeanReview{
   count:number
 }
 
+export interface SingleRestaurantJSON{
+    success: boolean,
+    count: number,
+    pagination: Object,
+    data: Restaurant
+}
+
 export interface Profile{
   _id?: string,
   name: string,
@@ -61,12 +68,6 @@ export interface Profile{
   role: string, 
   createdAt:string
   
-}
-export interface User {
-  name: string;
-  telephone: string;
-  email: string;
-  password: string;
 }
 
 export interface Menu {
@@ -112,13 +113,20 @@ export interface ReservationJSON {
 }
 
 export interface ReviewJSON {
+  success: boolean,
   count: number,
-  data: Review[]
+  data: Review[],
+  totalPages:number
 }
-
 
 export interface MenuJSON {
   success: boolean
   count: number,
   data: Menu[]
+}
+export interface User {
+  name: string;
+  tel: string;
+  email: string;
+  password: string;
 }

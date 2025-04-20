@@ -1,6 +1,6 @@
 export default async function deleteMenu (token:string, restaurantId:string, id:string,) {
 
-    const response=await fetch(`${process.env.BACKEND_URL}/api/restaurants/${restaurantId}/menus${id}`, {
+    const response=await fetch(`${process.env.BACKEND_URL}/api/restaurants/${restaurantId}/menus/${id}`, {
         method:"DELETE",
         headers:{
             "Content-Type": "application/json", 

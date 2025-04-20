@@ -66,7 +66,7 @@ export default function ProfilePage() {
   };
 
   return (
-    <div className="h-screen overflow-hidden bg-gray-100 p-6 flex justify-center items-start">
+    <div className="h-[calc(100vh-65px)] overflow-hidden bg-gray-100 p-6 flex justify-center items-start">
       <div className="flex flex-row max-w-7xl w-full h-full gap-5 items-start">
         {/* Left Panel - Profile section */}
         <div className="flex flex-col justify-between bg-[#75c3cc] text-white p-6 rounded-xl w-[350px] h-full">

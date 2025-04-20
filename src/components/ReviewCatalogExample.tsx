@@ -25,7 +25,7 @@ export default function ReviewCatalogExample({ reviews, meanReviews }:
     <div className="">
       {/* <h1 className={pattaya.className} style={{ fontSize: "48px" }}>{restaurantready.name} Restaurant Reviews</h1> */}
 
-      <div className=" text-left font-bold text-xl ">Reviews Ratings</div>
+      <div className=" text-left font-bold text-3xl lg:text-4xl lg:text-center ">Reviews Ratings</div>
 
       <div className="flex flex-row items-center justify-between border p-4 w-full bg-[#FFECAD] my-5 ">
         <div className=" flex flex-row text-left font-bold text-lg items-center">
@@ -35,16 +35,16 @@ export default function ReviewCatalogExample({ reviews, meanReviews }:
           </div>
           <ClientRating rating={Number(meanReviewsready)} />
         </div>
-        <div className=' text-right font-bold text-lg'>from {reviewsready.length} reviews</div>
+        <div className='text-right text-lg'>from {reviewsready.length} reviews</div>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+      <div className="font-inter font-semibold grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
         {
           reviewsready.slice(0, 5).map((review: Review) => (
             <div className="bg-[#FFECAD] p-4"
               key={review._id}>
               <div className='text-left'>User : {review.user}</div>
-              <div className='text-left font-bold'>Star : {review.reviewStar}</div>
+              <div className='text-left font-extrabold'>Star : {review.reviewStar}</div>
               <div className='text-left'>
                 <ClientRating rating={Number(review.reviewStar)} />
               </div>

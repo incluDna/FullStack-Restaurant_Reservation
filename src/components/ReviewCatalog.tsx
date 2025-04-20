@@ -13,7 +13,9 @@ export default function ReviewCatalog({ reviews, meanReviews, page, restaurant, 
 
   return (
     <div className="">
-      <div className=" text-left font-bold text-xl ">Reviews Ratings {restaurant?.name || ''}</div>
+      <div className=" text-left font-bold text-2xl lg:text-3xl lg:text-center">Reviews in {restaurant?.name || ''}</div>
+      <div className="lg:px-20 lg:py-5">
+
 
       <div className="flex flex-row items-center justify-between border p-4 w-full bg-[#FFECAD] my-5 ">
         <div className=" flex flex-row text-left font-bold text-lg items-center">
@@ -26,23 +28,23 @@ export default function ReviewCatalog({ reviews, meanReviews, page, restaurant, 
         <div className=' text-right font-bold text-lg'>from {reviews.length} reviews</div>
       </div>
       
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+      <div className="font-inter grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
         {
           review.map((review:Review)=>(
           <div className="bg-[#FFECAD] p-4"
           key={review._id}>
-            <div className='text-left'>User : {review.user}</div>
-            <div className='text-left font-bold'>Star : {review.reviewStar}</div>
-            <div className='text-left'>
+            <div className='text-left font-semibold'>User : {review.user}</div>
+            <div className='text-left font-extrabold'>Star : {review.reviewStar}</div>
+            <div className='text-left font-semibold'>
               <ClientRating rating={Number(review.reviewStar)}/>
             </div>
-            <div className='text-left'>Description : {review.reviewText}</div>
+            <div className='text-left font-semibold'>Description : {review.reviewText}</div>
                   
           </div>
           ))
         }    
       </div>
-
+      </div>
       {page>1?
         <div className="absolute left-5 bottom-5">
           <Link href={`/restaurants/${restaurant._id}/reviews?page=${page-1}`}>

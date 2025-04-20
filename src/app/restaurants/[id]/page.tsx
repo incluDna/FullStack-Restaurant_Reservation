@@ -185,8 +185,8 @@ export default function RestaurantInfo() {
   return (
     <main className="w-full bg-white">
       {/* Top Info */}
-      <section className="flex flex-col lg:flex-row gap-4 p-4">
-        <div className="flex w-full lg:w-[300px] h-[200px] items-center justify-center bg-[#3d3c3a]">
+      <section className="flex flex-col lg:flex-row gap-4 px-20 pt-20 pb-10 lg:justify-center">
+        <div className="font-inter lg:w-3/5 xl:w-2/5 h-auto items-center justify-center bg-[#3d3c3a]  rounded-3xl overflow-hidden">
           {isEditable ? (
             <input
               type="text"
@@ -200,8 +200,8 @@ export default function RestaurantInfo() {
           )}
         </div>
 
-        <div className="flex flex-col gap-2 flex-1">
-          <h1 className="font-semibold text-2xl lg:text-4xl text-black">
+        <div className="flex flex-col gap-2 flex-1 lg:justify-center">
+          <h1 className="font-semibold text-4xl text-black">
             {isEditable ? (
               <input
                 type="text"
@@ -214,7 +214,7 @@ export default function RestaurantInfo() {
             )}
           </h1>
 
-          <div className="text-sm lg:text-base space-y-1 text-black">
+          <div className="font-inter font-semibold text-base lg:text-xl space-y-1 text-black">
             <div>
               {isEditable ? (
                 <>
@@ -278,7 +278,9 @@ export default function RestaurantInfo() {
           </div>
         </div>
       </section>
+            <div className="lg:px-20">
 
+ 
       {/* Success Message for Deletion */}
       {deletionSuccess && (
         <div className="p-4 text-green-500 font-bold text-xl">
@@ -287,9 +289,9 @@ export default function RestaurantInfo() {
       )}
 
       {profile?.data?.role === 'user' && (
-        <section className="flex flex-col lg:flex-row gap-4 p-4">
+        <section className="flex flex-col lg:flex-row gap-4 p-10">
           {/* Queue */}
-          <div className="flex-1 bg-[#ffebac] p-6 flex flex-col justify-center">
+          <div className="flex-1 bg-[#ffebac] p-6 flex flex-col justify-center rounded-xl">
             <h2 className="text-2xl font-bold text-center text-black mb-6">Get Queue</h2>
             <div className="flex flex-col items-center justify-center flex-grow gap-4">
               <label className="text-lg text-black">How many people?</label>
@@ -305,7 +307,7 @@ export default function RestaurantInfo() {
           </div>
 
           {/* Reservation */}
-          <div className="flex-1 bg-[#ffebac] p-6 flex flex-col justify-between">
+          <div className="flex-1 bg-[#ffebac] p-6 flex flex-col justify-between rounded-xl">
             <div className="flex flex-col flex-1 justify-center">
               <div className="grid grid-cols-1 place-items-center gap-4">
                 <h2 className="text-2xl font-bold text-black">Reserve Table</h2>
@@ -433,14 +435,12 @@ export default function RestaurantInfo() {
         )}
 
       {/* Reviews section */}
-      <section className="flex flex-col gap-6 px-4 lg:px-12 pb-12">
-        <h2 className="font-medium text-black text-[40px] sm:text-[70px] lg:text-[110px] mb-10">
-          Reviews Ratings
-        </h2>
+      <section className="flex flex-col gap-6 px-4 lg:px-20 pb-12">
         <Suspense fallback={<p>Loading ...<LinearProgress /></p>}>
           <ReviewCatalogExample reviews={reviewData} meanReviews={meanReview} />
         </Suspense>
       </section>
+                 </div>
     </main>
   );
 }

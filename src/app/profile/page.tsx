@@ -4,12 +4,11 @@ import React, { useEffect, useState } from "react";
 import { getAuthCookie } from "@/libs/getAuthCookie";
 import getUserProfile from "@/libs/getUserProfile";
 import getReservations from "@/libs/getReservations";
-import { ProfileJSON, Reservation, ReviewJSON, User } from "../../../interfaces";
+import { Reservation, Review, User } from "../../../interfaces";
 import updateUserProfile from "@/libs/updateUserProfile";
 import ReservationCard from "@/components/ReservationCard";
-import ReviewCart from "@/components/ReviewCart";
 import getReviews from "@/libs/getReviews";
-
+import ReviewCard from "@/components/ReviewCard";
 export default function ProfilePage() {
   const [user, setUser] = useState<User>({
     name: "",
@@ -25,20 +24,18 @@ export default function ProfilePage() {
   const [role, setRole] = useState<string | null>(null);
   const [formData, setFormData] = useState<User>(user);
   const [showReviews, setShowReviews] = useState(false);
-  const [review,setReview]=useState<ReviewJSON|null>(null);
-  const [profile, setProfile] = useState<ProfileJSON|null>(null);
-
-
+  const [profile, setProfile] = useState<any>(null);
 
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
       try {
-        const { success, token: newToken, role, error } = await getAuthCookie();
+        const { success, token: newToken, role, error, profile } = await getAuthCookie();
         if (!success) throw new Error(error || "Auth failed");
 
         setToken(newToken);
         setRole(role || null);
+        setProfile(profile)
 
         const [userProfile, reservationJSON] = await Promise.all([getUserProfile(newToken), getReservations(newToken)]);
         setUser(userProfile.data);
@@ -53,11 +50,27 @@ export default function ProfilePage() {
       }
     };
 
+
     fetchData();
     return () => {
       setLoading(false);
     };
   }, []);
+  const [reviews, setReviews] = useState<Review[]>([]);
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const reviewsJSON = await getReviews(token!);
+        setReviews(reviewsJSON.data);
+        console.log(reviewsJSON)
+      } catch (err) {
+        console.error(err);
+      }
+    };
+
+    fetchData();
+  }, [token]);
+  // console.log(reviews)
 
   const handleFormChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -75,7 +88,7 @@ export default function ProfilePage() {
       alert("Failed to update profile");
     }
   };
-  if (!token || !profile || !review) return <p>Loading...</p>;
+
 
   return (
     <div className="h-[calc(100vh-65px)] overflow-hidden bg-gray-100 p-6 flex justify-center items-start">
@@ -159,16 +172,32 @@ export default function ProfilePage() {
                 ? "All user's Reviews"
                 : "All user's Reservations"
               : showReviews
-              ? "Your Reviews"
-              : "Your Reservations"}
+                ? "Your Reviews"
+                : "Your Reservations"}
           </h2>
 
           {/* Conditional Rendering for Reservations or Reviews */}
           {showReviews ? (
-            <div className="">
-                <ReviewCart reviews={review} profile={profile} token={token} />
-            
+            <div className="max-h-[30vh] overflow-y-auto p-4 space-y-4">
+              {reviews.length !== 0 ? (
+                <ul className="flex flex-wrap gap-5">
+                  {reviews.map((rev, index) => (
+                    <ReviewCard
+                      key={rev._id || index}
+                      time={rev.createdAt}
+                      rating={rev.reviewStar}
+                      description={rev.reviewText}
+                      restaurant={rev.restaurant.name!}
+                      profile={profile}
+                      reviewId={rev._id!}
+                    />
+                  ))}
+                </ul>
+              ) : (
+                <p className="text-gray-500">No reviews yet.</p>
+              )}
             </div>
+
           ) : (
             <div className="max-h-[30vh] overflow-y-auto p-4">
               {reservations.length === 0 ? (

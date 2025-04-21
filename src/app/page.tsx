@@ -60,7 +60,7 @@ export default function Home() {
     const fetchBestReview = async () => {
       if (bestRestaurant) {
         try {
-          const reviewResponse = await getMeanReviews(bestRestaurant._id || '');
+          const reviewResponse = await getMeanReviews(bestRestaurant._id!);
           const review = reviewResponse.count == 0 ? null : reviewResponse.totalRating;
           console.log(`Fetched review for restaurant ${bestRestaurant._id}:`, review);
           setBestReview(review);

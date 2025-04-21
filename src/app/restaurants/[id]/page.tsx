@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 import React, { useState, useEffect, Suspense } from "react";
 import { useParams } from "next/navigation";
 import getRestaurant from "@/libs/getRestaurant";
-import getReviewForRestaurant from "@/libs/getReviewForRestaurant";
+import getReviewForRestaurant from "@/libs/getReviewforRestaurant";
 import getMeanReviews from "@/libs/getMeanReview";
 import addReservation from "@/libs/addReservations";
 import {
@@ -88,9 +88,13 @@ export default function RestaurantInfo() {
   }, [id]);
 
   useEffect(() => {
-    setFilteredMenu(
-      menuData?.filter((item) => item.type === activeTab) || null
-    );
+    console.log('menuData:', menuData);
+    console.log('activeTab:', activeTab);
+
+    const filtered = menuData?.filter(item => item.type === activeTab) || [];
+    console.log('filteredMenu:', filtered);
+
+    setFilteredMenu(filtered);
   }, [menuData, activeTab]);
 
   const [numberOfPeople, setNumberOfPeople] = useState<number>(1);
@@ -464,63 +468,64 @@ export default function RestaurantInfo() {
         {(profile?.data?.role === "admin" ||
           (profile?.data?.role === "employee" &&
             id === profile?.data?.employedAt)) && (
-          <div className="flex justify-end items-center gap-4 p-8 mr-8">
-            {/* Larger Manage Reservation Button */}
-            <motion.button
-              whileHover={{ backgroundColor: "#5A2934", scale: 1.02 }}
-              transition={{ duration: 0.3 }}
-              className="w-fit px-12 h-16 text-2xl font-bold bg-[#f79540] text-white rounded"
-              onClick={() => router.push(`/restaurants/${id}/management`)}
-            >
-              Manage Reservation
-            </motion.button>
+            <div className="flex justify-end items-center gap-4 p-8 mr-8">
+              {/* Larger Manage Reservation Button */}
+              <motion.button
+                whileHover={{ backgroundColor: "#5A2934", scale: 1.02 }}
+                transition={{ duration: 0.3 }}
+                className="w-fit px-12 h-16 text-2xl font-bold bg-[#f79540] text-white rounded"
+                onClick={() => router.push(`/restaurants/${id}/management`)}
+              >
+                Manage Reservation
+              </motion.button>
 
-            {/* Show Edit and Delete buttons only when not in edit mode */}
-            {!isEditable && (
-              <>
-                <motion.button
-                  whileHover={{ backgroundColor: "black", scale: 1.02 }}
-                  transition={{ duration: 0.3 }}
-                  onClick={() => setIsEditable(true)}
-                  className="w-[65px] h-[65px] bg-[#3d3c3a] text-white text-xl border-0 rounded-none"
-                >
-                  Edit
-                </motion.button>
-                <motion.button
-                  whileHover={{ backgroundColor: "black", scale: 1.02 }}
-                  transition={{ duration: 0.3 }}
-                  onClick={handleDelete}
-                  className="w-[65px] h-[65px] bg-[#3d3c3a] text-white text-xl border-0 rounded-none"
-                >
-                  Delete
-                </motion.button>
-              </>
-            )}
 
-            {/* Show Save and Cancel buttons only when in edit mode */}
-            {isEditable && (
-              <>
-                <motion.button
-                  whileHover={{ backgroundColor: "#5A2934", scale: 1.02 }}
-                  transition={{ duration: 0.3 }}
-                  onClick={handleSave}
-                  className="w-fit px-12 h-16 text-2xl font-bold bg-[#f79540] text-white rounded"
-                >
-                  Save
-                </motion.button>
+              {/* Show Edit and Delete buttons only when not in edit mode */}
+              {!isEditable && (
+                <>
+                  <motion.button
+                    whileHover={{ backgroundColor: "black", scale: 1.02 }}
+                    transition={{ duration: 0.3 }}
+                    onClick={() => setIsEditable(true)}
+                    className="w-[65px] h-[65px] bg-[#3d3c3a] text-white text-xl border-0 rounded-none"
+                  >
+                    Edit
+                  </motion.button>
+                  <motion.button
+                    whileHover={{ backgroundColor: "black", scale: 1.02 }}
+                    transition={{ duration: 0.3 }}
+                    onClick={handleDelete}
+                    className="w-[65px] h-[65px] bg-[#3d3c3a] text-white text-xl border-0 rounded-none"
+                  >
+                    Delete
+                  </motion.button>
+                </>
+              )}
 
-                <motion.button
-                  whileHover={{ backgroundColor: "#5A2934", scale: 1.02 }}
-                  transition={{ duration: 0.3 }}
-                  onClick={() => setIsEditable(false)} // Deactivate edit mode
-                  className="w-fit px-12 h-16 text-2xl font-bold bg-[#f79540] text-white rounded"
-                >
-                  Cancel
-                </motion.button>
-              </>
-            )}
-          </div>
-        )}
+              {/* Show Save and Cancel buttons only when in edit mode */}
+              {isEditable && (
+                <>
+                  <motion.button
+                    whileHover={{ backgroundColor: "#5A2934", scale: 1.02 }}
+                    transition={{ duration: 0.3 }}
+                    onClick={handleSave}
+                    className="w-fit px-12 h-16 text-2xl font-bold bg-[#f79540] text-white rounded"
+                  >
+                    Save
+                  </motion.button>
+
+                  <motion.button
+                    whileHover={{ backgroundColor: "#5A2934", scale: 1.02 }}
+                    transition={{ duration: 0.3 }}
+                    onClick={() => setIsEditable(false)} // Deactivate edit mode
+                    className="w-fit px-12 h-16 text-2xl font-bold bg-[#f79540] text-white rounded"
+                  >
+                    Cancel
+                  </motion.button>
+                </>
+              )}
+            </div>
+          )}
         {/* Menu section*/}
         <section className="flex flex-col gap-3 px-4 lg:px-20 pb-12">
         <div className="flex flex-row justify-center items-center gap-x-4 mb-8">
@@ -542,17 +547,19 @@ export default function RestaurantInfo() {
             {tabOptions.map((tab) => (
               <button
                 key={tab}
-                onClick={() => { if(activeTab!=tab) setFilteredMenu(null); setActiveTab(tab);}}
-                className={`px-6 py-2 border-b-4 text-lg ${
-                  activeTab === tab
-                    ? "border-[#F89640] text-[#F89640]"
-                    : "border-transparent text-gray-500"
-                }`}
+                onClick={() => { setActiveTab(tab); setFilteredMenu(null); }}
+                className={`px-6 py-2 border-b-4 text-lg ${activeTab === tab
+                  ? "border-[#F89640] text-[#F89640]"
+                  : "border-transparent text-gray-500"
+                  }`}
               >
                 {tab}
               </button>
             ))}
+
+
           </div>
+
 
           {/* Cards */}
           {

@@ -6,66 +6,6 @@ import { getAuthCookie } from '@/libs/getAuthCookie';
 import getUserProfile from '@/libs/getUserProfile';
 import addMenu from '@/libs/addMenu';
 
-// TopMenu component (included inline)
-function TopMenu() {
-  const router = useRouter();
-  const [role, setRole] = useState<string | null>(null);
-  const [username, setUsername] = useState<string | null>(null);
-
-  useEffect(() => {
-    const fetchAuth = async () => {
-      try {
-        const auth = await getAuthCookie();
-        if (auth.success) {
-          const profile = await getUserProfile(auth.token);
-          setRole(profile.data.role);
-          setUsername(profile.data.name);
-        }
-      } catch (err) {
-        setRole(null);
-      }
-    };
-
-    fetchAuth();
-  }, []);
-
-  return (
-    <header className="fixed top-0 left-0 w-full bg-[#FFECAD] h-16 px-6 flex items-center justify-between shadow z-50">
-      <div className="text-xl font-bold cursor-pointer text-[#333]" onClick={() => router.push('/')}>
-        SCAM!
-      </div>
-
-      <div className="flex items-center gap-6">
-        {username && <span className="text-sm text-[#333]">👤 {username}</span>}
-        {role === 'admin' && (
-          <button onClick={() => router.push('/admin')} className="text-sm hover:underline">
-            Admin
-          </button>
-        )}
-        {role === 'employee' && (
-          <button onClick={() => router.push('/myRestaurant')} className="text-sm hover:underline">
-            My Restaurant
-          </button>
-        )}
-        {!role ? (
-          <button onClick={() => router.push('/login')} className="text-sm text-[#F89640] hover:underline">
-            Login
-          </button>
-        ) : (
-          <button
-            onClick={() => {
-              document.cookie = 'token=; Max-Age=0';
-              router.refresh();
-            }}
-            className="text-sm text-red-500 hover:underline"
-          >
-            Logout
-          </button>
-        )}
-      </div>
-    </header>
-  );
-}
 
 const tagOptions: { label: string; description: string }[] = [
   { label: "Spicy", description: "Dish is hot and flavorful with spices." },
@@ -161,7 +101,6 @@ export default function CreateMenuPage() {
 
   return (
     <main className="min-h-screen bg-white">
-      <TopMenu />
       <div className="max-w-4xl mx-auto px-6 pt-24 pb-12">
         <h1 className="text-3xl font-bold text-center mb-10">เพิ่มเมนู</h1>
 

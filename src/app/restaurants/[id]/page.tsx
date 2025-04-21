@@ -217,7 +217,7 @@ export default function RestaurantInfo() {
   }
 
   const totalReviews = reviewData.length;
-
+  console.log("filter menu", filteredMenu);
   return (
     <main className="w-full bg-white">
       {/* Top Info */}
@@ -528,20 +528,19 @@ export default function RestaurantInfo() {
           )}
         {/* Menu section*/}
         <section className="flex flex-col gap-3 px-4 lg:px-20 pb-12">
-          <div className="flex flex-row justify-center items-center gap-x-4 mb-8">
-            <h1 className="text-3xl font-bold text-center">Menu</h1>
-            {profile?.data?.role === "admin" && (
-              <motion.button
-                whileHover={{ backgroundColor: "black", scale: 1.02 }}
-                transition={{ duration: 0.3 }}
-                onClick={() => router.push(`/restaurants/${id}/create`)}
-                className="w-[45px] h-[45px] bg-[#3d3c3a] text-white text-xl border-0 rounded-none"
-              >
-                +
-              </motion.button>
-            )}
-          </div>
-
+        <div className="flex flex-row justify-center items-center gap-x-4 mb-8">
+          <h1 className="text-3xl font-bold text-center">Menu</h1>
+          {profile?.data?.role === "admin" && (
+            <motion.button
+              whileHover={{ backgroundColor: "black", scale: 1.02 }}
+              transition={{ duration: 0.3 }}
+              onClick={() => router.push(`/restaurants/${id}/create`)}
+              className="w-[45px] h-[45px] bg-[#3d3c3a] text-white text-xl border-0 rounded-none"
+            >
+              +
+            </motion.button>
+          )}
+        </div>
           {/* Tabs */}
           <div className="flex justify-center mb-8 gap-4">
             {tabOptions.map((tab) => (
@@ -562,39 +561,37 @@ export default function RestaurantInfo() {
 
 
           {/* Cards */}
-          <div className="h-[320px] grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-            {
-              activeTab === 'dish' &&
-              (
-                <div className="h-[320px] grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-                  {filteredMenu?.map((item, i) => (
-                    <MenuCard key={i} menu={item} role={role} token={token} />
-                  ))}
-                </div>
-              )
-            }
-            {
-              activeTab === 'set' &&
-              (
-                <div className="h-[320px] grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-                  {filteredMenu?.map((item, i) => (
-                    <MenuCard key={i} menu={item} role={role} token={token} />
-                  ))}
-                </div>
-              )
-            }
-            {
-              activeTab === 'drink' &&
-              (
-                <div className="h-[320px] grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-                  {filteredMenu?.map((item, i) => (
-                    <MenuCard key={i} menu={item} role={role} token={token} />
-                  ))}
-                </div>
-              )
-            }
-
+          {
+            activeTab === 'dish' &&
+            (
+              <div className="h-[320px] grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+            {filteredMenu?.map((item, i) => (
+              <MenuCard key={i} menu={item} role={role} token={token} />
+            ))}
           </div>
+            )
+          }
+           {
+            activeTab === 'set' &&
+            (
+              <div className="h-[320px] grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+            {filteredMenu?.map((item, i) => (
+              <MenuCard key={i} menu={item} role={role} token={token} />
+            ))}
+          </div>
+            )
+          }
+           {
+            activeTab === 'drink' &&
+            (
+              <div className="h-[320px] grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+            {filteredMenu?.map((item, i) => (
+              <MenuCard key={i} menu={item} role={role} token={token} />
+            ))}
+          </div>
+            )
+          }
+          
         </section>
 
         {/* Reviews section */}

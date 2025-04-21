@@ -60,7 +60,7 @@ export default function Home() {
     const fetchBestReview = async () => {
       if (bestRestaurant) {
         try {
-          const reviewResponse = await getMeanReviews(bestRestaurant._id );
+          const reviewResponse = await getMeanReviews(bestRestaurant._id!);
           const review = reviewResponse.count == 0 ? null : reviewResponse.totalRating;
           console.log(`Fetched review for restaurant ${bestRestaurant._id}:`, review);
           setBestReview(review);
@@ -81,7 +81,7 @@ export default function Home() {
   return (
     <main className="flex flex-col items-center w-full relative bg-[#FAF9F6]">
       {/* Welcome */}
-      <div className="flex flex-col w-full h-screen items-center justify-center">
+      <div className="flex flex-col w-full h-[calc(100vh-65px)] items-center justify-center bg-gradient-to-b from-[#FAF9F6] via-[#FAF9F6] via-[90%] to-[#ffe8c3] to-[100%]">
         <h2 className="text-[50px]">Welcome to</h2>
         <h1 className="text-[150px] mb-10">
           <span className="text-[#F59C04]">S</span>
@@ -90,7 +90,7 @@ export default function Home() {
           <span className="text-[#1FA49F]">M</span>
           <span className="text-[#F59C04]"> !</span>
         </h1>
-        {/* #FF7B00 Old Button Hover Color */}
+        {/* #FF7B00 /#f1e4cf Old Button Hover Color */}
         <motion.button
           className="bg-[#F89640] text-white text-2xl px-[60px] py-5"
           whileHover={{ backgroundColor: "#5A2934", scale: 1.02 }}
@@ -102,7 +102,7 @@ export default function Home() {
       </div>
 
       {/* Best Reviewed Restaurant */}
-      <div className="flex flex-col w-full h-[80vh] bg-[#F89640] px-20 justify-center space-y-6 pb-3">
+      <div className="flex flex-col w-full h-[80vh] bg-gradient-to-b from-[#F89640] to-[#da6622] px-20 justify-center space-y-6 pb-3">
 
         <h1 className="text-white text-[60px] font-medium">
           Best Reviewed Restaurant
@@ -203,7 +203,7 @@ export default function Home() {
 
       {/* Who are we */}
       <div className="flex flex-row w-full h-[80vh]">
-        <div className="h-full w-1/2 bg-[#75C4CD] flex flex-col px-20 py-2 flex items-center justify-center">
+        <div className="h-full w-1/2 bg-gradient-to-b from-[#75C4CD] to-indigo-200 flex flex-col px-20 py-2 flex items-center justify-center">
           <h1 className="text-white text-[80px] mb-2">Who are we ?</h1>
           <p className="text-white text-xl text-center">
             We are a website created to help you easily view and reserve
@@ -241,7 +241,7 @@ export default function Home() {
           />
         </div>
 
-        <div className="h-full w-1/2 bg-[#75C4CD] flex flex-col px-10 py-2 space-y-4 flex items-center justify-center">
+        <div className="h-full w-1/2 bg-gradient-to-b from-[#75C4CD] to-indigo-200 flex flex-col px-10 py-2 space-y-4 flex items-center justify-center">
           <h1 className="text-white text-[80px]">What you can do ?</h1>
 
           {/* Browse Restaurants (Add Link) */}
@@ -283,7 +283,7 @@ export default function Home() {
 
       {/* Register */}
       <div className="flex flex-row w-full h-[80vh]">
-        <div className="h-full w-1/2 bg-[#75C4CD] flex flex-col px-10 py-2 flex items-center justify-center space-y-4">
+        <div className="h-full w-1/2 bg-gradient-to-b from-[#75C4CD] to-indigo-200 flex flex-col px-10 py-2 flex items-center justify-center space-y-4">
           <h1 className="text-white text-[70px]">Let's Get Started !</h1>
           <p className="text-white text-3xl mb-5">
             Click here to create your account !

@@ -1,4 +1,4 @@
-export default async function editMenu (token:string, restaurantId:string, id:string,
+export default async function editMenu (token:string, restaurantId:string,
     updatedData:{
         name?:string, 
         restaurant?:string, 
@@ -7,10 +7,10 @@ export default async function editMenu (token:string, restaurantId:string, id:st
         type?:string, 
         description?:string, 
         tag?:string[]
-    }
+    }, id?:string
 ) {
 
-    const response=await fetch(`${process.env.BACKEND_URL}/api/restaurants/${restaurantId}/menus${id}`, {
+    const response=await fetch(`${process.env.BACKEND_URL}/api/restaurants/${restaurantId}/menus/${id}`, {
         method:"PUT",
         headers:{
             "Content-Type": "application/json", 

@@ -71,6 +71,7 @@ export interface Profile{
 }
 
 export interface Menu {
+  _id?:string;
   name: string;
   restaurant: string;
   picture: string;
@@ -118,6 +119,11 @@ export interface ReviewJSON {
   totalPages:number
 }
 
+export interface MenuJSON {
+  success: boolean
+  count: number,
+  data: Menu[]
+}
 export interface User {
   name: string;
   tel: string;

@@ -2,7 +2,7 @@
 import Link from "next/link";
 import { Rating } from "@mui/material";
 import { ProfileJSON } from "../../interfaces";
-import deleteReview from "@/libs/deleteReview";
+import deleteReview from "@/libs/Review/deleteReview";
 import { Session } from "next-auth";
 import ReviewInteractiveCard from "./ReviewInteractiveCard";
 

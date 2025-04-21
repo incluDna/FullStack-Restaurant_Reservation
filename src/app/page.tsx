@@ -1,13 +1,13 @@
 "use client";
 
-import getBestReviewedRestaurant from "@/libs/getBestReviewedRestaurant";
+import getBestReviewedRestaurant from "@/libs/Restaurant/getBestReviewedRestaurant";
 import { motion, useInView } from "framer-motion";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Restaurant } from "../../interfaces";
 import { Star } from "lucide-react";
 import Skeleton from '@mui/material/Skeleton';
-import getMeanReviews from "@/libs/getMeanReview";
+import getMeanReviews from "@/libs/Review/getMeanReview";
 
 export default function Home() {
   const router = useRouter();

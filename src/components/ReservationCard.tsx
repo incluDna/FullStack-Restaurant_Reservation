@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Reservation } from "../../interfaces";
-import editReservation from "@/libs/editReservation";
-import deleteReservation from "@/libs/deleteReservation";
+import editReservation from "@/libs/Reservation/editReservation";
+import deleteReservation from "@/libs/Reservation/deleteReservation";
 
 interface ReservationCardProps {
   res: Reservation;

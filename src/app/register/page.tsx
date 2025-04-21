@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useState } from 'react'
-import userRegister from "@/libs/userRegister";
+import userRegister from '@/libs/User/userRegister'
 
 export default function Register() {
   const [name, setName] = useState('')

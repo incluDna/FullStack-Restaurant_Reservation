@@ -1,9 +1,9 @@
 'use client'
 import { useEffect, useState } from "react";
 import { Menu, MenuJSON } from "../../interfaces";
-import editMenu from "@/libs/editMenu";
-import getMenu from "@/libs/getMenu";
-import deleteMenu from "@/libs/deleteMenu";
+import editMenu from "@/libs/Menu/editMenu";
+import getMenu from "@/libs/Menu/getMenu";
+import deleteMenu from "@/libs/Menu/deleteMenu";
 
 export default function MenuCard({ menu, role, token }: { menu: Menu, role: string | null, token: string | null }) {
   const [isEditable, setIsEditable] = useState<boolean>(false);

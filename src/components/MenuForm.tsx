@@ -1,6 +1,6 @@
 "use client";
 
-import addMenu from "@/libs/addMenu";
+import addMenu from "@/libs/Menu/addMenu";
 import { useParams, useRouter } from "next/navigation";
 import { useState } from "react";
 

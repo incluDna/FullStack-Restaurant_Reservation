@@ -1,6 +1,6 @@
 'use client'
-import addReviews from "@/libs/addReviews";
-import editReview from "@/libs/editReview";
+import addReviews from "@/libs/Review/addReviews";
+import editReview from "@/libs/Review/editReview";
 import { Rating, TextField } from "@mui/material";
 import { Session } from "next-auth";
 import { Pattaya } from "next/font/google";

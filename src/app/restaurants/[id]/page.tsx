@@ -4,10 +4,10 @@ import MenuCard from "@/components/MenuCard";
 import { motion } from "framer-motion";
 import React, { useState, useEffect, Suspense } from "react";
 import { useParams } from "next/navigation";
-import getRestaurant from "@/libs/getRestaurant";
-import getReviewForRestaurant from "@/libs/getReviewForRestaurant";
-import getMeanReviews from "@/libs/getMeanReview";
-import addReservation from "@/libs/addReservations";
+import getRestaurant from "@/libs/Restaurant/getRestaurant";
+import getReviewForRestaurant from "@/libs/Review/getReviewForRestaurant";
+import getMeanReviews from "@/libs/Review/getMeanReview";
+import addReservation from "@/libs/Reservation/addReservations";
 import {
   MeanReview,
   Menu,
@@ -18,12 +18,12 @@ import {
 } from "../../../../interfaces";
 import { LinearProgress } from "@mui/material";
 import ReviewCatalogExample from "@/components/ReviewCatalogExample";
-import { getAuthCookie } from "@/libs/getAuthCookie";
+import { getAuthCookie } from "@/libs/User/getAuthCookie";
 import { useRouter } from "next/navigation";
-import getUserProfile from "@/libs/getUserProfile";
-import editRestaurants from "@/libs/editRestaurant";
-import deleteRestaurant from "@/libs/deleteRestaurant";
-import getMenus from "@/libs/getMenus";
+import getUserProfile from "@/libs/User/getUserProfile";
+import editRestaurants from "@/libs/Restaurant/editRestaurant";
+import deleteRestaurant from "@/libs/Restaurant/deleteRestaurant";
+import getMenus from "@/libs/Menu/getMenus";
 
 const tabOptions = ["dish", "drink", "set"];
 

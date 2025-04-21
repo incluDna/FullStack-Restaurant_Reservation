@@ -1,13 +1,13 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { getAuthCookie } from "@/libs/getAuthCookie";
-import getUserProfile from "@/libs/getUserProfile";
-import getReservations from "@/libs/getReservations";
+import { getAuthCookie } from "@/libs/User/getAuthCookie";
+import getUserProfile from "@/libs/User/getUserProfile";
+import getReservations from "@/libs/Reservation/getReservations";
 import { Reservation, Review, User } from "../../../interfaces";
-import updateUserProfile from "@/libs/updateUserProfile";
+import updateUserProfile from "@/libs/User/updateUserProfile";
 import ReservationCard from "@/components/ReservationCard";
-import getReviews from "@/libs/getReviews";
+import getReviews from "@/libs/Review/getReviews";
 import ReviewCard from "@/components/ReviewCard";
 export default function ProfilePage() {
   const [user, setUser] = useState<User>({

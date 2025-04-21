@@ -1,10 +1,10 @@
 "use client";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { getAuthCookie } from "@/libs/getAuthCookie";
+import { getAuthCookie } from "@/libs/User/getAuthCookie";
 import { useEffect, useState } from "react";
-import getUserProfile from "@/libs/getUserProfile";
-import { deleteAuthCookie } from "@/libs/deleteAuthCookie";
+import getUserProfile from "@/libs/User/getUserProfile";
+import { deleteAuthCookie } from "@/libs/User/deleteAuthCookie";
 export default function TopMenu() {
     const [token, setToken] = useState<string | null>(null);
     const [role, setRole] = useState<string | null>(null);

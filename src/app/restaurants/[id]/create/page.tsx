@@ -2,9 +2,9 @@
 
 import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import { getAuthCookie } from '@/libs/getAuthCookie';
-import getUserProfile from '@/libs/getUserProfile';
-import addMenu from '@/libs/addMenu';
+import { getAuthCookie } from '@/libs/User/getAuthCookie';
+import getUserProfile from '@/libs/User/getUserProfile';
+import addMenu from '@/libs/Menu/addMenu';
 
 
 const tagOptions: { label: string; description: string }[] = [

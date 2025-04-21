@@ -1,8 +1,8 @@
 import ReviewCart from "@/components/ReviewCart"
-import getReviews from "@/libs/getReviews";
-import { getServerSession } from "next-auth";
+import getReviews from "@/libs/Review/getReviews";
+// import { getServerSession } from "next-auth";
 import { Pattaya } from "next/font/google";
-import getUserProfile from "@/libs/getUserProfile";
+import getUserProfile from "@/libs/User/getUserProfile";
 import { LinearProgress } from "@mui/material";
 import { Suspense } from "react";
 

@@ -555,14 +555,14 @@ export default function RestaurantInfo() {
 
           {/* Cards */}
           {
-             activeTab === 'dish' &&
-             (
-               <div className="h-[320px] grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+            activeTab === 'dish' &&
+            (
+              <div className="h-[320px] grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
             {filteredMenu?.map((item, i) => (
               <MenuCard key={i} menu={item} role={role} token={token} />
             ))}
           </div>
-           )
+            )
           }
            {
             activeTab === 'set' &&

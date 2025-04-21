@@ -216,16 +216,6 @@ export default function RestaurantInfo() {
   console.log("filter menu", filteredMenu);
   return (
     <main className="w-full bg-white">
-      {profile?.data?.role === "admin" && (
-        <div className="flex justify-end w-full pr-16 mb-8">
-          <motion.button
-            whileHover={{ backgroundColor: "black", scale: 1.02 }}
-            transition={{ duration: 0.3 }}
-            onClick={() => router.push(`/restaurants/${id}/create`)}
-            className="w-[65px] h-[65px] bg-[#3d3c3a] text-white text-xl border-0 rounded-none"
-          ></motion.button>
-        </div>
-      )}
       {/* Top Info */}
       <section className="flex flex-col lg:flex-row gap-4 px-20 pt-20 pb-10 lg:justify-center">
         <div className="font-inter lg:w-3/5 xl:w-2/5 h-auto items-center justify-center bg-[#3d3c3a]  rounded-3xl overflow-hidden">
@@ -533,7 +523,19 @@ export default function RestaurantInfo() {
         )}
         {/* Menu section*/}
         <section className="flex flex-col gap-3 px-4 lg:px-20 pb-12">
-          <h1 className="text-3xl font-bold mb-8 text-center">Menu</h1>
+        <div className="flex flex-row justify-center items-center gap-x-4 mb-8">
+          <h1 className="text-3xl font-bold text-center">Menu</h1>
+          {profile?.data?.role === "admin" && (
+            <motion.button
+              whileHover={{ backgroundColor: "black", scale: 1.02 }}
+              transition={{ duration: 0.3 }}
+              onClick={() => router.push(`/restaurants/${id}/create`)}
+              className="w-[45px] h-[45px] bg-[#3d3c3a] text-white text-xl border-0 rounded-none"
+            >
+              +
+            </motion.button>
+          )}
+        </div>
           {/* Tabs */}
           <div className="flex justify-center mb-8 gap-4">
             {tabOptions.map((tab) => (
@@ -552,11 +554,37 @@ export default function RestaurantInfo() {
           </div>
 
           {/* Cards */}
-          <div className="h-[320px] grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+          {
+             activeTab === 'dish' &&
+             (
+               <div className="h-[320px] grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
             {filteredMenu?.map((item, i) => (
               <MenuCard key={i} menu={item} role={role} token={token} />
             ))}
           </div>
+           )
+          }
+           {
+            activeTab === 'set' &&
+            (
+              <div className="h-[320px] grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+            {filteredMenu?.map((item, i) => (
+              <MenuCard key={i} menu={item} role={role} token={token} />
+            ))}
+          </div>
+            )
+          }
+           {
+            activeTab === 'drink' &&
+            (
+              <div className="h-[320px] grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+            {filteredMenu?.map((item, i) => (
+              <MenuCard key={i} menu={item} role={role} token={token} />
+            ))}
+          </div>
+            )
+          }
+          
         </section>
 
         {/* Reviews section */}

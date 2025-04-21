@@ -6,13 +6,13 @@ import deleteReview from "@/libs/deleteReview";
 import { Session } from "next-auth";
 import ReviewInteractiveCard from "./ReviewInteractiveCard";
 
-export default function ReviewCard({ time, rating,description ,restaurant,profile,reviewId,session}: 
+export default function ReviewCard({ time, rating,description ,restaurant,profile,reviewId,token}: 
     { time: string, rating: number ,description:string,restaurant:string,
-        profile:ProfileJSON,reviewId:string,session?:Session }) {
+        profile:ProfileJSON,reviewId:string,token:string }) {
 
     const onDelete = (rid: string) => {
         alert('delete review')
-        // deleteReview(rid, session.user.token) , TEST LATER
+        deleteReview(rid, token) 
     };
     return (
         <div className="w-[400px] h-full bg-[#FFECAD] p-5 flex flex-col">

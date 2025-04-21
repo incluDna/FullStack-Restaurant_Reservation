@@ -11,7 +11,7 @@ import { useEffect, useState } from "react";
 const pattaya = Pattaya({ weight: "400", subsets: ["thai", "latin"] }); 
 
 
-export default   function Reviewform({ session,profile}: { session: Session  ,profile:any}) {
+export default   function Reviewform({ token,profile}: { token: string  ,profile:any}) {
   const router = useRouter()
   const urlParams = useSearchParams();
   const [rid, setRid] = useState<string>("");
@@ -42,7 +42,7 @@ export default   function Reviewform({ session,profile}: { session: Session  ,pr
 
       addReviews(
         
-        session.user.token,{
+        token,{
             user: user,
             restaurant: rid,
             reviewStar: reviewStar,
@@ -60,7 +60,7 @@ export default   function Reviewform({ session,profile}: { session: Session  ,pr
       
 
 
-      editReview(session.user.token, id, reviewStar,Description);
+      editReview(token, id, reviewStar,Description);
       alert("Review updated ");
       router.push('/profile/view/review')
 

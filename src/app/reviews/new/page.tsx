@@ -1,17 +1,37 @@
+'use client'
 import ReviewForm from "@/components/ReviewForm";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import getUserProfile from "@/libs/getUserProfile";
+import { useEffect, useState } from "react";
+import { getAuthCookie } from "@/libs/getAuthCookie";
 
-export default async function addReviews() {
+export default  function addReviews() {
     // WILL TEST LATER
-    const session =await getServerSession(authOptions);
-    if(!session)return
-    const profile=await getUserProfile(session.user.token);
+    const [token, setToken] = useState<string | null>(null);
+    const [profile, setProfile] = useState<any>(null);
     
+      useEffect(() => {
+        async function fetchToken() {
+          try {
+            const data = await getAuthCookie();
+            if (data.success) {
+              setToken(data.token);
+              const userProfile = await getUserProfile(data.token);
+              setProfile(userProfile);
+            } else {
+              console.error("Auth error:", data.error);
+            }
+          } catch (err) {
+            console.error("Failed to fetch auth cookie", err);
+          }
+        }
+        fetchToken();
+      }, []);
+    if(!token)return;
+    if(!profile)return;
+   
     return (  
 
-        <ReviewForm session={session} profile={profile}/>
+        <ReviewForm token={token} profile={profile}/>
              
     )
 }

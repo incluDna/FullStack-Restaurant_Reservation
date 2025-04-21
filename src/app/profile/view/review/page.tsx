@@ -11,6 +11,7 @@ import { ReviewJSON } from "../../../../../interfaces";
 const pattaya = Pattaya({ weight: "400", subsets: ["thai", "latin"] });
 
 export default function ManageReview() {
+    //DELETE??
     // const session = await getServerSession(authOptions);
     // if (!session) return null
     // const token =

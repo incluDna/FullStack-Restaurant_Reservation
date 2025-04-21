@@ -69,11 +69,11 @@ export default function RestaurantInfo() {
   }, []);
 
   useEffect(() => {
-    if (!id) return;
+    if (!id||!token) return;
     const fetchData = async () => {
       try {
         const restaurantResponse: RestaurantJSON = await getRestaurant(id);
-        const reviewResponse: ReviewJSON = await getReviewForRestaurant(id);
+        const reviewResponse: ReviewJSON = await getReviewForRestaurant(id,1);
         const meanReviewResponse: MeanReview = await getMeanReviews(id);
         const menuResponse: MenuJSON = await getMenus(id);
         setMenuData(menuResponse.data);

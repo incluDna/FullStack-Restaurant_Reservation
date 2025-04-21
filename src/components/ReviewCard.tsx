@@ -6,9 +6,9 @@ import deleteReview from "@/libs/deleteReview";
 import { Session } from "next-auth";
 import ReviewInteractiveCard from "./ReviewInteractiveCard";
 
-export default function ReviewCard({ time, rating,description ,restaurant,profile,reviewId}: 
+export default function ReviewCard({ time, rating,description ,restaurant,profile,token,reviewId}: 
     { time: string, rating: number ,description:string,restaurant:string,
-        profile:ProfileJSON,reviewId:string}) {
+        profile:ProfileJSON,reviewId:string,token:string}) {
 
     const onDelete = (rid: string) => {
         alert('delete review')

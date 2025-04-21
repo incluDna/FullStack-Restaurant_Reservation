@@ -41,7 +41,7 @@ export default function ProfilePage() {
         setUser(userProfile.data);
         setReservations(reservationJSON.data);
         const userReview = await getReviews(newToken);
-        setReview(userReview);
+        setReviews(userReview.data);
         const userProfile1 = await getUserProfile(newToken);
         setProfile(userProfile1);
 
@@ -70,6 +70,7 @@ export default function ProfilePage() {
 
     fetchData();
   }, [token]);
+  if(!token)return <div>Loading...</div>;
   // console.log(reviews)
 
   const handleFormChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -190,6 +191,7 @@ export default function ProfilePage() {
                       restaurant={rev.restaurant.name!}
                       profile={profile}
                       reviewId={rev._id!}
+                      token={token}
                     />
                   ))}
                 </ul>

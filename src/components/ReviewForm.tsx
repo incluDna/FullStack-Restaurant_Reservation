@@ -110,7 +110,7 @@ export default   function Reviewform({ token,profile}: { token: string  ,profile
             </div>
         </div>
       </div>
-      <Link href={`/review/manage`}> 
+      <Link href={`/profile`}> 
       <button
         className="font-serif m-autoblock rounded-md bg-[#F89640] 
         hover:bg-green-600 px-3 py-2 text-white shadow-sm"

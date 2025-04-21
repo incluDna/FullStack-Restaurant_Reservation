@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 import React, { useState, useEffect, Suspense } from "react";
 import { useParams } from "next/navigation";
 import getRestaurant from "@/libs/getRestaurant";
-import getReviewForRestaurant from "@/libs/getReviewforRestaurant";
+import getReviewForRestaurant from "@/libs/getReviewForRestaurant";
 import getMeanReviews from "@/libs/getMeanReview";
 import addReservation from "@/libs/addReservations";
 import {
@@ -24,7 +24,10 @@ import getUserProfile from "@/libs/getUserProfile";
 import editRestaurants from "@/libs/editRestaurant";
 import deleteRestaurant from "@/libs/deleteRestaurant";
 import getMenus from "@/libs/getMenus";
-
+import TopInfo from "@/components/TopInfo";
+import QueueCard from "@/components/QueueCard";
+import ReservationCardInPageID from "@/components/ReservationCardInPageID";
+import MenuSection from "@/components/MenuSection";
 const tabOptions = ["dish", "drink", "set"];
 
 export default function RestaurantInfo() {
@@ -45,7 +48,10 @@ export default function RestaurantInfo() {
   const [deletionSuccess, setDeletionSuccess] = useState<boolean>(false);
   const [reservationError, setReservationError] = useState<string | null>(null);
   const [reservationSuccess, setReservationSuccess] = useState<boolean>(false);
-
+  const [numberOfPeople, setNumberOfPeople] = useState<number>(1);
+  const [selectedDate, setSelectedDate] = useState<string>("");
+  const [selectedTime, setSelectedTime] = useState<string>("");
+  const [timeOptions, setTimeOptions] = useState<string[]>([]);
   const [activeTab, setActiveTab] = useState("dish");
 
   useEffect(() => {
@@ -87,20 +93,6 @@ export default function RestaurantInfo() {
     fetchData();
   }, [id]);
 
-  useEffect(() => {
-    console.log('menuData:', menuData);
-    console.log('activeTab:', activeTab);
-
-    const filtered = menuData?.filter(item => item.type === activeTab) || [];
-    console.log('filteredMenu:', filtered);
-
-    setFilteredMenu(filtered);
-  }, [menuData, activeTab]);
-
-  const [numberOfPeople, setNumberOfPeople] = useState<number>(1);
-  const [selectedDate, setSelectedDate] = useState<string>("");
-  const [selectedTime, setSelectedTime] = useState<string>("");
-  const [timeOptions, setTimeOptions] = useState<string[]>([]);
   useEffect(() => {
     if (!restaurantData?.openTime || !restaurantData?.closeTime) return;
 
@@ -221,140 +213,11 @@ export default function RestaurantInfo() {
   return (
     <main className="w-full bg-white">
       {/* Top Info */}
-      <section className="flex flex-col lg:flex-row gap-4 px-20 pt-20 pb-10 lg:justify-center">
-        <div className="font-inter lg:w-3/5 xl:w-2/5 h-auto items-center justify-center bg-[#3d3c3a]  rounded-3xl overflow-hidden">
-          {isEditable ? (
-            <input
-              type="text"
-              value={restaurantData.picture}
-              onChange={(e) =>
-                setRestaurantData({
-                  ...restaurantData,
-                  picture: e.target.value,
-                })
-              }
-              className="w-full text-base text-black border-b-2 border-gray-300 focus:outline-none"
-              placeholder="Enter image URL or base64 string"
-            />
-          ) : (
-            <img
-              className="w-full h-full object-cover"
-              alt="restaurant"
-              src={restaurantData.picture}
-            />
-          )}
-        </div>
-
-        <div className="flex flex-col gap-2 flex-1 lg:justify-center">
-          <h1 className="font-semibold text-4xl text-black">
-            {isEditable ? (
-              <input
-                type="text"
-                value={restaurantData.name}
-                onChange={(e) =>
-                  setRestaurantData({ ...restaurantData, name: e.target.value })
-                }
-                className="w-full text-xl text-black border-b-2 border-gray-300 focus:outline-none"
-              />
-            ) : (
-              restaurantData.name
-            )}
-          </h1>
-
-          <div className="font-inter font-semibold text-base lg:text-xl space-y-1 text-black">
-            <div>
-              {isEditable ? (
-                <>
-                  <input
-                    type="text"
-                    value={restaurantData.address}
-                    onChange={(e) =>
-                      setRestaurantData({
-                        ...restaurantData,
-                        address: e.target.value,
-                      })
-                    }
-                    className="w-full text-base text-black border-b-2 border-gray-300 focus:outline-none"
-                  />
-                  <input
-                    type="text"
-                    value={restaurantData.district}
-                    onChange={(e) =>
-                      setRestaurantData({
-                        ...restaurantData,
-                        district: e.target.value,
-                      })
-                    }
-                    className="w-full text-base text-black border-b-2 border-gray-300 focus:outline-none"
-                  />
-                </>
-              ) : (
-                `${restaurantData.address}, ${restaurantData.district}`
-              )}
-            </div>
-
-            <div>
-              {isEditable ? (
-                <>
-                  <input
-                    type="text"
-                    value={restaurantData.province}
-                    onChange={(e) =>
-                      setRestaurantData({
-                        ...restaurantData,
-                        province: e.target.value,
-                      })
-                    }
-                    className="w-full text-base text-black border-b-2 border-gray-300 focus:outline-none"
-                  />
-                  <input
-                    type="text"
-                    value={restaurantData.postalCode}
-                    onChange={(e) =>
-                      setRestaurantData({
-                        ...restaurantData,
-                        postalCode: e.target.value,
-                      })
-                    }
-                    className="w-full text-base text-black border-b-2 border-gray-300 focus:outline-none"
-                  />
-                  <input
-                    type="text"
-                    value={restaurantData.region}
-                    onChange={(e) =>
-                      setRestaurantData({
-                        ...restaurantData,
-                        region: e.target.value,
-                      })
-                    }
-                    className="w-full text-base text-black border-b-2 border-gray-300 focus:outline-none"
-                  />
-                </>
-              ) : (
-                `${restaurantData.province} ${restaurantData.postalCode} ${restaurantData.region}`
-              )}
-            </div>
-
-            <div>
-              {isEditable ? (
-                <input
-                  type="text"
-                  value={restaurantData.tel}
-                  onChange={(e) =>
-                    setRestaurantData({
-                      ...restaurantData,
-                      tel: e.target.value,
-                    })
-                  }
-                  className="w-full text-base text-black border-b-2 border-gray-300 focus:outline-none"
-                />
-              ) : (
-                restaurantData.tel
-              )}
-            </div>
-          </div>
-        </div>
-      </section>
+      <TopInfo
+        restaurantData={restaurantData} 
+        isEditable={isEditable}
+        setRestaurantData={restaurantData}
+      ></TopInfo>
       <div className="lg:px-20">
         {/* Success Message for Deletion */}
         {deletionSuccess && (
@@ -364,104 +227,14 @@ export default function RestaurantInfo() {
         )}
 
         {profile?.data?.role === "user" && (
-          <section className="flex flex-col lg:flex-row gap-4 p-10">
-            {/* Queue */}
-            <div className="flex-1 bg-[#ffebac] p-6 flex flex-col justify-center rounded-xl">
-              <h2 className="text-2xl font-bold text-center text-black mb-6">
-                Get Queue
-              </h2>
-              <div className="flex flex-col items-center justify-center flex-grow gap-4">
-                <label className="text-lg text-black">How many people?</label>
-                <input
-                  type="number"
-                  className="w-24 h-10 text-base p-2 bg-white border"
-                />
-              </div>
-              <motion.button
-                whileHover={{ backgroundColor: "#5A2934", scale: 1.02 }}
-                transition={{ duration: 0.3 }}
-                className="w-full h-10 bg-[#f79540] text-white text-lg mt-6"
-              >
-                Get in Line
-              </motion.button>
-            </div>
-
-            {/* Reservation */}
-            <div className="flex-1 bg-[#ffebac] p-6 flex flex-col justify-between rounded-xl">
-              <div className="flex flex-col flex-1 justify-center">
-                <div className="grid grid-cols-1 place-items-center gap-4">
-                  <h2 className="text-2xl font-bold text-black">
-                    Reserve Table
-                  </h2>
-                  <div className="flex flex-col items-center gap-2">
-                    <label className="text-lg text-black">
-                      How many people?
-                    </label>
-                    <input
-                      type="number"
-                      value={numberOfPeople}
-                      onChange={(e) =>
-                        setNumberOfPeople(Number(e.target.value))
-                      }
-                      className="w-24 h-10 p-2 bg-white border"
-                    />
-                  </div>
-                  <div className="flex flex-col items-center gap-2">
-                    <label className="text-lg text-black">
-                      Select Date & Time
-                    </label>
-                    <input
-                      type="date"
-                      value={selectedDate}
-                      onChange={(e) => setSelectedDate(e.target.value)}
-                      min={(() => {
-                        const today = new Date();
-                        const year = today.getFullYear();
-                        const month = String(today.getMonth() + 1).padStart(
-                          2,
-                          "0"
-                        );
-                        const day = String(today.getDate()).padStart(2, "0");
-                        return `${year}-${month}-${day}`;
-                      })()}
-                      className="w-40 h-10 p-2  text-gray-700 bg-white border"
-                    />
-                    <select
-                      value={selectedTime}
-                      onChange={(e) => setSelectedTime(e.target.value)}
-                      className="w-40 h-10 p-2 bg-white border text-gray-700"
-                    >
-                      <option value="" disabled hidden>
-                        - Select Time -
-                      </option>
-                      {timeOptions.map((time) => (
-                        <option key={time} value={time}>
-                          {time}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                </div>
-              </div>
-              <motion.button
-                whileHover={{ backgroundColor: "#5A2934", scale: 1.02 }}
-                transition={{ duration: 0.3 }}
-                onClick={handleReservation}
-                className="w-full h-10 mt-8 bg-[#f79540] text-white text-lg"
-              >
-                Reserve
-              </motion.button>
-              {reservationError && (
-                <div className="text-red-500 text-center mt-4">
-                  {reservationError}
-                </div>
-              )}
-              {reservationSuccess && (
-                <div className="text-green-500 text-center mt-4">
-                  Reservation confirmed successfully
-                </div>
-              )}
-            </div>
+          <section className="flex flex-col lg:flex-row gap-4 p-10">         
+            <QueueCard/>           
+            <ReservationCardInPageID
+            restaurantData={restaurantData}
+            token={token}
+            profile={profile}
+            />
+            
           </section>
         )}
         {/* Edit button for Admin & Employee */}
@@ -526,73 +299,14 @@ export default function RestaurantInfo() {
               )}
             </div>
           )}
-        {/* Menu section*/}
-        <section className="flex flex-col gap-3 px-4 lg:px-20 pb-12">
-        <div className="flex flex-row justify-center items-center gap-x-4 mb-8">
-          <h1 className="text-3xl font-bold text-center">Menu</h1>
-          {profile?.data?.role === "admin" && (
-            <motion.button
-              whileHover={{ backgroundColor: "black", scale: 1.02 }}
-              transition={{ duration: 0.3 }}
-              onClick={() => router.push(`/restaurants/${id}/create`)}
-              className="w-[45px] h-[45px] bg-[#3d3c3a] text-white text-xl border-0 rounded-none"
-            >
-              +
-            </motion.button>
-          )}
-        </div>
-          {/* Tabs */}
-          <div className="flex justify-center mb-8 gap-4">
-            {tabOptions.map((tab) => (
-              <button
-                key={tab}
-                onClick={() => { setActiveTab(tab); setFilteredMenu(null); }}
-                className={`px-6 py-2 border-b-4 text-lg ${activeTab === tab
-                  ? "border-[#F89640] text-[#F89640]"
-                  : "border-transparent text-gray-500"
-                  }`}
-              >
-                {tab}
-              </button>
-            ))}
 
 
-          </div>
-
-
-          {/* Cards */}
-          {
-            activeTab === 'dish' &&
-            (
-              <div className="h-[320px] grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-            {filteredMenu?.map((item, i) => (
-              <MenuCard key={i} menu={item} role={role} token={token} />
-            ))}
-          </div>
-            )
-          }
-           {
-            activeTab === 'set' &&
-            (
-              <div className="h-[320px] grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-            {filteredMenu?.map((item, i) => (
-              <MenuCard key={i} menu={item} role={role} token={token} />
-            ))}
-          </div>
-            )
-          }
-           {
-            activeTab === 'drink' &&
-            (
-              <div className="h-[320px] grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-            {filteredMenu?.map((item, i) => (
-              <MenuCard key={i} menu={item} role={role} token={token} />
-            ))}
-          </div>
-            )
-          }
-          
-        </section>
+        <MenuSection
+        id={restaurantData._id}
+        token={token}
+        profile={profile}
+        menuData={menuData}
+        />
 
         {/* Reviews section */}
         <section className="flex flex-col gap-6 px-4 lg:px-20 pb-12">

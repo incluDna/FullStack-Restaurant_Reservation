@@ -525,7 +525,8 @@ export default function RestaurantInfo() {
         <section className="flex flex-col gap-3 px-4 lg:px-20 pb-12">
         <div className="flex flex-row justify-center items-center gap-x-4 mb-8">
           <h1 className="text-3xl font-bold text-center">Menu</h1>
-          {profile?.data?.role === "admin" && (
+          {(profile?.data?.role === "admin" ||
+          (profile?.data?.role === "employee")) && (
             <motion.button
               whileHover={{ backgroundColor: "black", scale: 1.02 }}
               transition={{ duration: 0.3 }}

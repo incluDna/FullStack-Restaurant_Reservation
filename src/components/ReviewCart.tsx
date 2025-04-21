@@ -16,10 +16,10 @@ export default function ReviewCart({ reviews, token,profile }:
     return (
         
         // <div className="flex flex-row h-[calc(100vh-75px)] p-2 overflow-y-hidden">
-        <div className="flex flex-row h-[80vh] p-2 overflow-y-hidden">
+        
+        <div className="flex flex-row w-[80vh] h-[calc(70vh-65px)] overflow-y-hidden">
 
-            <div className="w-1/5 text-center h-full">
-                <h1 className="text-3xl font-bold font-serif">Reviews</h1>
+            <div className="text-left">
                 {(profileready.data.role === 'admin') ? (
                 <div className="text-xl font-bold mb-4">All {reviewsready.count} Reviews in catalog</div>
                 ) : (
@@ -27,8 +27,7 @@ export default function ReviewCart({ reviews, token,profile }:
                 )}
             </div>
             {/* ซีกขวา */}
-            <div className="w-4/5 flex flex-row overflow-x-auto h-full" >
-                
+            <div className="w-full h-full flex flex-row overflow-x-auto " >
                 {reviewsready.data.map((review: Review) => (
                     <div className="mx-3" key={review._id}>
                         <ReviewCard 

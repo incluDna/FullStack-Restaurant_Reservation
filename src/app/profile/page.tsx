@@ -4,9 +4,11 @@ import React, { useEffect, useState } from "react";
 import { getAuthCookie } from "@/libs/getAuthCookie";
 import getUserProfile from "@/libs/getUserProfile";
 import getReservations from "@/libs/getReservations";
-import { Reservation, User } from "../../../interfaces";
+import { ProfileJSON, Reservation, ReviewJSON, User } from "../../../interfaces";
 import updateUserProfile from "@/libs/updateUserProfile";
 import ReservationCard from "@/components/ReservationCard";
+import ReviewCart from "@/components/ReviewCart";
+import getReviews from "@/libs/getReviews";
 
 export default function ProfilePage() {
   const [user, setUser] = useState<User>({
@@ -23,6 +25,10 @@ export default function ProfilePage() {
   const [role, setRole] = useState<string | null>(null);
   const [formData, setFormData] = useState<User>(user);
   const [showReviews, setShowReviews] = useState(false);
+  const [review,setReview]=useState<ReviewJSON|null>(null);
+  const [profile, setProfile] = useState<ProfileJSON|null>(null);
+
+
 
   useEffect(() => {
     const fetchData = async () => {
@@ -37,6 +43,11 @@ export default function ProfilePage() {
         const [userProfile, reservationJSON] = await Promise.all([getUserProfile(newToken), getReservations(newToken)]);
         setUser(userProfile.data);
         setReservations(reservationJSON.data);
+        const userReview = await getReviews(newToken);
+        setReview(userReview);
+        const userProfile1 = await getUserProfile(newToken);
+        setProfile(userProfile1);
+
       } catch (err) {
         console.error(err);
       }
@@ -64,6 +75,7 @@ export default function ProfilePage() {
       alert("Failed to update profile");
     }
   };
+  if (!token || !profile || !review) return <p>Loading...</p>;
 
   return (
     <div className="h-[calc(100vh-65px)] overflow-hidden bg-gray-100 p-6 flex justify-center items-start">
@@ -153,9 +165,9 @@ export default function ProfilePage() {
 
           {/* Conditional Rendering for Reservations or Reviews */}
           {showReviews ? (
-            <div className="max-h-[30vh] overflow-y-auto p-4">
-              <p className="text-gray-500">No reviews available.</p>
-              {/* Add code to show reviews here */}
+            <div className="">
+                <ReviewCart reviews={review} profile={profile} token={token} />
+            
             </div>
           ) : (
             <div className="max-h-[30vh] overflow-y-auto p-4">

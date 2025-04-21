@@ -533,13 +533,26 @@ export default function RestaurantInfo() {
         )}
         {/* Menu section*/}
         <section className="flex flex-col gap-3 px-4 lg:px-20 pb-12">
-          <h1 className="text-3xl font-bold mb-8 text-center">Menu</h1>
+
+          <div className="flex flex-row justify-center items-center gap-x-4 mb-8">
+            <h1 className="text-3xl font-bold text-center">Menu</h1>
+            {(profile?.data?.role === "admin" || profile?.data?.role === "employee") && (
+              <motion.button
+                whileHover={{ backgroundColor: "black", scale: 1.02 }}
+                transition={{ duration: 0.3 }}
+                onClick={() => router.push(`/restaurants/${id}/menu/create`)}
+                className="w-[45px] h-[45px] bg-[#3d3c3a] text-white text-xl border-0 rounded-none"
+              >
+                +
+              </motion.button>
+            )}
+          </div>
           {/* Tabs */}
           <div className="flex justify-center mb-8 gap-4">
             {tabOptions.map((tab) => (
               <button
                 key={tab}
-                onClick={() => {setActiveTab(tab); setFilteredMenu(null);}}
+                onClick={() => { if(activeTab!=tab) setFilteredMenu(null); setActiveTab(tab);}}
                 className={`px-6 py-2 border-b-4 text-lg ${
                   activeTab === tab
                     ? "border-[#F89640] text-[#F89640]"

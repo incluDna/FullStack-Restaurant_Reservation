@@ -130,3 +130,12 @@ export interface User {
   email: string;
   password: string;
 }
+
+export interface Queue {
+  _id?: string;
+  restaurant: string;
+  user: string;
+  seatCount: number;
+  createdAt: Date;
+  status: string;
+}

@@ -539,7 +539,7 @@ export default function RestaurantInfo() {
             {tabOptions.map((tab) => (
               <button
                 key={tab}
-                onClick={() => setActiveTab(tab)}
+                onClick={() => {setActiveTab(tab); setFilteredMenu(null);}}
                 className={`px-6 py-2 border-b-4 text-lg ${
                   activeTab === tab
                     ? "border-[#F89640] text-[#F89640]"

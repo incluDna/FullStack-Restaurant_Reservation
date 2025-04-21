@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 import React, { useState, useEffect, Suspense } from "react";
 import { useParams } from "next/navigation";
 import getRestaurant from "@/libs/getRestaurant";
-import getReviewForRestaurant from "@/libs/getReviewforRestaurant";
+import getReviewForRestaurant from "@/libs/getReviewForRestaurant";
 import getMeanReviews from "@/libs/getMeanReview";
 import addReservation from "@/libs/addReservations";
 import {
@@ -530,7 +530,8 @@ export default function RestaurantInfo() {
         <section className="flex flex-col gap-3 px-4 lg:px-20 pb-12">
         <div className="flex flex-row justify-center items-center gap-x-4 mb-8">
           <h1 className="text-3xl font-bold text-center">Menu</h1>
-          {profile?.data?.role === "admin" && (
+          {(profile?.data?.role === "admin" ||
+          (profile?.data?.role === "employee")) && (
             <motion.button
               whileHover={{ backgroundColor: "black", scale: 1.02 }}
               transition={{ duration: 0.3 }}
@@ -546,11 +547,12 @@ export default function RestaurantInfo() {
             {tabOptions.map((tab) => (
               <button
                 key={tab}
-                onClick={() => { setActiveTab(tab); setFilteredMenu(null); }}
-                className={`px-6 py-2 border-b-4 text-lg ${activeTab === tab
-                  ? "border-[#F89640] text-[#F89640]"
-                  : "border-transparent text-gray-500"
-                  }`}
+                onClick={() => { if(activeTab!=tab) setFilteredMenu(null); setActiveTab(tab);}}
+                className={`px-6 py-2 border-b-4 text-lg ${
+                  activeTab === tab
+                    ? "border-[#F89640] text-[#F89640]"
+                    : "border-transparent text-gray-500"
+                }`}
               >
                 {tab}
               </button>

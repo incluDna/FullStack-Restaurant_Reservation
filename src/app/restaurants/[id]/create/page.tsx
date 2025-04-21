@@ -152,7 +152,7 @@ export default function CreateMenuPage() {
       if (!token) throw new Error("Missing unauthorized");
       await addMenu(token, restaurantId, menuData);
       alert("✅ เมนูถูกเพิ่มเรียบร้อยแล้ว");
-      router.push(`/restaurants/${restaurantId}/menu`);
+      router.push(`/restaurants/${restaurantId}`);
     } catch (err) {
       console.error("❌ Failed to create menu:", err);
       alert("❌ เกิดข้อผิดพลาดในการเพิ่มเมนู");

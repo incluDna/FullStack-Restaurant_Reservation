@@ -213,7 +213,7 @@ export default function RestaurantInfo() {
   }
 
   const totalReviews = reviewData.length;
-
+  console.log("filter menu", filteredMenu);
   return (
     <main className="w-full bg-white">
       {profile?.data?.role === "admin" && (

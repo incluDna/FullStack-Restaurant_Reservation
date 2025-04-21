@@ -52,7 +52,6 @@ export default function RestaurantInfo() {
   const [selectedDate, setSelectedDate] = useState<string>("");
   const [selectedTime, setSelectedTime] = useState<string>("");
   const [timeOptions, setTimeOptions] = useState<string[]>([]);
-  const [activeTab, setActiveTab] = useState("dish");
 
   useEffect(() => {
     async function fetchToken() {

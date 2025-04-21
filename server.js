@@ -14,6 +14,7 @@ const restaurants = require("./routes/restaurants");
 const reservations = require("./routes/reservations");
 const review = require("./routes/reviews");
 const auth = require("./routes/auth");
+const errorHandler = require("./middleware/errorHandler");
 
 // require models
 // require("./models/Queue");
@@ -38,18 +39,20 @@ app.use(xss());
 app.use(hpp());
 app.use(cors());
 
-// use routes
-app.use("/api/restaurants", restaurants);
-app.use("/api/reservations", reservations);
-app.use("/api/reviews", review);
-app.use("/api/auth", auth);
-
 // rate limiting
 const limiter = rateLimit({
   windowsMs: 10 * 60 * 1000, // 10 minutes
   max: 100,
 });
 app.use(limiter);
+
+// use routes
+app.use("/api/restaurants", restaurants);
+app.use("/api/reservations", reservations);
+app.use("/api/reviews", review);
+app.use("/api/auth", auth);
+
+app.use(errorHandler);
 
 // configs
 const PORT = process.env.PORT || 5000;

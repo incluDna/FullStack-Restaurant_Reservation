@@ -6,11 +6,16 @@ class APIFeatures {
   constructor(query, queryString) {
     this.query = query;
     this.queryString = { ...queryString }; // for select/sort/page/limit
-    // make a second object purely for filtering
+
+    // purely for filtering, removed duplicate keys
     this.filterParams = { ...queryString };
     ["select", "sort", "page", "limit"].forEach(
       (f) => delete this.filterParams[f]
     );
+
+    // pagination metadata
+    this.page = 1;
+    this.limit = 25;
   }
 
   filter() {
@@ -19,7 +24,17 @@ class APIFeatures {
       /\b(gt|gte|lt|lte|in)\b/g,
       (m) => `$${m}`
     );
-    this.query = this.query.find(JSON.parse(str));
+
+    let filterObj;
+    try {
+      filterObj = JSON.parse(str);
+    } catch (err) {
+      const parseError = new Error("Invalid filter query parameters");
+      parseError.statusCode = 400;
+      throw parseError;
+    }
+
+    this.query = this.query.find(filterObj);
     return this;
   }
 
@@ -42,11 +57,26 @@ class APIFeatures {
   }
 
   paginate() {
-    const page = parseInt(this.queryString.page, 10) || 1;
-    const limit = parseInt(this.queryString.limit, 10) || 25;
-    const skip = (page - 1) * limit;
-    this.query = this.query.skip(skip).limit(limit);
+    this.page = parseInt(this.queryString.page, 10) || 1;
+    this.limit = parseInt(this.queryString.limit, 10) || 25;
+    const skip = (this.page - 1) * this.limit;
+
+    this.query = this.query.skip(skip).limit(this.limit);
     return this;
+  }
+
+  getPaginationMetadata(totalDocs) {
+    const totalPages = Math.ceil(totalDocs / this.limit);
+    const startIndex = (this.page - 1) * this.limit;
+    const endIndex = this.page * this.limit;
+    const pagination = {};
+
+    if (endIndex < totalDocs)
+      pagination.next = { page: this.page + 1, limit: this.limit };
+    if (startIndex > 0)
+      pagination.prev = { page: this.page - 1, limit: this.limit };
+
+    return [totalPages, { ...pagination }];
   }
 }
 module.exports = APIFeatures;

@@ -87,6 +87,11 @@ exports.updateQueueStatus = asyncHandler(async (req, res, next) => {
     throw error;
   }
 
+  if (req.body.queueStatus === undefined) {
+    const error = new Error(`Queue status not provided`);
+    error.statusCode = 400;
+    throw error;
+  }
   queue.queueStatus = req.body.queueStatus;
   await queue.save();
 

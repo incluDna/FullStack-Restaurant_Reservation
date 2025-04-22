@@ -72,6 +72,17 @@ exports.deleteQueue = asyncHandler(async (req, res, next) => {
     error.statusCode = 404;
     throw error;
   }
+  if (
+    (req.user.role === "user" && queue.user.toString() !== req.user.id) ||
+    (req.user.role === "employee" &&
+      queue.restaurant.toString() !== req.user.employedAt)
+  ) {
+    const error = new Error(
+      `Role ${req.user.role} cannot access this resource`
+    );
+    error.statusCode = 403;
+    throw error;
+  }
 
   await queue.remove();
 

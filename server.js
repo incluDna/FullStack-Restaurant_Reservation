@@ -13,11 +13,12 @@ const cors = require("cors");
 const restaurants = require("./routes/restaurants");
 const reservations = require("./routes/reservations");
 const review = require("./routes/reviews");
+const queues = require("./routes/queues");
 const auth = require("./routes/auth");
 const errorHandler = require("./middleware/errorHandler");
 
 // require models
-// require("./models/Queue");
+require("./models/Queue");
 require("./models/Reservation");
 require("./models/Restaurant");
 require("./models/Review");
@@ -51,6 +52,7 @@ app.use("/api/restaurants", restaurants);
 app.use("/api/reservations", reservations);
 app.use("/api/reviews", review);
 app.use("/api/auth", auth);
+app.use("/api/queues", queues);
 
 app.use(errorHandler);
 

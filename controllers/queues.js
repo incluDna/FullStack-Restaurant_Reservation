@@ -32,7 +32,7 @@ exports.getQueuePosition = asyncHandler(async (req, res, next) => {
   let features = new APIFeatures(null, req.query);
   if (!req.params.restaurantId) {
     const error = new Error(
-      `Restaurant ID not provided: please access through a restaurant`,
+      `Restaurant ID not provided: please access through a restaurant`
     );
     error.statusCode = 400;
     throw error;
@@ -43,7 +43,7 @@ exports.getQueuePosition = asyncHandler(async (req, res, next) => {
   }).sort({ createdAt: 1 });
   const thisQueue = await Queue.findById(req.params.id);
   const index = allQueues.findIndex(
-    (queue) => queue._id.toString() === thisQueue._id.toString(),
+    (queue) => queue._id.toString() === thisQueue._id.toString()
   );
   if (index === -1) {
     const error = new Error(`Cannot find queue in restaurant. How?`);
@@ -61,7 +61,7 @@ exports.getQueuePosition = asyncHandler(async (req, res, next) => {
 exports.createQueue = asyncHandler(async (req, res, next) => {
   if (!req.params.restaurantId) {
     const error = new Error(
-      `Restaurant ID not provided: please access through a restaurant`,
+      `Restaurant ID not provided: please access through a restaurant`
     );
     error.statusCode = 400;
     throw error;
@@ -87,7 +87,7 @@ exports.updateQueueStatus = asyncHandler(async (req, res, next) => {
     throw error;
   }
 
-  queue.status = req.body.status;
+  queue.queueStatus = req.body.status;
   await queue.save();
 
   return res.status(200).json({
@@ -110,13 +110,13 @@ exports.deleteQueue = asyncHandler(async (req, res, next) => {
       queue.restaurant.toString() !== req.user.employedAt)
   ) {
     const error = new Error(
-      `Role ${req.user.role} cannot access this resource`,
+      `Role ${req.user.role} cannot access this resource`
     );
     error.statusCode = 403;
     throw error;
   }
 
-  await queue.remove();
+  await Queue.findByIdAndDelete(req.params.id);
 
   return res.status(204).json({
     success: true,

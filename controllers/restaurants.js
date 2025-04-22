@@ -12,19 +12,13 @@ const { toMinutes } = require("../utils/parseTimes");
  * @access Public
  */
 exports.getRestaurants = asyncHandler(async (req, res, next) => {
-  const features = new APIFeatures(
-    Restaurant.find().populate("reviews"),
-    req.query,
-  )
+  const features = new APIFeatures(Restaurant.find(), req.query)
     .filter()
     .sort()
     .limitFields()
     .paginate();
 
-  const restaurants = await features.query
-    .populate("reservations")
-    .populate("reviews");
-
+  const restaurants = await features.query;
   const total = await Restaurant.countDocuments(features.query.getFilter());
 
   const [totalPages, pagination] = features.getPaginationMetadata(total);
@@ -43,9 +37,7 @@ exports.getRestaurants = asyncHandler(async (req, res, next) => {
  * @access Public
  */
 exports.getRestaurant = asyncHandler(async (req, res, next) => {
-  const restaurant = await Restaurant.findById(req.params.id)
-    .populate("reservations")
-    .populate("reviews");
+  const restaurant = await Restaurant.findById(req.params.id);
 
   if (!restaurant) {
     const error = new Error(`No restaurant with the id of ${req.params.id}`);
@@ -74,7 +66,7 @@ exports.createRestaurant = asyncHandler(async (req, res, next) => {
   }
   if (openMinutes >= closeMinutes) {
     const error = new Error(
-      "Opening time must be before closing time in the same day",
+      "Opening time must be before closing time in the same day"
     );
     error.statusCode = 400;
     throw error;
@@ -100,7 +92,7 @@ exports.updateRestaurant = asyncHandler(async (req, res, next) => {
     {
       new: true,
       runValidators: true,
-    },
+    }
   );
 
   if (!restaurant) {

@@ -10,29 +10,35 @@ const Reservation = require("../models/Reservation");
 exports.getReviews = async (req, res, next) => {
   let query;
 
+  const restaurantPopulate = {
+    path: "restaurant",
+    select: "name province tel",
+  };
+  const userPopulate = {
+    path: "user",
+    select: "name tel",
+  };
+
   // Check if the user is authenticated (req.user exists)
   if (req.user) {
     // If the user is authenticated, they can see reviews based on their role
     if (req.user.role !== "admin") {
       // General users can only see their own reviews or reviews for a specific restaurant
       if (req.params.restaurantId) {
-        query = Review.find({ restaurant: req.params.restaurantId }).populate({
-          path: "restaurant",
-          select: "name",
-        });
+        query = Review.find({ restaurant: req.params.restaurantId })
+          .populate(restaurantPopulate)
+          .populate(userPopulate);
       } else {
-        query = Review.find({ user: req.user.id }).populate({
-          path: "restaurant",
-          select: "name reviews",
-        });
+        query = Review.find({ user: req.user.id })
+          .populate(restaurantPopulate)
+          .populate(userPopulate);
       }
     } else {
       // Admin users can view all reviews or reviews for a specific restaurant
       if (req.params.restaurantId) {
-        query = Review.find({ restaurant: req.params.restaurantId }).populate({
-          path: "restaurant",
-          select: "name",
-        });
+        query = Review.find({ restaurant: req.params.restaurantId })
+          .populate(restaurantPopulate)
+          .populate(userPopulate);
       } else {
         query = Review.find().populate({
           path: "restaurant",
@@ -43,16 +49,12 @@ exports.getReviews = async (req, res, next) => {
   } else {
     // If the user is not logged in (guest user), allow them to see reviews for a specific restaurant
     if (req.params.restaurantId) {
-      query = Review.find({ restaurant: req.params.restaurantId }).populate({
-        path: "restaurant",
-        select: "name",
-      });
+      query = Review.find({ restaurant: req.params.restaurantId })
+        .populate(restaurantPopulate)
+        .populate(userPopulate);
     } else {
       // Allow guest users to see all reviews if no specific restaurant is provided
-      query = Review.find().populate({
-        path: "restaurant",
-        select: "name",
-      });
+      query = Review.find().populate(restaurantPopulate).populate(userPopulate);
     }
   }
 
@@ -105,11 +107,19 @@ exports.getReviews = async (req, res, next) => {
  * @access Public
  */
 exports.getReview = async (req, res, next) => {
+  const restaurantPopulate = {
+    path: "restaurant",
+    select: "name province tel",
+  };
+  const userPopulate = {
+    path: "user",
+    select: "name tel",
+  };
+
   try {
-    const review = await Review.findById(req.params.id).populate({
-      path: "restaurant",
-      select: "name reviews",
-    });
+    const review = await Review.findById(req.params.id)
+      .populate(restaurantPopulate)
+      .populate(userPopulate);
 
     if (!review) {
       return res.status(404).json({

@@ -16,7 +16,7 @@ exports.register = async (req, res, next) => {
       email,
       role,
       password,
-      employedAt
+      employedAt,
     });
     sendTokenResponse(user, 200, res);
   } catch (err) {
@@ -141,6 +141,6 @@ exports.updateUser = async (req, res, next) => {
     });
   } catch (err) {
     console.error(err.stack);
-    res.status(400).json({ success: false, msg: 'User update failed' });
+    res.status(400).json({ success: false, msg: "User update failed" });
   }
 };

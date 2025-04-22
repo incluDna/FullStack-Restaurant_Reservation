@@ -10,7 +10,7 @@ class APIFeatures {
     // purely for filtering, removed duplicate keys
     this.filterParams = { ...queryString };
     ["select", "sort", "page", "limit"].forEach(
-      (f) => delete this.filterParams[f]
+      (f) => delete this.filterParams[f],
     );
 
     // pagination metadata
@@ -22,7 +22,7 @@ class APIFeatures {
     // convert { price: { lte: '100' } } → { price: { $lte: 100 } }
     const str = JSON.stringify(this.filterParams).replace(
       /\b(gt|gte|lt|lte|in)\b/g,
-      (m) => `$${m}`
+      (m) => `$${m}`,
     );
 
     let filterObj;

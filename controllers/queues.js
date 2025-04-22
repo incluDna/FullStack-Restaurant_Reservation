@@ -29,7 +29,7 @@ exports.getQueues = asyncHandler(async (req, res, next) => {
 exports.createQueue = asyncHandler(async (req, res, next) => {
   if (!req.params.restaurantId) {
     const error = new Error(
-      `Restaurant ID not provided: please access through a restaurant`
+      `Restaurant ID not provided: please access through a restaurant`,
     );
     error.statusCode = 400;
     throw error;
@@ -78,7 +78,7 @@ exports.deleteQueue = asyncHandler(async (req, res, next) => {
       queue.restaurant.toString() !== req.user.employedAt)
   ) {
     const error = new Error(
-      `Role ${req.user.role} cannot access this resource`
+      `Role ${req.user.role} cannot access this resource`,
     );
     error.statusCode = 403;
     throw error;

@@ -59,8 +59,7 @@ exports.optionalAuth = async (req, res, next) => {
     // is guest
     req.user = null;
     next();
-  }
-  else {
+  } else {
     // is user/admin
     try {
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
@@ -71,7 +70,10 @@ exports.optionalAuth = async (req, res, next) => {
       console.log(err.stack);
       return res
         .status(401)
-        .json({ success: false, message: "Not authorize to access this route" });
+        .json({
+          success: false,
+          message: "Not authorize to access this route",
+        });
     }
   }
 };

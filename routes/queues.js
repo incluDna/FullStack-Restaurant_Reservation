@@ -16,4 +16,3 @@ router
   .delete(protect, deleteQueue);
 
 module.exports = router;
-

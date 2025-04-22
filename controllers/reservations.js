@@ -29,7 +29,7 @@ exports.getReservations = asyncHandler(async (req, res, next) => {
     if (req.params.restaurantId) {
       if (!isValidObjectId(req.params.restaurantId)) {
         const error = new Error(
-          `Invalid restaurant ID format: Not an ObjectID`
+          `Invalid restaurant ID format: Not an ObjectID`,
         );
         error.statusCode = 400;
         throw error;
@@ -67,9 +67,14 @@ exports.getReservations = asyncHandler(async (req, res, next) => {
  * @access Public
  */
 exports.getReservation = asyncHandler(async (req, res, next) => {
-  const reservation = await Reservation.findById(req.params.id).populate({
+  const reservation = await Reservation.findById(req.params.id)
+  .populate({
     path: "restaurant",
     select: "name description tel",
+  })
+  .populate({
+    path: "user",
+    select: "name tel",
   });
 
   if (!reservation) {
@@ -101,7 +106,7 @@ exports.addReservation = asyncHandler(async (req, res, next) => {
 
   if (!restaurant) {
     const error = new Error(
-      `No restaurant with the id of ${req.params.restaurantId}`
+      `No restaurant with the id of ${req.params.restaurantId}`,
     );
     error.statusCode = 404;
     throw error;
@@ -110,7 +115,7 @@ exports.addReservation = asyncHandler(async (req, res, next) => {
     !checkValidTime(restaurant.openTime, restaurant.closeTime, req.body.resDate)
   ) {
     const error = new Error(
-      `Invalid reservation time: must be between open and close time`
+      `Invalid reservation time: must be between open and close time`,
     );
     error.statusCode = 400;
     throw error;
@@ -135,14 +140,14 @@ exports.addReservation = asyncHandler(async (req, res, next) => {
 
   if (count >= restaurant.reservationLimit) {
     const error = new Error(
-      `${restaurant.name} is fully booked at this time. Choose a different time slot.`
+      `${restaurant.name} is fully booked at this time. Choose a different time slot.`,
     );
     error.statusCode = 400;
     throw error;
   }
   if (req.body.seatCount > restaurant.seatPerReservationLimit) {
     const error = new Error(
-      `Your seat count of ${req.body.seatCount} exceeds the restaurant's limit of ${restaurant.seatPerReservationLimit}`
+      `Your seat count of ${req.body.seatCount} exceeds the restaurant's limit of ${restaurant.seatPerReservationLimit}`,
     );
     error.statusCode = 400;
     throw error;
@@ -196,7 +201,7 @@ exports.updateReservation = async (req, res, next) => {
       !checkValidTime(
         restaurant.openTime,
         restaurant.closeTime,
-        req.body.resDate
+        req.body.resDate,
       )
     ) {
       return res.status(400).json({

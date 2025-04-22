@@ -7,6 +7,7 @@ import getReservations from "@/libs/Reservation/getReservations";
 import { Reservation, Review, User } from "../../../interfaces";
 import updateUserProfile from "@/libs/User/updateUserProfile";
 import ReservationCard from "@/components/ReservationCard";
+import QueueCardInProfile from "@/components/QueueCardInProfile";
 import getReviews from "@/libs/Review/getReviews";
 import ReviewCard from "@/components/ReviewCard";
 export default function ProfilePage() {
@@ -160,15 +161,16 @@ export default function ProfilePage() {
         </div>
 
         {/* Right Panel - Reservations or Reviews */}
-        <div className="flex-1 bg-[#fff4ce] p-6 rounded-xl shadow-md w-full self-end py-8">
-          <h2 className="text-3xl font-bold mb-4 text-gray-800">
+        <div className="flex flex-col gap-4">
+        <div className="bg-[#fff4ce] p-4 rounded-xl shadow-md w-full max-h-[280px] overflow-y-auto">
+        <h2 className="text-3xl font-bold mb-4 text-gray-800">
             {role == "admin"
               ? showReviews
                 ? "All user's Reviews"
-                : "All user's Reservations"
+                : "All user's Queues"
               : showReviews
                 ? "Your Reviews"
-                : "Your Reservations"}
+                : "Your Queue"}
           </h2>
 
           {/* Conditional Rendering for Reservations or Reviews */}
@@ -201,20 +203,11 @@ export default function ProfilePage() {
                 <ul className="flex flex-wrap gap-5">
                   {reservations.map((res, index) => {
                     return (
-                      <ReservationCard
-                        key={res._id || index}
-                        res={res}
-                        index={index}
-                        token={token ?? ""}
-                        onUpdate={(idx, updated) => {
-                          const updatedList = [...reservations];
-                          updatedList[idx] = updated;
-                          setReservations(updatedList);
-                        }}
-                        onDelete={(id) => {
-                          setReservations((prev) =>
-                            prev.filter((r) => r._id !== id)
-                          );
+                      <QueueCardInProfile
+                      key={res._id || index}
+                      res={res}
+                      onDelete={(id) => {
+                        setReservations((prev) => prev.filter((r) => r._id !== id));
                         }}
                       />
                     );
@@ -223,6 +216,44 @@ export default function ProfilePage() {
               )}
             </div>
           )}
+        </div>
+        
+          {/* Conditional Rendering for Reservations*/}
+          {!showReviews && (
+          <div className="bg-[#fff4ce] p-4 rounded-xl shadow-md w-full max-h-[280px] overflow-y-auto">
+            <h2 className="text-3xl font-bold mb-4 text-gray-800">
+              {role == "admin" ? "All user's Reservations" : "Your Reservations"}
+            </h2>
+
+            <div className="max-h-[30vh] overflow-y-auto p-4">
+              {reservations.length === 0 ? (
+                <p className="text-gray-500">No reservations found.</p>
+              ) : (
+                <ul className="flex flex-wrap gap-5">
+                  {reservations.map((res, index) => (
+                    <ReservationCard
+                      key={res._id || index}
+                      res={res}
+                      index={index}
+                      token={token ?? ""}
+                      onUpdate={(idx, updated) => {
+                        const updatedList = [...reservations];
+                        updatedList[idx] = updated;
+                        setReservations(updatedList);
+                      }}
+                      onDelete={(id) => {
+                        setReservations((prev) =>
+                          prev.filter((r) => r._id !== id)
+                        );
+                      }}
+                    />
+                  ))}
+                </ul>
+              )}
+            </div>
+          </div>
+        )}
+
         </div>
       </div>
     </div>

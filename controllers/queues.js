@@ -1,5 +1,7 @@
 const Queue = require("../models/Queue");
+const Restaurant = require("../models/Restaurant");
 const asyncHandler = require("../utils/asyncHandler");
+const APIFeatures = require("../utils/APIFeatures");
 
 exports.getQueues = asyncHandler(async (req, res, next) => {
   let features = new APIFeatures(null, req.query);
@@ -23,6 +25,36 @@ exports.getQueues = asyncHandler(async (req, res, next) => {
     success: true,
     count: queues.length,
     data: queues,
+  });
+});
+
+exports.getQueuePosition = asyncHandler(async (req, res, next) => {
+  let features = new APIFeatures(null, req.query);
+  if (!req.params.restaurantId) {
+    const error = new Error(
+      `Restaurant ID not provided: please access through a restaurant`,
+    );
+    error.statusCode = 400;
+    throw error;
+  }
+
+  const allQueues = await Queue.find({
+    restaurant: req.params.restaurantId,
+  }).sort({ createdAt: 1 });
+  const thisQueue = await Queue.findById(req.params.id);
+  const index = allQueues.findIndex(
+    (queue) => queue._id.toString() === thisQueue._id.toString(),
+  );
+  if (index === -1) {
+    const error = new Error(`Cannot find queue in restaurant. How?`);
+    error.statusCode = 500;
+    throw error;
+  }
+
+  return res.status(200).json({
+    success: true,
+    position: index,
+    queue: thisQueue,
   });
 });
 

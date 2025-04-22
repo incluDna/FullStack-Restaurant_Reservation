@@ -68,12 +68,10 @@ exports.optionalAuth = async (req, res, next) => {
       next();
     } catch (err) {
       console.log(err.stack);
-      return res
-        .status(401)
-        .json({
-          success: false,
-          message: "Not authorize to access this route",
-        });
+      return res.status(401).json({
+        success: false,
+        message: "Not authorize to access this route",
+      });
     }
   }
 };

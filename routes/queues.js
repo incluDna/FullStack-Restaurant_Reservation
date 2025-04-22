@@ -1,6 +1,7 @@
 const express = require("express");
 const {
   getQueues,
+  getQueuePosition,
   createQueue,
   updateQueueStatus,
   deleteQueue,
@@ -14,5 +15,7 @@ router
   .route("/:id")
   .put(protect, authorize("admin", "employee"), updateQueueStatus)
   .delete(protect, deleteQueue);
+
+router.route("/:id/position").get(protect, getQueuePosition);
 
 module.exports = router;

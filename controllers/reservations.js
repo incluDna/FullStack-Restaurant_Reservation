@@ -68,14 +68,14 @@ exports.getReservations = asyncHandler(async (req, res, next) => {
  */
 exports.getReservation = asyncHandler(async (req, res, next) => {
   const reservation = await Reservation.findById(req.params.id)
-  .populate({
-    path: "restaurant",
-    select: "name description tel",
-  })
-  .populate({
-    path: "user",
-    select: "name tel",
-  });
+    .populate({
+      path: "restaurant",
+      select: "name description tel",
+    })
+    .populate({
+      path: "user",
+      select: "name tel",
+    });
 
   if (!reservation) {
     const error = new Error(`No reservation with the id of ${req.params.id}`);

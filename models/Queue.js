@@ -15,6 +15,11 @@ const QueueSchema = new mongoose.Schema({
     type: Number,
     required: [true, "Queue must have a seat-to-take amount"],
   },
+  queueStatus: {
+    type: String,
+    enum: ["waiting", "calling", "completed"],
+    default: "waiting",
+  },
   createdAt: {
     type: Date,
     default: Date.now,

@@ -93,25 +93,4 @@ RestaurantSchema.pre("validate", function (next) {
   next();
 });
 
-// reverse populate with virtuals
-RestaurantSchema.virtual("queues", {
-  ref: "Queue",
-  localField: "_id",
-  foreignField: "restaurant",
-  options: { sort: { createdAt: 1 } },
-  justOne: false,
-});
-RestaurantSchema.virtual("reservations", {
-  ref: "Reservation",
-  localField: "_id",
-  foreignField: "restaurant",
-  justOne: false,
-});
-RestaurantSchema.virtual("reviews", {
-  ref: "Review",
-  localField: "_id",
-  foreignField: "restaurant",
-  justOne: false,
-});
-
 module.exports = mongoose.model("Restaurant", RestaurantSchema);

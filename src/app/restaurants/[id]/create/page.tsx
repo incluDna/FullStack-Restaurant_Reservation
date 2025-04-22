@@ -100,7 +100,7 @@ export default function CreateMenuPage() {
   };
 
   return (
-    <main className="min-h-screen bg-white">
+    <main className="min-h-screen bg-white">  
       <div className="max-w-4xl mx-auto px-6 pt-24 pb-12">
         <h1 className="text-3xl font-bold text-center mb-10">เพิ่มเมนู</h1>
 

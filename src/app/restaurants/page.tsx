@@ -1,7 +1,6 @@
 'use client';
-
 import { useState, useEffect } from "react";
-import RestaurantCard from "@/components/restaurantCard";
+import RestaurantCard from "@/components/RestaurantCard";
 import { MeanReview, Restaurant, RestaurantJSON } from "../../../interfaces";
 import getRestaurants from "@/libs/Restaurant/getRestaurants";
 import getMeanReviews from "@/libs/Review/getMeanReview";

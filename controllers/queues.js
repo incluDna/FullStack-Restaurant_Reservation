@@ -87,7 +87,7 @@ exports.updateQueueStatus = asyncHandler(async (req, res, next) => {
     throw error;
   }
 
-  queue.queueStatus = req.body.status;
+  queue.queueStatus = req.body.queueStatus;
   await queue.save();
 
   return res.status(200).json({

@@ -1,10 +1,10 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { Queue } from "../../../interfaces";
+import { Queue } from "../../../../interfaces";
 import { Bell, Check, X } from "lucide-react";
-import QueueStatusButton from "../button/QueueStatusButton";
+import QueueStatusButton from "../../button/QueueStatusButton";
 
-export default function QueueCard({ queue }: { queue: Queue }) {
+export default function QueueManageCard({ queue }: { queue: Queue }) {
   const [loading, setLoading] = useState<boolean>(false);
   const [name, setName] = useState<string>("");
   const [tel, setTel] = useState<string>("");

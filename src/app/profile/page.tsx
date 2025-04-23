@@ -26,6 +26,7 @@ export default function ProfilePage() {
   const [showReviews, setShowReviews] = useState(false);
   const [profile, setProfile] = useState<any>(null);
 
+
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
@@ -53,6 +54,8 @@ export default function ProfilePage() {
   }, []);
   const [reviews, setReviews] = useState<Review[]>([]);
   useEffect(() => {
+    if(!token) return;
+
     const fetchData = async () => {
       try {
         const reviewsJSON = await getReviews(token!);

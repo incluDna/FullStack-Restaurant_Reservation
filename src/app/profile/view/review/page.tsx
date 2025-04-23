@@ -18,7 +18,7 @@ export default async function ManageReview() {
     // ** ^ edit and use test token here, this token was for John admin
 
     const review = getReviews(token);
-    const profile = getUserProfile(token);
+    const profile = getUserProfile(token); 
 
     return (
         <main className="">

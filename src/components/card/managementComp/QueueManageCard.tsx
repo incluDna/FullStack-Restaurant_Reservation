@@ -6,24 +6,6 @@ import QueueStatusButton from "../../button/QueueStatusButton";
 
 export default function QueueManageCard({ queue }: { queue: Queue }) {
   const [loading, setLoading] = useState<boolean>(false);
-  const [name, setName] = useState<string>("");
-  const [tel, setTel] = useState<string>("");
-
-  // Actual Function / Data
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     const data = await getUserById(queue.user); // อยากได้คำสั่งนี้ ;-;
-  //     setName(data.name);
-  //     setTel(data.tel);
-  //   }
-  //   fetchData();
-  // }, [])
-
-  // MOCK DATA
-  useEffect(() => {
-    setName("Joshua");
-    setTel("090-000-0129");
-  }, []);
 
   const handleClick = (status: string) => {
     setLoading(true);
@@ -53,9 +35,9 @@ export default function QueueManageCard({ queue }: { queue: Queue }) {
     <div className="bg-[#C2C2C2] h-[23vh] w-[40vw] flex flex-row">
       {/* User's and Queue's Info */}
       <div className="w-full h-full px-4 py-4 space-y-2 font-inter">
-        <p>{queue.user}</p>
-        <p>{name}</p>
-        <p>{tel}</p>
+        <p>{queue.user._id}</p>
+        <p>{queue.user.name}</p>
+        <p>{queue.user.tel}</p>
         <p>Number of People: {queue.seatCount}</p>
       </div>
 

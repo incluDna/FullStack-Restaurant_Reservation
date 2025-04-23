@@ -125,6 +125,7 @@ export interface MenuJSON {
   data: Menu[]
 }
 export interface User {
+  _id?: string;
   name: string;
   tel: string;
   email: string;
@@ -134,7 +135,7 @@ export interface User {
 export interface Queue {
   _id?: string;
   restaurant: string;
-  user: string;
+  user: User;
   seatCount: number;
   createdAt: Date;
   status: string;

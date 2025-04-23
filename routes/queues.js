@@ -10,7 +10,7 @@ const {
 const router = express.Router({ mergeParams: true });
 const { protect, authorize } = require("../middleware/auth");
 
-router.route("/").get(protect, getQueues).post(protect, createQueue);
+router.route("/").get(protect, getQueues).post(protect, authorize("user"), createQueue);
 router
   .route("/:id")
   .put(protect, authorize("admin", "employee"), updateQueueStatus)

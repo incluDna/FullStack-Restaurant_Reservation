@@ -110,9 +110,9 @@ exports.deleteQueue = asyncHandler(async (req, res, next) => {
     throw error;
   }
   if (
-    (req.user.role === "user" && queue.user.toString() !== req.user.id) ||
+    (req.user.role === "user" && queue.user.toString() !== req.user.id.toString()) ||
     (req.user.role === "employee" &&
-      queue.restaurant.toString() !== req.user.employedAt)
+      queue.restaurant.toString() !== req.user.employedAt.toString())
   ) {
     const error = new Error(
       `Role ${req.user.role} cannot access this resource`

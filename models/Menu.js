@@ -20,9 +20,9 @@ const MenuSchema = new mongoose.Schema({
   },
   type: {
     type: String,
-    enum: ["generic", "dish", "drink", "set", "dessert"],
+    enum: ["dish", "drink", "set"],
     required: true,
-    default: "generic",
+    default: "dish",
   },
   description: {
     type: String,

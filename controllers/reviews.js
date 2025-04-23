@@ -40,10 +40,9 @@ exports.getReviews = async (req, res, next) => {
           .populate(restaurantPopulate)
           .populate(userPopulate);
       } else {
-        query = Review.find().populate({
-          path: "restaurant",
-          select: "name",
-        });
+        query = Review.find()
+          .populate(restaurantPopulate)
+          .populate(userPopulate);
       }
     }
   } else {
@@ -188,7 +187,7 @@ exports.addReview = async (req, res, next) => {
     //console.log(Date.now());
     //console.log(new Date(existingReservations[(existingReservations.length-1)].resDate).getTime()) ;\
     existingReservations.sort(
-      (a, b) => new Date(a.resDate) - new Date(b.resDate),
+      (a, b) => new Date(a.resDate) - new Date(b.resDate)
     );
 
     //console.log(existingReservations);
@@ -308,7 +307,7 @@ exports.getReviewsForRestaurant = async (req, res, next) => {
 
     const totalRating = reviews.reduce(
       (sum, review) => sum + review.reviewStar,
-      0,
+      0
     );
     const meanRating = totalRating / reviews.length;
 

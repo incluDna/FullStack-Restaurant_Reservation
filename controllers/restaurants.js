@@ -65,9 +65,7 @@ exports.createRestaurant = asyncHandler(async (req, res, next) => {
     throw error;
   }
   if (openMinutes >= closeMinutes) {
-    const error = new Error(
-      "Opening time must be before closing time in the same day"
-    );
+    const error = new Error("Opening time must be before closing time in the same day");
     error.statusCode = 400;
     throw error;
   }
@@ -86,14 +84,10 @@ exports.createRestaurant = asyncHandler(async (req, res, next) => {
  * @access Private
  */
 exports.updateRestaurant = asyncHandler(async (req, res, next) => {
-  const restaurant = await Restaurant.findByIdAndUpdate(
-    req.params.id,
-    req.body,
-    {
-      new: true,
-      runValidators: true,
-    }
-  );
+  const restaurant = await Restaurant.findByIdAndUpdate(req.params.id, req.body, {
+    new: true,
+    runValidators: true,
+  });
 
   if (!restaurant) {
     const error = new Error(`No restaurant with the id of ${req.params.id}`);

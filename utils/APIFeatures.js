@@ -9,9 +9,7 @@ class APIFeatures {
 
     // purely for filtering, removed duplicate keys
     this.filterParams = { ...queryString };
-    ["select", "sort", "page", "limit"].forEach(
-      (f) => delete this.filterParams[f],
-    );
+    ["select", "sort", "page", "limit"].forEach((f) => delete this.filterParams[f]);
 
     // pagination metadata
     this.page = 1;
@@ -22,7 +20,7 @@ class APIFeatures {
     // convert { price: { lte: '100' } } → { price: { $lte: 100 } }
     const str = JSON.stringify(this.filterParams).replace(
       /\b(gt|gte|lt|lte|in)\b/g,
-      (m) => `$${m}`,
+      (m) => `$${m}`
     );
 
     let filterObj;
@@ -71,10 +69,8 @@ class APIFeatures {
     const endIndex = this.page * this.limit;
     const pagination = {};
 
-    if (endIndex < totalDocs)
-      pagination.next = { page: this.page + 1, limit: this.limit };
-    if (startIndex > 0)
-      pagination.prev = { page: this.page - 1, limit: this.limit };
+    if (endIndex < totalDocs) pagination.next = { page: this.page + 1, limit: this.limit };
+    if (startIndex > 0) pagination.prev = { page: this.page - 1, limit: this.limit };
 
     return [totalPages, { ...pagination }];
   }

@@ -40,9 +40,7 @@ exports.getReviews = async (req, res, next) => {
           .populate(restaurantPopulate)
           .populate(userPopulate);
       } else {
-        query = Review.find()
-          .populate(restaurantPopulate)
-          .populate(userPopulate);
+        query = Review.find().populate(restaurantPopulate).populate(userPopulate);
       }
     }
   } else {
@@ -186,9 +184,7 @@ exports.addReview = async (req, res, next) => {
     // check review date after resDate
     //console.log(Date.now());
     //console.log(new Date(existingReservations[(existingReservations.length-1)].resDate).getTime()) ;\
-    existingReservations.sort(
-      (a, b) => new Date(a.resDate) - new Date(b.resDate)
-    );
+    existingReservations.sort((a, b) => new Date(a.resDate) - new Date(b.resDate));
 
     //console.log(existingReservations);
     const dt = new Date(existingReservations[0].resDate).getTime();
@@ -305,10 +301,7 @@ exports.getReviewsForRestaurant = async (req, res, next) => {
     // Find all reviews for the given restaurant ID
     const reviews = await Review.find({ restaurant: restaurantID });
 
-    const totalRating = reviews.reduce(
-      (sum, review) => sum + review.reviewStar,
-      0
-    );
+    const totalRating = reviews.reduce((sum, review) => sum + review.reviewStar, 0);
     const meanRating = totalRating / reviews.length;
 
     const restaurant = await Restaurant.findById(req.params.id);

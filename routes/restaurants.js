@@ -23,10 +23,7 @@ router.use("/:restaurantId/reviews/", reviewRouter);
 router.use("/:restaurantId/menus/", menuRouter);
 router.use("/:restaurantId/queues/", queueRouter);
 
-router
-  .route("/")
-  .get(getRestaurants)
-  .post(protect, authorize("admin"), createRestaurant);
+router.route("/").get(getRestaurants).post(protect, authorize("admin"), createRestaurant);
 router
   .route("/:id")
   .get(getRestaurant)

@@ -36,27 +36,21 @@ exports.login = async (req, res, next) => {
 
     // Validate email & password
     if (!email || !password) {
-      return res
-        .status(400)
-        .json({ success: false, msg: "Please provide an email and password" });
+      return res.status(400).json({ success: false, msg: "Please provide an email and password" });
     }
 
     // Check for user
     const user = await User.findOne({ email }).select("+password");
 
     if (!user) {
-      return res
-        .status(400)
-        .json({ success: false, msg: "Invalid credentials" });
+      return res.status(400).json({ success: false, msg: "Invalid credentials" });
     }
 
     // Check if password matches
     const isMatch = await user.matchPassword(password);
 
     if (!isMatch) {
-      return res
-        .status(401)
-        .json({ success: false, msg: "Invalid credentials" });
+      return res.status(401).json({ success: false, msg: "Invalid credentials" });
     }
 
     // Create token
@@ -103,9 +97,7 @@ const sendTokenResponse = (user, statusCode, res) => {
   const token = user.getSignedJwtToken();
 
   const options = {
-    expires: new Date(
-      Date.now() + process.env.JWT_COOKIE_EXPIRE * 24 * 60 * 60 * 1000,
-    ),
+    expires: new Date(Date.now() + process.env.JWT_COOKIE_EXPIRE * 24 * 60 * 60 * 1000),
     httpOnly: true,
   };
 

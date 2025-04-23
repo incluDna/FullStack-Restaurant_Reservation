@@ -137,5 +137,5 @@ export interface Queue {
   user: string;
   seatCount: number;
   createdAt: Date;
-  status: string;
+  queueStatus: string;
 }

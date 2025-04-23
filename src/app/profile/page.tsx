@@ -4,10 +4,11 @@ import React, { useEffect, useState } from "react";
 import { getAuthCookie } from "@/libs/User/getAuthCookie";
 import getUserProfile from "@/libs/User/getUserProfile";
 import getReservations from "@/libs/Reservation/getReservations";
-import { Reservation, Review, User } from "../../../interfaces";
+import { Reservation, Review, User, Queue } from "../../../interfaces";
 import updateUserProfile from "@/libs/User/updateUserProfile";
 import ReservationCard from "@/components/ReservationCard";
 import QueueCardInProfile from "@/components/QueueCardInProfile";
+import getUserQueues from "@/libs/Queue/getUserQueues";
 import getReviews from "@/libs/Review/getReviews";
 import ReviewCard from "@/components/ReviewCard";
 export default function ProfilePage() {
@@ -26,6 +27,7 @@ export default function ProfilePage() {
   const [formData, setFormData] = useState<User>(user);
   const [showReviews, setShowReviews] = useState(false);
   const [profile, setProfile] = useState<any>(null);
+  const [queues, setQueues] = useState<Queue[]>([]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -67,6 +69,48 @@ export default function ProfilePage() {
     fetchData();
   }, [token]);
   // console.log(reviews)
+  // Mock Data
+  //const mockQueues = [
+    /*{
+      _id: "1",
+      restaurant: { name: "Sushi Place", province: "Bangkok" },
+      status: "waiting",
+    },
+    {
+      _id: "2",
+      restaurant: { name: "Pasta Bistro", province: "Chiang Mai" },
+      status: "completed",
+    },
+    {
+      _id: "3",
+      restaurant: { name: "Pizza House", province: "Phuket" },
+      status: "completed",
+    },
+  ];
+
+  useEffect(() => {
+    setQueues(mockQueues); // สร้าง queues ด้วย mock data
+    setLoading(false);
+  }, []);*/
+
+  useEffect(() => {
+    const fetchQueues = async () => {
+      try {
+        if (token) {
+          const queueJSON = await getUserQueues(token);
+          setQueues(queueJSON.data);
+        } else {
+          // ถ้าไม่มี token ใช้ mock data
+          //setQueues(mockQueues);  // ใช้ mock data ทดสอบ
+        }
+        setLoading(false);
+      } catch (err) {
+        console.error(err);
+      }
+    };
+  
+    fetchQueues();
+  }, [token]);
 
   const handleFormChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -197,19 +241,18 @@ export default function ProfilePage() {
 
           ) : (
             <div className="max-h-[30vh] overflow-y-auto p-4">
-              {reservations.length === 0 ? (
+              {queues.length === 0 ? (
                 <p className="text-gray-500">No queues found.</p>
               ) : (
                 <ul className="flex flex-wrap gap-5">
-                  {reservations.map((res, index) => {
+                  {queues.map((que, index) => {
                     return (
                       <QueueCardInProfile
-                      key={res._id || index}
-                      res={res}
-                      onDelete={(id) => {
-                        setReservations((prev) => prev.filter((r) => r._id !== id));
-                        }}
-                      />
+                        key={que._id || index}
+                        que={que}
+                        onDelete={(id) => {
+                          setQueues((prev) => prev.filter((q) => q._id !== id));
+                        } } token={""}                      />
                     );
                   })}
                 </ul>

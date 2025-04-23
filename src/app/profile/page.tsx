@@ -198,7 +198,7 @@ export default function ProfilePage() {
           ) : (
             <div className="max-h-[30vh] overflow-y-auto p-4">
               {reservations.length === 0 ? (
-                <p className="text-gray-500">No reservations found.</p>
+                <p className="text-gray-500">No queues found.</p>
               ) : (
                 <ul className="flex flex-wrap gap-5">
                   {reservations.map((res, index) => {

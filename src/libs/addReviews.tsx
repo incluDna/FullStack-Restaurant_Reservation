@@ -3,11 +3,11 @@ export default async function addReviews(token:string,
     {user,restaurant,reviewStar,Description}:
     {user:string,restaurant:string,reviewStar:number,Description:string}
 ) {
-    console.log(token)
-    console.log(user)
-    console.log(restaurant)
-    console.log(reviewStar)
-    console.log(Description)
+    // console.log(token)
+    // console.log(user)
+    // console.log(restaurant)
+    // console.log(reviewStar)
+    // console.log(Description)
     
 
 
@@ -23,11 +23,12 @@ export default async function addReviews(token:string,
             reviewText: Description
         })
     });
-
+    const data=await response.json();
     if(!response.ok){
-        const error = await response.json();  // Log server response for more details
-        console.error("Error response:", error);
-        throw new Error("failed to add the review")
+        // const error = await response.json();  // Log server response for more details
+        // console.error("Error response:", error);
+        // throw new Error("failed to add the review")
+        return false
     }
-    return await response.json();
+    return data;
 }

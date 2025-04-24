@@ -22,8 +22,9 @@ export default async function editReview(
         });
 
         if (!response.ok) {
-            const errorMessage = await response.text();
-            throw new Error(`Failed to update review: ${errorMessage}`);
+            // const errorMessage = await response.text();
+            // throw new Error(`Failed to update review: ${errorMessage}`);
+            return false;
         }
 
         return await response.json();  

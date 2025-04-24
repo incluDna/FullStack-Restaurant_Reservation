@@ -2,13 +2,10 @@
 import addReviews from "@/libs/addReviews";
 import editReview from "@/libs/editReview";
 import { Rating, TextField } from "@mui/material";
-import { Session } from "next-auth";
-import { Pattaya } from "next/font/google";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
-const pattaya = Pattaya({ weight: "400", subsets: ["thai", "latin"] }); 
 
 
 export default   function Reviewform({ token,profile}: { token: string  ,profile:any}) {
@@ -30,8 +27,9 @@ export default   function Reviewform({ token,profile}: { token: string  ,profile
   const [user, setUser] = useState<string>(profile.data._id);
   const [reviewStar, setReviewStar] = useState<number>(0);
   const [Description, setDescription] = useState<string>('');
+  const [errorMessage,setErrorMessage]=useState<string>('');
 
-  const makeReview= () => {
+  const makeReview=async  () => {
     // console.log(session.user.token)
     // console.log(user)
     // console.log(rid)
@@ -40,39 +38,48 @@ export default   function Reviewform({ token,profile}: { token: string  ,profile
 
     if (user && rid && (reviewStar&&Description)) {
 
-      addReviews(
-        
+      const check=await addReviews(
         token,{
             user: user,
             restaurant: rid,
             reviewStar: reviewStar,
             Description: Description
         }
-        
       );
+      if(!check){
+        setErrorMessage("Cannot make a review.");
+        return;
+      }
+
       alert("Add Review Successfully!");
-      router.push(`/restaurants/${rid}`);
+      setErrorMessage('');
+      router.push(`/profile`);
 
       
     }else if(id && (reviewStar||Description)){
       // console.log(reviewStar)
       // console.log(Description)
       
-
-
-      editReview(token, id, reviewStar,Description);
+      const check=await editReview(token, id, reviewStar,Description);
+      if(!check){
+        setErrorMessage("Cannot updated a review.");
+        return;
+      }
       alert("Review updated ");
-      router.push('/profile/view/review')
+      setErrorMessage('');
+      router.push('/profile')
 
+    }else{
+      setErrorMessage("Please fill in fields.");
     }
   };
 
   return (
     <div className="p-3 ">
         {id?
-        <div className={pattaya.className} style={{ fontSize: "96px" }}>Edit Review</div>
+        <div style={{ fontSize: "96px" }}>Edit Review</div>
         :
-        <div className={pattaya.className} style={{ fontSize: "96px" }}>New Review</div>
+        <div style={{ fontSize: "96px" }}>New Review</div>
         }
 
       <div className="text-center">
@@ -110,7 +117,6 @@ export default   function Reviewform({ token,profile}: { token: string  ,profile
             </div>
         </div>
       </div>
-      <Link href={`/profile`}> 
       <button
         className="font-serif m-autoblock rounded-md bg-[#F89640] 
         hover:bg-green-600 px-3 py-2 text-white shadow-sm"
@@ -118,7 +124,7 @@ export default   function Reviewform({ token,profile}: { token: string  ,profile
       >
         Submit
       </button>
-      </Link> 
+      <div className="text-red-500 font-mono p-5">{errorMessage}</div>
     </div>
   );
 

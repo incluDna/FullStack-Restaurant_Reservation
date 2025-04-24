@@ -2,14 +2,15 @@ const Restaurant = require("../models/Restaurant");
 const Reservation = require("../models/Reservation");
 const Review = require("../models/Review");
 const Queue = require("../models/Queue");
+const Menu = require("../models/Menu");
 const asyncHandler = require("../utils/asyncHandler");
 const APIFeatures = require("../utils/APIFeatures");
+const APIError = require("../utils/APIError");
 const { toMinutes } = require("../utils/parseTimes");
 
 /**
- * @description Get all restaurants
+ * @description Get ALL restaurants. Supports filtering, sorting, selecting fields, and pagination.
  * @route GET /api/restaurants
- * @access Public
  */
 exports.getRestaurants = asyncHandler(async (req, res, next) => {
   const features = new APIFeatures(Restaurant.find(), req.query)
@@ -40,9 +41,7 @@ exports.getRestaurant = asyncHandler(async (req, res, next) => {
   const restaurant = await Restaurant.findById(req.params.id);
 
   if (!restaurant) {
-    const error = new Error(`No restaurant with the id of ${req.params.id}`);
-    error.statusCode = 404;
-    throw error;
+    throw new APIError(`No restaurant with the id of ${req.params.id}`, 404);
   }
 
   res.status(200).json({
@@ -65,9 +64,7 @@ exports.createRestaurant = asyncHandler(async (req, res, next) => {
     throw error;
   }
   if (openMinutes >= closeMinutes) {
-    const error = new Error("Opening time must be before closing time in the same day");
-    error.statusCode = 400;
-    throw error;
+    throw new APIError("Opening time must be before closing time in the same day", 400);
   }
 
   const restaurant = await Restaurant.create(req.body);
@@ -90,9 +87,7 @@ exports.updateRestaurant = asyncHandler(async (req, res, next) => {
   });
 
   if (!restaurant) {
-    const error = new Error(`No restaurant with the id of ${req.params.id}`);
-    error.statusCode = 404;
-    throw error;
+    throw new APIError(`No restaurant with the id of ${req.params.id}`, 404);
   }
 
   res.status(200).json({
@@ -110,9 +105,7 @@ exports.deleteRestaurant = asyncHandler(async (req, res, next) => {
   const restaurant = await Restaurant.findById(req.params.id);
 
   if (!restaurant) {
-    const error = new Error(`No restaurant with the id of ${req.params.id}`);
-    error.statusCode = 404;
-    throw error;
+    throw new APIError(`No restaurant with the id of ${req.params.id}`, 404);
   }
 
   // Delete all reservations, reviews, and queues associated with the restaurant
@@ -120,10 +113,11 @@ exports.deleteRestaurant = asyncHandler(async (req, res, next) => {
     Reservation.deleteMany({ restaurant: req.params.id }),
     Review.deleteMany({ restaurant: req.params.id }),
     Queue.deleteMany({ restaurant: req.params.id }),
+    Menu.deleteMany({ restaurant: req.params.id }),
   ]);
   await Restaurant.deleteOne({ _id: req.params.id });
 
-  res.status(200).json({
+  res.status(204).json({
     success: true,
     data: {},
   });

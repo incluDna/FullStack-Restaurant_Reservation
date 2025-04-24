@@ -1,6 +1,10 @@
 "use client"
 
 import { useEffect, useState } from "react";
+import getQueueByRestaurant from "@/libs/Queue/getQueueByRestaurant";
+import callQueue from "@/libs/Queue/callQueue";
+import tickQueue from "@/libs/Queue/tickQueue";
+import deleteQueue from "@/libs/Queue/deleteQueue";
 import { Queue } from "../../interfaces";
 // import getQueuesByRestaurant from "@/libs/Reservation/getQueuesByRestaurant";
 import QueueManageCard from "./card/managementComp/QueueManageCard";
@@ -36,7 +40,6 @@ export default function QueueManageSection({ token, restaurantID }: { token?: st
     useEffect(() => {
         const fetchQueues = async () => {
             try {
-                // IMPLEMENT AFTER HAVE LIBS
                 const response: any = await getQueueByRestaurant(restaurantID, token);
                 setQueues(response.data);
 
@@ -57,7 +60,7 @@ export default function QueueManageSection({ token, restaurantID }: { token?: st
                 // filtering
                 const waitingQueuesFiltered = queues?.filter((item) => item.queueStatus === 'waiting') || [];
                 const callingQueuesFiltered = queues?.filter((item) => item.queueStatus === 'calling') || [];
-                
+
                 setWaitingQueues(waitingQueuesFiltered);
                 setCallingQueues(callingQueuesFiltered);
                 setLoading(false);
@@ -70,6 +73,40 @@ export default function QueueManageSection({ token, restaurantID }: { token?: st
 
         filteredQueues();
     }, [queues]);
+    
+    const handleCall = async (queueId: string) => {
+        setLoading(true);
+        try {
+            await callQueue(token, queueId);
+        } catch (error) {
+            console.log("Call error: ", error);
+            alert("Cannot call the selected queue at this moment. Please try again.");
+        }
+        setPleaseReload(!pleaseReload);
+    };
+
+    const handleTick = async (queueId: string) => {
+        setLoading(true);
+        try {
+            await tickQueue(token, queueId);
+        } catch (error) {
+            console.log("Tick error: ", error);
+            alert("Cannot confirm the selected queue at this moment. Please try again.");
+        }
+        setPleaseReload(!pleaseReload);
+    };
+
+    const handleDelete = async (queueId: string) => {
+        setLoading(true);
+        try {
+            await deleteQueue(token, queueId);
+        } catch (error) {
+            console.log("Delete error: ", error);
+            alert("Cannot cancel the selected queue at this moment. Please try again.");
+        }
+        setPleaseReload(!pleaseReload);
+    };
+
     if (error) {
         return <p>{error}</p>;
     }
@@ -88,7 +125,7 @@ export default function QueueManageSection({ token, restaurantID }: { token?: st
             {
                 callingQueues?.map((queue, index) =>
                 (
-                    <QueueManageCard queue={queue} key={index}/>
+                    <QueueManageCard queue={queue} key={index} handleCall={handleCall} handleDelete={handleDelete} handleTick={handleTick} />
                 )
                 )
             }
@@ -98,7 +135,7 @@ export default function QueueManageSection({ token, restaurantID }: { token?: st
             {
                 waitingQueues?.map((queue, index) =>
                 (
-                    <QueueManageCard queue={queue} key={index}/>
+                    <QueueManageCard queue={queue} key={index} handleCall={handleCall} handleDelete={handleDelete} handleTick={handleTick} />
                 )
                 )
             }

@@ -3,12 +3,9 @@ import React, { useEffect, useState } from "react";
 import { Queue } from "../../../../interfaces";
 import { Bell, Check, X } from "lucide-react";
 import QueueStatusButton from "../../button/QueueStatusButton";
-import callQueue from "@/libs/Queue/callQueue";
 import { getAuthCookie } from "@/libs/User/getAuthCookie";
-import tickQueue from "@/libs/Queue/tickQueue";
-import deleteQueue from "@/libs/Queue/deleteQueue";
 
-export default function QueueManageCard({ queue }: { queue: Queue }) {
+export default function QueueManageCard({ queue, handleCall, handleTick, handleDelete }: { queue: Queue, handleCall:Function, handleTick:Function, handleDelete:Function }) {
   const [loading, setLoading] = useState<boolean>(false);
   const [token, setToken] = useState<string>("");
 
@@ -26,39 +23,7 @@ export default function QueueManageCard({ queue }: { queue: Queue }) {
     fetchData();
   }, []);
 
-  const handleCall = async (queueId: string) => {
-    setLoading(true);
-    try {
-      await callQueue(token, queueId);
-    } catch (error) {
-      console.log("Call error: ", error);
-      alert("Cannot call the selected queue at this moment. Please try again.");
-    }
-    setLoading(false);
-  };
-
-  const handleTick = async (queueId: string) => {
-    setLoading(true);
-    try {
-      await tickQueue(token, queueId);
-    } catch (error) {
-      console.log("Tick error: ", error);
-      alert("Cannot confirm the selected queue at this moment. Please try again.");
-    }
-    setLoading(false);
-  };
-
-  const handleDelete = async (queueId: string) => {
-    setLoading(true);
-    try {
-      await deleteQueue(token, queueId);
-    } catch (error) {
-      console.log("Delete error: ", error);
-      alert("Cannot cancel the selected queue at this moment. Please try again.");
-    }
-    setLoading(false);
-  };
-
+  
   return (
     <div className="relative bg-[#C2C2C2] h-[23vh] w-[40vw] flex flex-row rounded-md shadow-md overflow-hidden">
       {/* Optional Loading Overlay */}

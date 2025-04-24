@@ -1,4 +1,4 @@
-export default async function deleteMenu (token:string, queueID:string,) {
+export default async function deleteQueue (token:string, queueID:string,) {
     //for admin and employee
     const response=await fetch(`${process.env.BACKEND_URL}/api/queues/${queueID}`, {
         method:"DELETE",

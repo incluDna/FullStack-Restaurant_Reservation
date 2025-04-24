@@ -3,37 +3,72 @@ import React, { useEffect, useState } from "react";
 import { Queue } from "../../../../interfaces";
 import { Bell, Check, X } from "lucide-react";
 import QueueStatusButton from "../../button/QueueStatusButton";
+import callQueue from "@/libs/Queue/callQueue";
+import { getAuthCookie } from "@/libs/User/getAuthCookie";
+import tickQueue from "@/libs/Queue/tickQueue";
+import deleteQueue from "@/libs/Queue/deleteQueue";
 
 export default function QueueManageCard({ queue }: { queue: Queue }) {
   const [loading, setLoading] = useState<boolean>(false);
+  const [token, setToken] = useState<string>("");
 
-  const handleClick = (status: string) => {
+  useEffect(() => {
+    const fetchData = async () => {
+      setLoading(true);
+      try {
+        const data = await getAuthCookie();
+        setToken(data.token);
+      } catch (error) {
+        console.log("Auth error: ", error);
+      }
+      setLoading(false);
+    };
+    fetchData();
+  }, []);
+
+  const handleCall = async (queueId: string) => {
     setLoading(true);
     try {
-      // editQueue(... , status)
-      // เอาไว้แก้ status ของ Queue อ่ะ
-      // ไม่แน่ใจ syntax อ่ะเอาจริง ๆ อย่าเชื่อ param ที่เขียนนะ ;-;
+      await callQueue(token, queueId);
     } catch (error) {
-      console.log(error);
+      console.log("Call error: ", error);
+      alert("Cannot call the selected queue at this moment. Please try again.");
     }
     setLoading(false);
   };
 
-  const handleDelete = async () => {
+  const handleTick = async (queueId: string) => {
     setLoading(true);
     try {
-      // deleteQueue()
-      // เอาไว้ deleteQueue นับ params แล้วแต่เหมือนเดิมเลยว่าต้องใช้อะไรบ้าง
+      await tickQueue(token, queueId);
     } catch (error) {
-      console.log(error);
+      console.log("Tick error: ", error);
+      alert("Cannot confirm the selected queue at this moment. Please try again.");
+    }
+    setLoading(false);
+  };
+
+  const handleDelete = async (queueId: string) => {
+    setLoading(true);
+    try {
+      await deleteQueue(token, queueId);
+    } catch (error) {
+      console.log("Delete error: ", error);
+      alert("Cannot cancel the selected queue at this moment. Please try again.");
     }
     setLoading(false);
   };
 
   return (
-    // สำหรับเรื่องสียังเอาตาม Figma อยู่นะ ไม่ได้แก้อะไร แต่ถ้าอยากให้แก้เดี๋ยวมาแก้ให้ ้ ้ ้
-    <div className="bg-[#C2C2C2] h-[23vh] w-[40vw] flex flex-row">
-      {/* User's and Queue's Info */}
+    <div className="relative bg-[#C2C2C2] h-[23vh] w-[40vw] flex flex-row rounded-md shadow-md overflow-hidden">
+      {/* Optional Loading Overlay */}
+      {loading && (
+        <div className="absolute inset-0 bg-black bg-opacity-30 flex items-center justify-center z-10">
+          <p className="text-white font-semibold text-lg">Loading...</p>
+        </div>
+      )}
+
+      {/* User and Queue Info */}
       <div className="w-full h-full px-4 py-4 space-y-2 font-inter">
         <p>{queue.user._id}</p>
         <p>{queue.user.name}</p>
@@ -42,13 +77,10 @@ export default function QueueManageCard({ queue }: { queue: Queue }) {
       </div>
 
       {/* Buttons */}
-      <div className="w-[5vw] h-full py-2 space-y-2 flex flex-col justify-center items-center">
-        <QueueStatusButton icon={Bell} onClick={() => handleClick("calling")} />
-        <QueueStatusButton
-          icon={Check}
-          onClick={() => handleClick("complete")}
-        />
-        <QueueStatusButton icon={X} onClick={() => handleDelete()} />
+      <div className="w-[5vw] h-full py-2 space-y-2 flex flex-col justify-center items-center z-0">
+        <QueueStatusButton icon={Bell} onClick={() => handleCall(queue._id!)} disabled={loading} />
+        <QueueStatusButton icon={Check} onClick={() => handleTick(queue._id!)} disabled={loading} />
+        <QueueStatusButton icon={X} onClick={() => handleDelete(queue._id!)} disabled={loading} />
       </div>
     </div>
   );

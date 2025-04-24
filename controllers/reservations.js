@@ -7,7 +7,7 @@ const { toMinutes } = require("../utils/parseTimes");
 
 const restaurantPopulate = {
   path: "restaurant",
-  select: "name province tel",
+  select: "name province shortLocation tel",
 };
 const userPopulate = {
   path: "user",
@@ -25,9 +25,7 @@ exports.getReservations = asyncHandler(async (req, res, next) => {
     baseQuery = Reservation.find({ user: req.user.id });
   } else if (req.params.restaurantId) {
     if (!isValidObjectId(req.params.restaurantId)) {
-      const error = new Error(`Invalid id: not an ObjectID`);
-      error.statusCode = 400;
-      throw error;
+      throw new APIError(`Invalid id: not an ObjectID`, 400);
     }
     baseQuery = Reservation.find({ restaurant: req.params.restaurantId });
   } else {
@@ -42,9 +40,7 @@ exports.getReservations = asyncHandler(async (req, res, next) => {
     .populate(userPopulate);
 
   if (reservations.length === 0) {
-    const error = new Error(`No reservations found`);
-    error.statusCode = 404;
-    throw error;
+    throw new APIError(`No reservations found`, 404);
   }
 
   res.status(200).json({
@@ -61,19 +57,11 @@ exports.getReservations = asyncHandler(async (req, res, next) => {
  */
 exports.getReservation = asyncHandler(async (req, res, next) => {
   const reservation = await Reservation.findById(req.params.id)
-    .populate({
-      path: "restaurant",
-      select: "name description tel",
-    })
-    .populate({
-      path: "user",
-      select: "name tel",
-    });
+    .populate(restaurantPopulate)
+    .populate(userPopulate);
 
   if (!reservation) {
-    const error = new Error(`No reservation with the id of ${req.params.id}`);
-    error.statusCode = 404;
-    throw error;
+    throw new APIError(`No reservation with the id of ${req.params.id}`, 404);
   }
 
   res.status(200).json({
@@ -89,55 +77,38 @@ exports.getReservation = asyncHandler(async (req, res, next) => {
  */
 exports.addReservation = asyncHandler(async (req, res, next) => {
   if (!isValidObjectId(req.params.restaurantId)) {
-    const error = new Error(`Invalid id: not an ObjectID`);
-    error.statusCode = 400;
-    throw error;
+    throw new APIError(`Invalid id: not an ObjectID`, 400);
   }
   req.body.restaurant = req.params.restaurantId;
 
   const restaurant = await Restaurant.findById(req.params.restaurantId);
 
   if (!restaurant) {
-    const error = new Error(`No restaurant with the id of ${req.params.restaurantId}`);
-    error.statusCode = 404;
-    throw error;
+    throw new APIError(`No restaurant with the id of ${req.params.restaurantId}`, 404);
   }
   if (!checkValidTime(restaurant.openTime, restaurant.closeTime, req.body.resDate)) {
-    const error = new Error(`Invalid reservation time: must be between open and close time`);
-    error.statusCode = 400;
-    throw error;
+    throw new APIError(`Invalid reservation time: must be between open and close time`, 400);
   }
 
   req.body.user = req.user.id;
   const existingReservations = await Reservation.find({ user: req.user.id });
 
   if (existingReservations.length >= 3 && req.user.role !== "admin") {
-    const error = new Error(`${req.user.name} has already made 3 reservations`);
-    error.statusCode = 400;
-    throw error;
+    throw new APIError(`${req.user.name} has already made 3 reservations.`, 400);
   }
 
-  const newResDate = new Date(req.body.resDate);
-  const endDate = new Date(newResDate.getTime() + 60 * 60 * 1000);
-
-  const count = await Reservation.countDocuments({
-    restaurant: req.params.restaurantId,
-    resDate: { $gte: newResDate, $lt: endDate },
-  });
-
+  const count = await countReservationInPeriod(req.params.restaurantId, req.body.resDate);
   if (count >= restaurant.reservationLimit) {
-    const error = new Error(
-      `${restaurant.name} is fully booked at this time. Choose a different time slot.`
+    throw new APIError(
+      `${restaurant.name} is fully booked at this time. Choose a different time slot.`,
+      400
     );
-    error.statusCode = 400;
-    throw error;
   }
   if (req.body.seatCount > restaurant.seatPerReservationLimit) {
-    const error = new Error(
-      `Your seat count of ${req.body.seatCount} exceeds the restaurant's limit of ${restaurant.seatPerReservationLimit}`
+    throw new APIError(
+      `Your seat count of ${req.body.seatCount} exceeds the restaurant's limit of ${restaurant.seatPerReservationLimit}`,
+      400
     );
-    error.statusCode = 400;
-    throw error;
   }
 
   const reservation = await Reservation.create(req.body);
@@ -153,102 +124,68 @@ exports.addReservation = asyncHandler(async (req, res, next) => {
  * @route /api/reservations/:id
  * @access Private
  */
-exports.updateReservation = async (req, res, next) => {
+exports.updateReservation = asyncHandler(async (req, res, next) => {
   // Make sure user is the reservation owner
 
-  try {
-    let reservation = await Reservation.findById(req.params.id);
+  let reservation = await Reservation.findById(req.params.id);
 
-    if (!reservation) {
-      return res.status(404).json({
-        success: false,
-        message: `No reservation with the id of ${req.params.id}`,
-      });
-    }
-
-    if (reservation.user.toString() !== req.user.id && req.user.role !== "admin") {
-      return res.status(401).json({
-        success: false,
-        message: `User ${req.user.id} is not authorized to update this reservation`,
-      });
-    }
-
-    const restaurant = await Restaurant.findById(reservation.restaurant);
-    if (!restaurant) {
-      return res.status(404).json({
-        success: false,
-        message: `No restaurant with the id of ${reservation.restaurant}`,
-      });
-    }
-    if (
-      req.body.resDate &&
-      !checkValidTime(restaurant.openTime, restaurant.closeTime, req.body.resDate)
-    ) {
-      return res.status(400).json({
-        success: false,
-        message: "Cannot update reservation: Invalid time",
-      });
-    }
-    if (req.body.seatCount && req.body.seatCount > restaurant.seatPerReservationLimit) {
-      return res.status(400).json({
-        success: false,
-        message: `The seat count exceeds the limit of ${restaurant.seatPerReservationLimit}`,
-      });
-    }
-
-    reservation = await Reservation.findByIdAndUpdate(req.params.id, req.body, {
-      new: true,
-      runValidators: true,
-    });
-
-    res.status(200).json({
-      success: true,
-      data: reservation,
-    });
-  } catch (error) {
-    console.log(error);
-    return res.status(500).json({
-      success: false,
-      message: "Cannot update Reservation",
-    });
+  if (!reservation) {
+    throw new APIError(`No reservation with the id of ${req.params.id}`, 404);
   }
-};
+
+  if (reservation.user.toString() !== req.user.id && req.user.role !== "admin") {
+    throw new APIError(`User ${req.user.id} is not authorized to update this reservation`, 403);
+  }
+
+  const restaurant = await Restaurant.findById(reservation.restaurant);
+  if (!restaurant) {
+    throw new APIError(`No restaurant with the id of ${reservation.restaurant}`, 404);
+  }
+  if (
+    req.body.resDate &&
+    !checkValidTime(restaurant.openTime, restaurant.closeTime, req.body.resDate)
+  ) {
+    throw new APIError(`Invalid reservation time: must be between open and close time`, 400);
+  }
+  if (req.body.seatCount && req.body.seatCount > restaurant.seatPerReservationLimit) {
+    throw new APIError(
+      `Your seat count of ${req.body.seatCount} exceeds the restaurant's limit of ${restaurant.seatPerReservationLimit}`,
+      400
+    );
+  }
+
+  reservation = await Reservation.findByIdAndUpdate(req.params.id, req.body, {
+    new: true,
+    runValidators: true,
+  });
+
+  res.status(200).json({
+    success: true,
+    data: reservation,
+  });
+});
 
 /**
  * @description Delete a reservation
  * @route /api/reservations/:id
  * @access Private
  */
-exports.deleteReservation = async (req, res, next) => {
-  try {
-    const reservation = await Reservation.findById(req.params.id);
+exports.deleteReservation = asyncHandler(async (req, res, next) => {
+  const reservation = await Reservation.findById(req.params.id);
 
-    if (!reservation) {
-      return res.status(404).json({
-        success: false,
-        message: `No reservation with the id of ${req.params.id}`,
-      });
-    }
-    if (reservation.user.toString() !== req.user.id && req.user.role === "user") {
-      return res.status(401).json({
-        success: false,
-        message: `User ${req.user.id} is not authorized to delete this reservation`,
-      });
-    }
-    await reservation.deleteOne();
-
-    res.status(200).json({
-      success: true,
-      data: {},
-    });
-  } catch (error) {
-    console.log(error);
-    return res.status(500).json({
-      success: false,
-      message: "Cannot delete Reservation",
-    });
+  if (!reservation) {
+    throw new APIError(`No reservation with the id of ${req.params.id}`, 404);
   }
-};
+  if (reservation.user.toString() !== req.user.id && req.user.role === "user") {
+    throw new APIError(`User ${req.user.id} is not authorized to delete this reservation`, 403);
+  }
+  await reservation.deleteOne();
+
+  res.status(204).json({
+    success: true,
+    data: {},
+  });
+});
 
 function checkValidTime(openTime, closeTime, resDate) {
   const openMinutes = toMinutes(openTime);
@@ -263,4 +200,15 @@ function checkValidTime(openTime, closeTime, resDate) {
     return false;
   }
   return true;
+}
+
+async function countReservationInPeriod(restaurantId, startDate) {
+  const newResDate = new Date(startDate);
+  const endDate = new Date(newResDate.getTime() + 60 * 60 * 1000);
+  const count = await Reservation.countDocuments({
+    restaurant: restaurantId,
+    resDate: { $gte: newResDate, $lte: endDate },
+  });
+
+  return count;
 }

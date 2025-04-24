@@ -2,20 +2,51 @@ const Queue = require("../models/Queue");
 const Restaurant = require("../models/Restaurant");
 const asyncHandler = require("../utils/asyncHandler");
 const APIFeatures = require("../utils/APIFeatures");
+const APIError = require("../utils/APIError");
 
 exports.getQueues = asyncHandler(async (req, res, next) => {
-  let features = new APIFeatures(null, req.query);
-
+  let baseQuery;
   if (req.params.restaurantId && req.user.role !== "user") {
-    features.query = Queue.find({ restaurant: req.params.restaurantId });
+    baseQuery = Queue.find({ restaurant: req.params.restaurantId });
   } else if (!req.params.restaurantId && req.user.role === "user") {
-    features.query = Queue.find({ user: req.user.id });
+    baseQuery = Queue.find({ user: req.user.id });
   } else {
-    const error = new Error(`User cannot access this resource`);
-    error.statusCode = 403;
-    throw error;
+    throw new APIError(`User cannot access this resource`, 403);
   }
 
+  const features = new APIFeatures(baseQuery, req.query).filter().limitFields();
+  const queues = await features.query
+    .sort({ createdAt: 1 })
+    .populate({
+      path: "restaurant",
+      select: "name province tel",
+    })
+    .populate({
+      path: "user",
+      select: "name tel",
+    });
+
+  return res.status(200).json({
+    success: true,
+    count: queues.length,
+    data: queues,
+  });
+});
+
+exports.getIncompleteQueues = asyncHandler(async (req, res, next) => {
+  let baseQuery;
+  if (req.params.restaurantId && req.user.role !== "user") {
+    baseQuery = Queue.find({
+      restaurant: req.params.restaurantId,
+      queueStatus: { $ne: "completed" },
+    });
+  } else if (!req.params.restaurantId && req.user.role === "user") {
+    baseQuery = Queue.find({ user: req.user.id, queueStatus: { $ne: "completed" } });
+  } else {
+    throw new APIError(`User cannot access this resource`, 403);
+  }
+
+  const features = new APIFeatures(baseQuery, req.query).filter().limitFields();
   const queues = await features.query
     .sort({ createdAt: 1 })
     .populate({
@@ -35,11 +66,8 @@ exports.getQueues = asyncHandler(async (req, res, next) => {
 });
 
 exports.getQueuePosition = asyncHandler(async (req, res, next) => {
-  let features = new APIFeatures(null, req.query);
   if (!req.params.restaurantId) {
-    const error = new Error(`Restaurant ID not provided: please access through a restaurant`);
-    error.statusCode = 400;
-    throw error;
+    throw new APIError(`Restaurant ID not provided: please access through a restaurant`, 400);
   }
 
   const allQueues = await Queue.find({
@@ -47,11 +75,10 @@ exports.getQueuePosition = asyncHandler(async (req, res, next) => {
     queueStatus: { $ne: "completed" },
   }).sort({ createdAt: 1 });
   const thisQueue = await Queue.findById(req.params.id);
+
   const index = allQueues.findIndex((queue) => queue._id.toString() === thisQueue._id.toString());
   if (index === -1) {
-    const error = new Error(`Cannot find queue in restaurant. How?`);
-    error.statusCode = 500;
-    throw error;
+    throw new APIError(`Somehow, no queue with the id of ${req.params.id}`, 404);
   }
 
   return res.status(200).json({
@@ -63,9 +90,7 @@ exports.getQueuePosition = asyncHandler(async (req, res, next) => {
 
 exports.createQueue = asyncHandler(async (req, res, next) => {
   if (!req.params.restaurantId) {
-    const error = new Error(`Restaurant ID not provided: please access through a restaurant`);
-    error.statusCode = 400;
-    throw error;
+    throw new APIError(`Restaurant ID not provided: please access through a restaurant`, 400);
   }
 
   req.body.user = req.user.id;
@@ -77,19 +102,16 @@ exports.createQueue = asyncHandler(async (req, res, next) => {
     restaurant: req.params.restaurantId,
   });
   if (exists) {
-    const error = new Error(`You already have a queue in this restaurant`);
-    error.statusCode = 400;
-    throw error;
+    throw new APIError(`You already have a queue in this restaurant`, 400);
   }
 
   // Ensure seatCount is not greater than the restaurant's limit
   const restaurant = await Restaurant.findById(req.params.restaurantId);
   if (req.body.seatCount > restaurant.seatPerReservationLimit) {
-    const error = new Error(
-      `This restaurant does not allow reserving more than ${restaurant.seatPerReservationLimit} seats`
+    throw new APIError(
+      `This restaurant does not allow reserving more than ${restaurant.seatPerReservationLimit} seats`,
+      400
     );
-    error.statusCode = 400;
-    throw error;
   }
 
   const queue = await Queue.create(req.body);
@@ -101,21 +123,24 @@ exports.createQueue = asyncHandler(async (req, res, next) => {
 });
 
 exports.updateQueueStatus = asyncHandler(async (req, res, next) => {
-  const queue = await Queue.findById(req.params.id);
+  let queue = await Queue.findById(req.params.id);
 
   if (!queue) {
-    const error = new Error(`No queue with the id of ${req.params.id}`);
-    error.statusCode = 404;
-    throw error;
+    throw new APIError(`No queue with the id of ${req.params.id}`, 404);
   }
 
   if (req.body.queueStatus === undefined) {
-    const error = new Error(`Queue status not provided`);
-    error.statusCode = 400;
-    throw error;
+    throw new APIError(`Queue status not provided`, 400);
   }
-  queue.queueStatus = req.body.queueStatus;
-  await queue.save();
+
+  queue = await Queue.findByIdAndUpdate(
+    req.params.id,
+    { queueStatus: req.body.queueStatus },
+    {
+      new: true,
+      runValidators: true,
+    }
+  );
 
   return res.status(200).json({
     success: true,
@@ -127,23 +152,19 @@ exports.deleteQueue = asyncHandler(async (req, res, next) => {
   const queue = await Queue.findById(req.params.id);
 
   if (!queue) {
-    const error = new Error(`No queue with the id of ${req.params.id}`);
-    error.statusCode = 404;
-    throw error;
+    throw new APIError(`No queue with the id of ${req.params.id}`, 404);
   }
   if (
     (req.user.role === "user" && !queue.user.equals(req.user.id)) ||
     (req.user.role === "employee" && !queue.restaurant.equals(req.user.employedAt))
   ) {
-    const error = new Error(`Role ${req.user.role} cannot access this resource`);
-    error.statusCode = 403;
-    throw error;
+    throw new APIError(`User ${req.user.id} is not authorized to delete this queue`, 403);
   }
 
   await Queue.findByIdAndDelete(req.params.id);
 
   return res.status(204).json({
     success: true,
-    data: null,
+    data: {},
   });
 });

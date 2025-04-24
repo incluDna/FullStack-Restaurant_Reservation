@@ -8,7 +8,42 @@ import deleteMenu from "@/libs/Menu/deleteMenu";
 export default function MenuCard({ menu, role, token }: { menu: Menu, role: string | null, token: string | null }) {
   const [isEditable, setIsEditable] = useState<boolean>(false);
   const [menuData, setMenuData] = useState<any>(menu);
+  const [warning, setWarning] = useState<string>("");
+  const [emptyFields, setEmptyFields] = useState<{ name: boolean; price: boolean; description: boolean }>({
+    name: false,
+    price: false,
+    description: false,
+  });
+
   const handleSave = async () => {
+    const isNameEmpty = !menuData.name?.trim();
+    const isPriceEmpty = menuData.price === "" || menuData.price === null;
+    const isDescEmpty = !menuData.description?.trim();
+    const isDescTooLong = menuData.description?.length > 300;
+
+    if (isNameEmpty || isPriceEmpty || isDescEmpty || isDescTooLong) {
+      const missingFields = [];
+      if (isNameEmpty) missingFields.push("name");
+      if (isPriceEmpty) missingFields.push("price");
+      if (isDescEmpty) missingFields.push("description");
+
+      let warningMsg = "";
+      if (missingFields.length > 0) {
+        warningMsg += "Please fill: " + missingFields.join(", ");
+      }
+      if (isDescTooLong) {
+        warningMsg += (warningMsg ? ". " : "") + "Description must be less than or equal to 300 characters.";
+      }
+
+      setWarning(warningMsg);
+      setEmptyFields({
+        name: isNameEmpty,
+        price: isPriceEmpty,
+        description: isDescEmpty || isDescTooLong,
+      });
+      return;
+    }
+
     try {
       const updatedFields = {
         name: menuData?.name,
@@ -26,13 +61,14 @@ export default function MenuCard({ menu, role, token }: { menu: Menu, role: stri
       const menuResponse: MenuJSON = await getMenu(menuData.restaurant, menuData._id);
       setMenuData(menuResponse.data);
       setIsEditable(false);
+      setWarning("");
+      setEmptyFields({ name: false, price: false, description: false });
     } catch (error) {
       console.error("Error saving restaurant data:", error);
     }
   };
 
   const handleDelete = async () => {
-
     if (!menuData || !token) {
       console.error("Missing menu or authentication token");
       return;
@@ -58,9 +94,12 @@ export default function MenuCard({ menu, role, token }: { menu: Menu, role: stri
     const fetchMenu = async () => {
       const menuResponse: MenuJSON = await getMenu(menuData.restaurant, menuData._id);
       setMenuData(menuResponse.data);
-
+    };
+    if (!isEditable) {
+      fetchMenu();
+      setWarning("");
+      setEmptyFields({ name: false, price: false, description: false });
     }
-    if (!isEditable) fetchMenu();
   }, [isEditable]);
 
   return (
@@ -73,7 +112,7 @@ export default function MenuCard({ menu, role, token }: { menu: Menu, role: stri
               type="text"
               value={menuData.name}
               onChange={(e) => setMenuData({ ...menuData, name: e.target.value })}
-              className="w-full text-base text-black border-b-2 border-gray-300 focus:outline-none"
+              className={`w-full text-base text-black border-b-2 focus:outline-none ${emptyFields.name ? "border-red-500" : "border-gray-300"}`}
             />
           ) : (`${menuData.name}`)
         }</h3>
@@ -83,21 +122,23 @@ export default function MenuCard({ menu, role, token }: { menu: Menu, role: stri
             type="number"
             value={menuData.price}
             onChange={(e) => setMenuData({ ...menuData, price: e.target.value })}
-            className="w-full text-base text-black border-b-2 border-gray-300 focus:outline-none"
+            className={`w-full text-base text-black border-b-2 focus:outline-none ${emptyFields.price ? "border-red-500" : "border-gray-300"}`}
           />
         ) :
-          (`${menuData.price} ฿`)}
-      </p>
+          (`${menuData.price} ฿`)}</p>
       <p className="text-sm text-gray-600 text-center">{
         isEditable ? (
           <input
             type="text"
             value={menuData.description}
             onChange={(e) => setMenuData({ ...menuData, description: e.target.value })}
-            className="w-full text-base text-black border-b-2 border-gray-300 focus:outline-none"
+            className={`w-full text-base text-black border-b-2 focus:outline-none ${emptyFields.description ? "border-red-500" : "border-gray-300"}`}
           />
         ) :
           (`${menuData.description}`)}</p>
+      {
+        isEditable && warning && <p className="text-red-500 text-sm mt-2">{warning}</p>
+      }
       {
         (role === 'admin' || role === 'employee') && (
           <div className="flex justify-center gap-2 mt-4">
@@ -112,8 +153,10 @@ export default function MenuCard({ menu, role, token }: { menu: Menu, role: stri
                 <button onClick={() => setIsEditable(true)} className="w-20 h-5 bg-orange-400 rounded">Edit</button>
                 <button onClick={handleDelete} className="w-20 h-5 bg-orange-500 rounded">Delete</button>
               </>
-            )}  </div>
-        )}
+            )}
+          </div>
+        )
+      }
     </div>
   );
 }

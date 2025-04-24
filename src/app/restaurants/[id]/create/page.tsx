@@ -10,11 +10,14 @@ import addMenu from '@/libs/Menu/addMenu';
 const tagOptions: { label: string; description: string }[] = [
   { label: "Spicy", description: "Dish is hot and flavorful with spices." },
   { label: "Vegan", description: "No animal products." },
-  { label: "Gluten-Free", description: "No gluten." },
-  { label: "Dairy-Free", description: "No dairy products." },
-  { label: "Nut-Free", description: "Safe for nut allergies." },
-  { label: "Sweet", description: "Dessert or sweet taste." },
-  { label: "Rich in Protein", description: "Great source of protein." },
+  { label: "Gluten-free", description: "No gluten." },
+  { label: "Dairy-free", description: "No dairy products." },
+  { label: "Nut-free", description: "Safe for nut allergies." },
+  { label: "Halal", description: "Meets Halal dietary requirements." },
+  { label: "Locally-sourced", description: "Ingredients are locally sourced." },
+  { label: "Signature-dish", description: "Restaurant's signature dish." },
+  { label: "Seasonal", description: "Dish changes with the seasons." },
+  { label: "Sustainable", description: "Environmentally sustainable ingredients." },
   { label: "Vegetarian", description: "No meat, but may include dairy or eggs." },
 ];
 

@@ -37,29 +37,9 @@ export default function QueueManageSection({ token, restaurantID }: { token?: st
         const fetchQueues = async () => {
             try {
                 // IMPLEMENT AFTER HAVE LIBS
-                // fetching
-                // const response: ReservationJSON = await getQueuesByRestaurant(token, restaurantID);
-                // setQueues(response.data);
-                
-                // MOCK QUEUES
-                setQueues([
-                    {
-                        restaurant: '6803c841eaa0dff6a1c419e5', // sushiro
-                        user: '67fd5ab82306dfd76d6504c3', // jane
-                        seatCount: 2,
-                        createdAt: new Date(),
-                        status: 'calling',
-                    },
-                    {
-                        restaurant: '6803c841eaa0dff6a1c419e5', // sushiro
-                        user: '67f8cfa54f9feca57539a7bd', // rinuser
-                        seatCount: 2,
-                        createdAt: new Date(),
-                        status: 'waiting',
-                    }
-                ]);
+                const response: any = await getQueueByRestaurant(restaurantID, token);
+                setQueues(response.data);
 
-                console.log('test1', queues);
             } catch (error) {
                 console.error("Error fetching queues:", error);
                 setError("Error fetching queues.");
@@ -74,16 +54,13 @@ export default function QueueManageSection({ token, restaurantID }: { token?: st
     useEffect(() => {
         const filteredQueues = async () => {
             try {
-
-                console.log('test1', queues);
                 // filtering
-                const waitingQueuesFiltered = queues?.filter((item) => item.status === 'waiting') || [];
-                const callingQueuesFiltered = queues?.filter((item) => item.status === 'calling') || [];
+                const waitingQueuesFiltered = queues?.filter((item) => item.queueStatus === 'waiting') || [];
+                const callingQueuesFiltered = queues?.filter((item) => item.queueStatus === 'calling') || [];
                 
                 setWaitingQueues(waitingQueuesFiltered);
                 setCallingQueues(callingQueuesFiltered);
                 setLoading(false);
-                console.log('test', queues);
             } catch (error) {
                 console.error("Error fetching queues:", error);
                 setError("Error fetching queues.");
@@ -103,7 +80,7 @@ export default function QueueManageSection({ token, restaurantID }: { token?: st
                 Queue
             </div>
             <div className="w-full h-fit text-left break-words text-xl font-bold">
-                Remaing : {queues?.length||0}
+                Remaing : {queues?.length || 0}
             </div>
             <div className="w-full h-fit text-left break-words text-xl font-bold">
                 calling..

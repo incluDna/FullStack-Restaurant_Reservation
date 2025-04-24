@@ -2,6 +2,7 @@ const { isValidObjectId } = require("mongoose");
 const Reservation = require("../models/Reservation");
 const Restaurant = require("../models/Restaurant");
 const APIFeatures = require("../utils/APIFeatures");
+const APIError = require("../utils/APIError");
 const asyncHandler = require("../utils/asyncHandler");
 const { toMinutes } = require("../utils/parseTimes");
 
@@ -15,9 +16,9 @@ const userPopulate = {
 };
 
 /**
- * @description Get all reservations
- * @route GET /api/reservations
- * @access Public
+ * @description Get all reservations. Supports filtering and selecting fields.
+ * @route GET /api/reservations | /api/restaurants/:restaurantId/reservations
+ * @access Private
  */
 exports.getReservations = asyncHandler(async (req, res, next) => {
   let baseQuery;
@@ -39,10 +40,6 @@ exports.getReservations = asyncHandler(async (req, res, next) => {
     .populate(restaurantPopulate)
     .populate(userPopulate);
 
-  if (reservations.length === 0) {
-    throw new APIError(`No reservations found`, 404);
-  }
-
   res.status(200).json({
     success: true,
     count: reservations.length,
@@ -52,8 +49,8 @@ exports.getReservations = asyncHandler(async (req, res, next) => {
 
 /**
  * @description Get single reservation
- * @route GET /api/reservations/:id
- * @access Public
+ * @route GET /api/reservations/:id | /api/restaurants/:restaurantId/reservations/:id
+ * @access Private
  */
 exports.getReservation = asyncHandler(async (req, res, next) => {
   const reservation = await Reservation.findById(req.params.id)
@@ -72,12 +69,12 @@ exports.getReservation = asyncHandler(async (req, res, next) => {
 
 /**
  * @description Add a reservation
- * @route /api/reservations/:id
+ * @route /api/reservations/:id | /api/restaurants/:restaurantId/reservations/:id
  * @access Private
  */
 exports.addReservation = asyncHandler(async (req, res, next) => {
   if (!isValidObjectId(req.params.restaurantId)) {
-    throw new APIError(`Invalid id: not an ObjectID`, 400);
+    throw new APIError(`Invalid restaurant id: not an ObjectID`, 400);
   }
   req.body.restaurant = req.params.restaurantId;
 
@@ -121,18 +118,15 @@ exports.addReservation = asyncHandler(async (req, res, next) => {
 
 /**
  * @description Update a reservation
- * @route /api/reservations/:id
+ * @route /api/reservations/:id | /api/restaurants/:restaurantId/reservations/:id
  * @access Private
  */
 exports.updateReservation = asyncHandler(async (req, res, next) => {
-  // Make sure user is the reservation owner
-
   let reservation = await Reservation.findById(req.params.id);
 
   if (!reservation) {
     throw new APIError(`No reservation with the id of ${req.params.id}`, 404);
   }
-
   if (reservation.user.toString() !== req.user.id && req.user.role !== "admin") {
     throw new APIError(`User ${req.user.id} is not authorized to update this reservation`, 403);
   }
@@ -167,7 +161,7 @@ exports.updateReservation = asyncHandler(async (req, res, next) => {
 
 /**
  * @description Delete a reservation
- * @route /api/reservations/:id
+ * @route /api/reservations/:id | /api/restaurants/:restaurantId/reservations/:id
  * @access Private
  */
 exports.deleteReservation = asyncHandler(async (req, res, next) => {
@@ -179,7 +173,7 @@ exports.deleteReservation = asyncHandler(async (req, res, next) => {
   if (reservation.user.toString() !== req.user.id && req.user.role === "user") {
     throw new APIError(`User ${req.user.id} is not authorized to delete this reservation`, 403);
   }
-  await reservation.deleteOne();
+  await reservation.deleteOne({ _id: req.params.id });
 
   res.status(204).json({
     success: true,

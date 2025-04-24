@@ -11,6 +11,7 @@ const { toMinutes } = require("../utils/parseTimes");
 /**
  * @description Get ALL restaurants. Supports filtering, sorting, selecting fields, and pagination.
  * @route GET /api/restaurants
+ * @access Public
  */
 exports.getRestaurants = asyncHandler(async (req, res, next) => {
   const features = new APIFeatures(Restaurant.find(), req.query)

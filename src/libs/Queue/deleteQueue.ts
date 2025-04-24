@@ -11,5 +11,6 @@ export default async function deleteQueue (token:string, queueID:string,) {
     if(!response.ok){
         throw new Error("failed to delete the menu")
     }
-    return await response.json();
+    const text = await response.text();
+    return text ? JSON.parse(text) : null;
 }

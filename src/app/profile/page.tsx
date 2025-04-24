@@ -83,6 +83,7 @@ export default function ProfilePage() {
       alert("Failed to update profile");
     }
   };
+  
 
 
   return (
@@ -178,8 +179,8 @@ export default function ProfilePage() {
                 <ul className="flex flex-wrap gap-5">
                   {reviews.map((rev, index) => (
                     <ReviewCard
-                      key={rev._id || index}
-                      time={rev.createdAt}
+                      key={rev._id || index}                    
+                      time={rev.createdAt.toLocaleString()}
                       rating={rev.reviewStar}
                       description={rev.reviewText}
                       restaurant={rev.restaurant.name!}

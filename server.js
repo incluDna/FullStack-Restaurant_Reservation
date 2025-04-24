@@ -13,10 +13,12 @@ const cors = require("cors");
 const restaurants = require("./routes/restaurants");
 const reservations = require("./routes/reservations");
 const review = require("./routes/reviews");
+const queues = require("./routes/queues");
 const auth = require("./routes/auth");
+const errorHandler = require("./middleware/errorHandler");
 
 // require models
-// require("./models/Queue");
+require("./models/Queue");
 require("./models/Reservation");
 require("./models/Restaurant");
 require("./models/Review");
@@ -38,12 +40,6 @@ app.use(xss());
 app.use(hpp());
 app.use(cors());
 
-// use routes
-app.use("/api/restaurants", restaurants);
-app.use("/api/reservations", reservations);
-app.use("/api/reviews", review);
-app.use("/api/auth", auth);
-
 // rate limiting
 const limiter = rateLimit({
   windowsMs: 10 * 60 * 1000, // 10 minutes
@@ -51,11 +47,20 @@ const limiter = rateLimit({
 });
 app.use(limiter);
 
+// use routes
+app.use("/api/restaurants", restaurants);
+app.use("/api/reservations", reservations);
+app.use("/api/reviews", review);
+app.use("/api/auth", auth);
+app.use("/api/queues", queues);
+
+app.use(errorHandler);
+
 // configs
 const PORT = process.env.PORT || 5000;
 const server = app.listen(
   PORT,
-  console.log("Server running in", process.env.NODE_ENV, "mode on port", PORT),
+  console.log("Server running in", process.env.NODE_ENV, "mode on port", PORT)
 );
 
 process.on("unhandledRejection", (err, promise) => {

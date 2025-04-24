@@ -74,7 +74,7 @@ const RestaurantSchema = new mongoose.Schema(
   {
     toJSON: { virtuals: true },
     toObject: { virtuals: true },
-  },
+  }
 );
 
 RestaurantSchema.pre("validate", function (next) {
@@ -85,33 +85,9 @@ RestaurantSchema.pre("validate", function (next) {
     this.invalidate("reservationLimit", "Reservation limit must be an integer");
   }
   if (!Number.isInteger(this.seatPerReservationLimit)) {
-    this.invalidate(
-      "seatPerReservationLimit",
-      "Seat per reservation limit must be an integer",
-    );
+    this.invalidate("seatPerReservationLimit", "Seat per reservation limit must be an integer");
   }
   next();
-});
-
-// reverse populate with virtuals
-RestaurantSchema.virtual("queues", {
-  ref: "Queue",
-  localField: "_id",
-  foreignField: "restaurant",
-  options: { sort: { createdAt: 1 } },
-  justOne: false,
-});
-RestaurantSchema.virtual("reservations", {
-  ref: "Reservation",
-  localField: "_id",
-  foreignField: "restaurant",
-  justOne: false,
-});
-RestaurantSchema.virtual("reviews", {
-  ref: "Review",
-  localField: "_id",
-  foreignField: "restaurant",
-  justOne: false,
 });
 
 module.exports = mongoose.model("Restaurant", RestaurantSchema);

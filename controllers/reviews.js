@@ -10,49 +10,48 @@ const Reservation = require("../models/Reservation");
 exports.getReviews = async (req, res, next) => {
   let query;
 
+  const restaurantPopulate = {
+    path: "restaurant",
+    select: "name province tel",
+  };
+  const userPopulate = {
+    path: "user",
+    select: "name tel",
+  };
+
   // Check if the user is authenticated (req.user exists)
   if (req.user) {
     // If the user is authenticated, they can see reviews based on their role
     if (req.user.role !== "admin") {
       // General users can only see their own reviews or reviews for a specific restaurant
       if (req.params.restaurantId) {
-        query = Review.find({ restaurant: req.params.restaurantId }).populate({
-          path: "restaurant",
-          select: "name",
-        });
+        query = Review.find({ restaurant: req.params.restaurantId })
+          .populate(restaurantPopulate)
+          .populate(userPopulate);
       } else {
-        query = Review.find({ user: req.user.id }).populate({
-          path: "restaurant",
-          select: "name reviews",
-        });
+        query = Review.find({ user: req.user.id })
+          .populate(restaurantPopulate)
+          .populate(userPopulate);
       }
     } else {
       // Admin users can view all reviews or reviews for a specific restaurant
       if (req.params.restaurantId) {
-        query = Review.find({ restaurant: req.params.restaurantId }).populate({
-          path: "restaurant",
-          select: "name",
-        });
+        query = Review.find({ restaurant: req.params.restaurantId })
+          .populate(restaurantPopulate)
+          .populate(userPopulate);
       } else {
-        query = Review.find().populate({
-          path: "restaurant",
-          select: "name",
-        });
+        query = Review.find().populate(restaurantPopulate).populate(userPopulate);
       }
     }
   } else {
     // If the user is not logged in (guest user), allow them to see reviews for a specific restaurant
     if (req.params.restaurantId) {
-      query = Review.find({ restaurant: req.params.restaurantId }).populate({
-        path: "restaurant",
-        select: "name",
-      });
+      query = Review.find({ restaurant: req.params.restaurantId })
+        .populate(restaurantPopulate)
+        .populate(userPopulate);
     } else {
       // Allow guest users to see all reviews if no specific restaurant is provided
-      query = Review.find().populate({
-        path: "restaurant",
-        select: "name",
-      });
+      query = Review.find().populate(restaurantPopulate).populate(userPopulate);
     }
   }
 
@@ -105,11 +104,19 @@ exports.getReviews = async (req, res, next) => {
  * @access Public
  */
 exports.getReview = async (req, res, next) => {
+  const restaurantPopulate = {
+    path: "restaurant",
+    select: "name province tel",
+  };
+  const userPopulate = {
+    path: "user",
+    select: "name tel",
+  };
+
   try {
-    const review = await Review.findById(req.params.id).populate({
-      path: "restaurant",
-      select: "name reviews",
-    });
+    const review = await Review.findById(req.params.id)
+      .populate(restaurantPopulate)
+      .populate(userPopulate);
 
     if (!review) {
       return res.status(404).json({
@@ -177,9 +184,7 @@ exports.addReview = async (req, res, next) => {
     // check review date after resDate
     //console.log(Date.now());
     //console.log(new Date(existingReservations[(existingReservations.length-1)].resDate).getTime()) ;\
-    existingReservations.sort(
-      (a, b) => new Date(a.resDate) - new Date(b.resDate)
-    );
+    existingReservations.sort((a, b) => new Date(a.resDate) - new Date(b.resDate));
 
     //console.log(existingReservations);
     const dt = new Date(existingReservations[0].resDate).getTime();
@@ -296,10 +301,7 @@ exports.getReviewsForRestaurant = async (req, res, next) => {
     // Find all reviews for the given restaurant ID
     const reviews = await Review.find({ restaurant: restaurantID });
 
-    const totalRating = reviews.reduce(
-      (sum, review) => sum + review.reviewStar,
-      0
-    );
+    const totalRating = reviews.reduce((sum, review) => sum + review.reviewStar, 0);
     const meanRating = totalRating / reviews.length;
 
     const restaurant = await Restaurant.findById(req.params.id);

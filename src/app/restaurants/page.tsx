@@ -123,6 +123,17 @@ export default function RestaurantCatalog() {
 
   return (
     <main className="flex flex-col w-full items-start pt-20">
+       {profile?.data?.role === 'admin' && (
+         <div className="flex justify-end w-full pr-16 mb-8">
+           <motion.button
+             whileHover={{ backgroundColor: "black", scale: 1.02 }}
+             transition={{ duration: 0.3 }}
+             onClick={() => router.push(`/restaurants/create`)}
+             className="w-[65px] h-[65px] bg-[#3d3c3a] text-white text-xl border-0 rounded-none"
+           >
+           </motion.button>
+         </div>
+       )}
       <section className="flex flex-wrap justify-center w-full bg-white">
         {restaurants.map((restaurant) => {
           const restaurantId = restaurant._id?.toString() || '';

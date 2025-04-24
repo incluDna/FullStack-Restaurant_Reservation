@@ -36,15 +36,18 @@ export interface Reservation {
   createdAt: Date;
 }
 export interface Review{
-  _id?: string,
-  user: string,
+  _id?: string;
+  user:  {
+    _id?: string;
+    name: string;
+  };
   restaurant:  {
     _id?: string;
     name: string;
-  },
-  reviewStar: number,
-  reviewText: string,
-  createdAt:string
+  };
+  reviewStar: number;
+  reviewText: string;
+  createdAt:Date;
 }
 export interface MeanReview{
   success:string,

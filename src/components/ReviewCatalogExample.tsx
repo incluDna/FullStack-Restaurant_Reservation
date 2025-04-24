@@ -43,7 +43,7 @@ export default function ReviewCatalogExample({ reviews, meanReviews }:
           reviewsready.slice(0, 5).map((review: Review) => (
             <div className="bg-[#FFECAD] p-4"
               key={review._id}>
-              <div className='text-left'>User : {review.user}</div>
+              <div className='text-left'>User : {review.user.name}</div>
               <div className='text-left font-extrabold'>Star : {review.reviewStar}</div>
               <div className='text-left'>
                 <ClientRating rating={Number(review.reviewStar)} />

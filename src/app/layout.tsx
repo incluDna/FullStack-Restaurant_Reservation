@@ -3,6 +3,7 @@ import './global.css';
 import TopMenu from '@/components/TopMenu';
 import { Agbalumo } from "next/font/google";
 import './global.css';
+import NotificationCard from '@/components/NotificationCard';
 const agbalumo = Agbalumo({
     weight: '400',
     subsets: ['latin'],

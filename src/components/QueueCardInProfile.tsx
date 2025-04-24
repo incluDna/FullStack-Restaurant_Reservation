@@ -13,11 +13,11 @@ const QueueCardInProfile: React.FC<QueueCardInProfileProps> = ({ que, token, onD
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [showReviewPrompt, setShowReviewPrompt] = useState(que.status === "completed");
+  const [showReviewPrompt, setShowReviewPrompt] = useState(que.queueStatus === "completed");
   const [hideReviewPrompt, setHideReviewPrompt] = useState(false);
 
   const addReview = () => {
-    router.push(`/restaurants/${que.restaurant._id}/reviews`);
+    router.push(`/restaurants/${que.restaurant._id}/reviews/new`);
   };
 
   const handleDelete = async () => {
@@ -37,7 +37,7 @@ const QueueCardInProfile: React.FC<QueueCardInProfileProps> = ({ que, token, onD
     <li className="bg-[#FFECAD] rounded-lg p-4 shadow-md w-[17vw] max-w-sm">
       <h3 className="text-xl font-bold text-gray-800 mb-1">{que.restaurant.name}</h3>
       <p className="text-sm text-black">Location: {que.restaurant.province}</p>
-      <p className="text-sm text-orange-400 mt-2">status: {que.status}</p>
+      <p className="text-sm text-orange-400 mt-2">status: {que.queueStatus}</p>
 
       {showReviewPrompt && (
         <div className="flex items-center gap-3 mt-3">
@@ -52,11 +52,11 @@ const QueueCardInProfile: React.FC<QueueCardInProfileProps> = ({ que, token, onD
       )}
 
       {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
-      {(!showReviewPrompt || que.status !== "completed") && (
+      {(!showReviewPrompt || que.queueStatus !== "completed") && (
       <div className="flex justify-start mt-3">
         <button
           className="bg-orange-400 text-white px-4 py-1 rounded hover:bg-orange-500"
-          onClick={() => onDelete(que._id)}
+          onClick={handleDelete}
           disabled={loading}
         >
           {loading ? "Removing..." : "Remove"}

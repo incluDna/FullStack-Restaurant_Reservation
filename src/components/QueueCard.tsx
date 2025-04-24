@@ -2,7 +2,6 @@ import { motion } from "framer-motion";
 import { createQueue } from "@/libs/Queue/createQueue";
 import { getAuthCookie } from "@/libs/User/getAuthCookie";
 import { useEffect, useState } from "react";
-import { useParams } from "next/navigation";
 import { useRouter } from "next/navigation";
 
 type QueueCardProps = {
@@ -10,11 +9,12 @@ type QueueCardProps = {
 };
 
 export default function QueueCard({ id }: QueueCardProps) {
-  
   const [token, setToken] = useState("");
   const [role, setRole] = useState("");
-  const [seatCount, setSeatCount] = useState(0)
+  const [seatCount, setSeatCount] = useState(0);
+  const [error, setError] = useState(""); // state for error message
   const router = useRouter();
+
   useEffect(() => {
     async function fetchToken() {
       try {
@@ -34,22 +34,25 @@ export default function QueueCard({ id }: QueueCardProps) {
   }, []);
 
   const handleGetQueue = async () => {
+    setError(""); 
+
     const fieldValues = {
-      restaurantId: id!,
-      token: token,
-      seatCount: seatCount,
+      restaurantId: id,
+      token,
+      seatCount,
       queueStatus: "waiting"
     };
 
+    const result = await createQueue(fieldValues);
 
-    try {
-      await createQueue(fieldValues);
-      alert("Creation completed!");
+    if (result.success) {
+      alert("You are now in line!");
       setTimeout(() => router.push("/profile"), 1000);
-    } catch (err) {
-      console.error("Failed to add restaurant:", err);
+    } else {
+      setError(result.message); 
     }
   };
+
   return (
     <div className="flex-1 bg-[#ffebac] p-6 flex flex-col justify-center rounded-xl">
       <h2 className="text-2xl font-bold text-center text-black mb-6">
@@ -71,6 +74,11 @@ export default function QueueCard({ id }: QueueCardProps) {
       >
         Get in Line
       </motion.button>
+
+      {/* Error Message */}
+      {error && (
+        <p className="text-red-600 text-sm text-center mt-2">{error}</p>
+      )}
     </div>
   );
 }

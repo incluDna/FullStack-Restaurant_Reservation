@@ -1,7 +1,7 @@
 import ReviewForm from "@/components/ReviewForm";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
-import getUserProfile from "@/libs/getUserProfile";
+import getUserProfile from "@/libs/User/getUserProfile";
 
 export default async function addReviews() {
     // WILL TEST LATER

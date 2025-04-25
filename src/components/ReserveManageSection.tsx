@@ -3,8 +3,8 @@
 import { useEffect, useState } from "react";
 import ReserveManageCard from "./card/managementComp/ReserveManageCard";
 import { Reservation, ReservationJSON } from "../../interfaces";
-import getReservationsByRestaurant from "@/libs/getReservationsByRestaurant";
-import deleteReservation from "@/libs/deleteReservation";
+import getReservationsByRestaurant from "@/libs/Reservation/getReservationsByRestaurant";
+import deleteReservation from "@/libs/Reservation/deleteReservation";
 
 export default function ReserveManageSection({ token, restaurantID }: { token?: string, restaurantID?: string }) {
     const [reservations, setReservations] = useState<Reservation[] | undefined>(

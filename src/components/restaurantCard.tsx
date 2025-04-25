@@ -2,7 +2,6 @@ import React from "react";
 import { Star } from "lucide-react";
 import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
 export default function RestaurantCard({
   restaurantsID,
   restaurantName,

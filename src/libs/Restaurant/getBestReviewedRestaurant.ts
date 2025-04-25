@@ -1,6 +1,6 @@
 import getRestaurants from "./getRestaurants";
-import getMeanReviews from "./getMeanReview";
-import { Restaurant, RestaurantJSON } from "../../interfaces";
+import getMeanReviews from "../Review/getMeanReview";
+import { Restaurant, RestaurantJSON } from "../../../interfaces";
 
 export default async function getBestReviewedRestaurant(): Promise<Restaurant | null> {
   let page = 1;

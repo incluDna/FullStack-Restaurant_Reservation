@@ -1,13 +1,13 @@
 "use client";
 
-import getBestReviewedRestaurant from "@/libs/getBestReviewedRestaurant";
+import getBestReviewedRestaurant from "@/libs/Restaurant/getBestReviewedRestaurant";
 import { motion, useInView } from "framer-motion";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Restaurant } from "../../interfaces";
 import { Star } from "lucide-react";
 import Skeleton from '@mui/material/Skeleton';
-import getMeanReviews from "@/libs/getMeanReview";
+import getMeanReviews from "@/libs/Review/getMeanReview";
 
 export default function Home() {
   const router = useRouter();
@@ -60,7 +60,7 @@ export default function Home() {
     const fetchBestReview = async () => {
       if (bestRestaurant) {
         try {
-          const reviewResponse = await getMeanReviews(bestRestaurant._id || '');
+          const reviewResponse = await getMeanReviews(bestRestaurant._id!);
           const review = reviewResponse.count == 0 ? null : reviewResponse.totalRating;
           console.log(`Fetched review for restaurant ${bestRestaurant._id}:`, review);
           setBestReview(review);

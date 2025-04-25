@@ -1,15 +1,14 @@
 'use client';
-
 import { useState, useEffect } from "react";
-import RestaurantCard from "@/components/restaurantCard";
+import RestaurantCard from "@/components/RestaurantCard";
 import { MeanReview, Restaurant, RestaurantJSON } from "../../../interfaces";
-import getRestaurants from "@/libs/getRestaurants";
-import getMeanReviews from "@/libs/getMeanReview";
+import getRestaurants from "@/libs/Restaurant/getRestaurants";
+import getMeanReviews from "@/libs/Review/getMeanReview";
 import { useRouter , useSearchParams } from "next/navigation";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import { motion } from "framer-motion";
-import { getAuthCookie } from "@/libs/getAuthCookie";
-import getUserProfile from "@/libs/getUserProfile";
+import { getAuthCookie } from "@/libs/User/getAuthCookie";
+import getUserProfile from "@/libs/User/getUserProfile";
 export default function RestaurantCatalog() {
   const [restaurants, setRestaurants] = useState<Restaurant[]>([]);
   const [loading, setLoading] = useState<boolean>(true);

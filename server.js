@@ -42,8 +42,8 @@ app.use(cors());
 
 // rate limiting
 const limiter = rateLimit({
-  windowsMs: 10 * 60 * 1000, // 10 minutes
-  max: 100,
+  windowsMs: 1 * 60 * 1000, // 10 minutes
+  max: 200,
 });
 app.use(limiter);
 

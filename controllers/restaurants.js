@@ -20,15 +20,18 @@ exports.getRestaurants = asyncHandler(async (req, res, next) => {
     .limitFields()
     .paginate();
 
-  const restaurants = await features.query;
-  const total = await Restaurant.countDocuments(features.query.getFilter());
+  const restaurants = await features.query.lean();
 
+  const data = await appendAverageReview(restaurants);
+  
+  const total = await Restaurant.countDocuments(features.query.getFilter());
   const [totalPages, pagination] = features.getPaginationMetadata(total);
+  
   res.status(200).json({
     success: true,
-    count: restaurants.length,
+    count: data.length,
     totalPages,
-    data: restaurants,
+    data: data,
     pagination,
   });
 });
@@ -123,3 +126,31 @@ exports.deleteRestaurant = asyncHandler(async (req, res, next) => {
     data: {},
   });
 });
+
+async function appendAverageReview(restaurants) {
+  const ratingStats = await Review.aggregate([
+    { $match: { restaurant: { $in: restaurants.map((r) => r._id) } } },
+    {
+      $group: {
+        _id: "$restaurant",
+        avgRating: { $avg: "$reviewStar" },
+        reviewCount: { $sum: 1 },
+      },
+    },
+  ]);
+
+  const statsMap = ratingStats.reduce((map, s) => {
+    map[s._id.toString()] = {
+      avgRating: Number(s.avgRating.toFixed(2)),
+      reviewCount: s.reviewCount,
+    };
+    return map;
+  }, {});
+
+  const data = restaurants.map((r) => {
+    const stat = statsMap[r._id.toString()] || { avgRating: 0, reviewCount: 0 };
+    return { ...r, ...stat };
+  });
+
+  return data;
+}

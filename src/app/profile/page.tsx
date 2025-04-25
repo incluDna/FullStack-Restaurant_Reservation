@@ -128,7 +128,7 @@ export default function ProfilePage() {
       alert("Failed to update profile");
     }
   };
-
+  if(token==null) return <p>failed. No token</p>;
 
   return (
     <div className="h-[calc(100vh-65px)] overflow-hidden bg-gray-100 p-6 flex justify-center items-start">
@@ -225,7 +225,7 @@ export default function ProfilePage() {
                   {reviews.map((rev, index) => (
                     <ReviewCard
                       key={rev._id || index}
-                      time={rev.createdAt}
+                      time={rev.createdAt.toLocaleString()}
                       rating={rev.reviewStar}
                       description={rev.reviewText}
                       restaurant={rev.restaurant.name!}
@@ -246,13 +246,17 @@ export default function ProfilePage() {
               ) : (
                 <ul className="flex flex-wrap gap-5">
                   {queues.map((que, index) => {
+                    if(!que.restaurant._id || !que._id) return <p>failed loading queue</p>;
+
                     return (
                       <QueueCardInProfile
                         key={que._id || index}
                         que={que}
-                        onDelete={(id) => {
+                        restaurantId={que.restaurant._id}
+                        queueId={que._id}
+                        onDelete={(id: string) => {
                           setQueues((prev) => prev.filter((q) => q._id !== id));
-                        } } token={""}                      />
+                        } } tokenRecieve={token}                      />
                     );
                   })}
                 </ul>

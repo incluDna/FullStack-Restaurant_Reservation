@@ -19,6 +19,9 @@ export default function QueueManageSection({ token, restaurantID }: { token?: st
     const [waitingQueues, setWaitingQueues] = useState<Queue[] | undefined>(
         undefined,
     );
+    const [remainingQueues, setRemainingQueues] = useState<Queue[] | undefined>(
+        undefined,
+    );
     const [isLoading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     // force to fetch
@@ -52,6 +55,21 @@ export default function QueueManageSection({ token, restaurantID }: { token?: st
 
         fetchQueues();
     }, [pleaseReload]);
+
+    useEffect(() => {
+        const getRemainingQueues = () => {
+            setLoading(true);
+            try {
+                setRemainingQueues(queues?.filter((item) => item.queueStatus !== 'completed') || []);
+            } catch (error) {
+                console.log(error);
+                setError("Error setting remaining queues.");
+                setLoading(false);
+            }
+            setLoading(false);
+        }
+        getRemainingQueues();
+    }, [queues]);
 
     // need separate fetch and filter useEffect cuz it's procederal otherwise it's buggy
     useEffect(() => {
@@ -117,7 +135,7 @@ export default function QueueManageSection({ token, restaurantID }: { token?: st
                 Queue
             </div>
             <div className="w-full h-fit text-left break-words text-xl font-bold">
-                Remaing : {queues?.length || 0}
+                Remaing : {remainingQueues?.length || 0}
             </div>
             <div className="w-full h-fit text-left break-words text-xl font-bold">
                 calling..

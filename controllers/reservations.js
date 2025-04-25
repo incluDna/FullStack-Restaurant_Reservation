@@ -26,7 +26,7 @@ exports.getReservations = asyncHandler(async (req, res, next) => {
     baseQuery = Reservation.find({ user: req.user.id });
   } else if (req.params.restaurantId) {
     if (!isValidObjectId(req.params.restaurantId)) {
-      throw new APIError(`Invalid id: not an ObjectID`, 400);
+      throw new APIError(`Invalid restaurant id: not an ObjectID`, 400);
     }
     baseQuery = Reservation.find({ restaurant: req.params.restaurantId });
   } else {
@@ -58,7 +58,7 @@ exports.getReservation = asyncHandler(async (req, res, next) => {
     .populate(userPopulate);
 
   if (!reservation) {
-    throw new APIError(`No reservation with the id of ${req.params.id}`, 404);
+    throw new APIError("Reservation not found", 404);
   }
 
   res.status(200).json({
@@ -81,7 +81,7 @@ exports.addReservation = asyncHandler(async (req, res, next) => {
   const restaurant = await Restaurant.findById(req.params.restaurantId);
 
   if (!restaurant) {
-    throw new APIError(`No restaurant with the id of ${req.params.restaurantId}`, 404);
+    throw new APIError("Restaurant not found", 404);
   }
   if (!checkValidTime(restaurant.openTime, restaurant.closeTime, req.body.resDate)) {
     throw new APIError(`Invalid reservation time: must be between open and close time`, 400);
@@ -125,15 +125,15 @@ exports.updateReservation = asyncHandler(async (req, res, next) => {
   let reservation = await Reservation.findById(req.params.id);
 
   if (!reservation) {
-    throw new APIError(`No reservation with the id of ${req.params.id}`, 404);
+    throw new APIError("Reservation not found", 404);
   }
   if (reservation.user.toString() !== req.user.id && req.user.role !== "admin") {
-    throw new APIError(`User ${req.user.id} is not authorized to update this reservation`, 403);
+    throw new APIError(`User is not authorized to update this reservation`, 403);
   }
 
   const restaurant = await Restaurant.findById(reservation.restaurant);
   if (!restaurant) {
-    throw new APIError(`No restaurant with the id of ${reservation.restaurant}`, 404);
+    throw new APIError("Restaurant not found", 404);
   }
   if (
     req.body.resDate &&
@@ -168,10 +168,10 @@ exports.deleteReservation = asyncHandler(async (req, res, next) => {
   const reservation = await Reservation.findById(req.params.id);
 
   if (!reservation) {
-    throw new APIError(`No reservation with the id of ${req.params.id}`, 404);
+    throw new APIError("Reservation not found", 404);
   }
   if (reservation.user.toString() !== req.user.id && req.user.role === "user") {
-    throw new APIError(`User ${req.user.id} is not authorized to delete this reservation`, 403);
+    throw new APIError(`User is not authorized to delete this reservation`, 403);
   }
   await reservation.deleteOne({ _id: req.params.id });
 

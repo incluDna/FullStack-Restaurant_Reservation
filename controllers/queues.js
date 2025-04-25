@@ -4,6 +4,15 @@ const asyncHandler = require("../utils/asyncHandler");
 const APIFeatures = require("../utils/APIFeatures");
 const APIError = require("../utils/APIError");
 
+const restaurantPopulate = {
+  path: "restaurant",
+  select: "name province shortLocation tel",
+};
+const userPopulate = {
+  path: "user",
+  select: "name tel",
+};
+
 exports.getQueues = asyncHandler(async (req, res, next) => {
   let baseQuery;
   if (req.params.restaurantId && req.user.role !== "user") {
@@ -17,14 +26,8 @@ exports.getQueues = asyncHandler(async (req, res, next) => {
   const features = new APIFeatures(baseQuery, req.query).filter().limitFields();
   const queues = await features.query
     .sort({ createdAt: 1 })
-    .populate({
-      path: "restaurant",
-      select: "name province tel",
-    })
-    .populate({
-      path: "user",
-      select: "name tel",
-    });
+    .populate(restaurantPopulate)
+    .populate(userPopulate);
 
   return res.status(200).json({
     success: true,
@@ -49,14 +52,8 @@ exports.getIncompleteQueues = asyncHandler(async (req, res, next) => {
   const features = new APIFeatures(baseQuery, req.query).filter().limitFields();
   const queues = await features.query
     .sort({ createdAt: 1 })
-    .populate({
-      path: "restaurant",
-      select: "name province tel",
-    })
-    .populate({
-      path: "user",
-      select: "name tel",
-    });
+    .populate(restaurantPopulate)
+    .populate(userPopulate);
 
   return res.status(200).json({
     success: true,
@@ -78,7 +75,7 @@ exports.getQueuePosition = asyncHandler(async (req, res, next) => {
 
   const index = allQueues.findIndex((queue) => queue._id.toString() === thisQueue._id.toString());
   if (index === -1) {
-    throw new APIError(`Somehow, no queue with the id of ${req.params.id}`, 404);
+    throw new APIError(`Queue not found`, 404);
   }
 
   return res.status(200).json({
@@ -126,7 +123,7 @@ exports.updateQueueStatus = asyncHandler(async (req, res, next) => {
   let queue = await Queue.findById(req.params.id);
 
   if (!queue) {
-    throw new APIError(`No queue with the id of ${req.params.id}`, 404);
+    throw new APIError("Queue not found", 404);
   }
 
   if (req.body.queueStatus === undefined) {
@@ -152,13 +149,13 @@ exports.deleteQueue = asyncHandler(async (req, res, next) => {
   const queue = await Queue.findById(req.params.id);
 
   if (!queue) {
-    throw new APIError(`No queue with the id of ${req.params.id}`, 404);
+    throw new APIError("Queue not found", 404);
   }
   if (
     (req.user.role === "user" && !queue.user.equals(req.user.id)) ||
     (req.user.role === "employee" && !queue.restaurant.equals(req.user.employedAt))
   ) {
-    throw new APIError(`User ${req.user.id} is not authorized to delete this queue`, 403);
+    throw new APIError(`User is not authorized to delete this queue`, 403);
   }
 
   await Queue.findByIdAndDelete(req.params.id);

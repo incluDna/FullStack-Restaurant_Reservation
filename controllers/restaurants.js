@@ -42,7 +42,7 @@ exports.getRestaurant = asyncHandler(async (req, res, next) => {
   const restaurant = await Restaurant.findById(req.params.id);
 
   if (!restaurant) {
-    throw new APIError(`No restaurant with the id of ${req.params.id}`, 404);
+    throw new APIError("Restaurant not found", 404);
   }
 
   res.status(200).json({
@@ -88,7 +88,7 @@ exports.updateRestaurant = asyncHandler(async (req, res, next) => {
   });
 
   if (!restaurant) {
-    throw new APIError(`No restaurant with the id of ${req.params.id}`, 404);
+    throw new APIError("Restaurant not found", 404);
   }
 
   res.status(200).json({
@@ -106,7 +106,7 @@ exports.deleteRestaurant = asyncHandler(async (req, res, next) => {
   const restaurant = await Restaurant.findById(req.params.id);
 
   if (!restaurant) {
-    throw new APIError(`No restaurant with the id of ${req.params.id}`, 404);
+    throw new APIError("Restaurant not found", 404);
   }
 
   // Delete all reservations, reviews, and queues associated with the restaurant

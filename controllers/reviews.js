@@ -57,7 +57,7 @@ exports.getReview = asyncHandler(async (req, res, next) => {
     .populate(userPopulate);
 
   if (!review) {
-    throw new APIError(`No review with the id of ${req.params.id}`, 404);
+    throw new APIError("Review not found", 404);
   }
 
   res.status(200).json({
@@ -79,7 +79,7 @@ exports.addReview = asyncHandler(async (req, res, next) => {
 
   const restaurant = await Restaurant.findById(req.params.restaurantId);
   if (!restaurant) {
-    throw new APIError(`No restaurant with the id of ${req.params.restaurantId}`, 404);
+    throw new APIError("Restaurant not found", 404);
   }
 
   req.body.user = req.user.id;
@@ -110,10 +110,10 @@ exports.updateReview = asyncHandler(async (req, res, next) => {
   let review = await Review.findById(req.params.id);
 
   if (!review) {
-    throw new APIError(`No review with the id of ${req.params.id}`, 404);
+    throw new APIError("Review not found", 404);
   }
   if (review.user.toString() !== req.user.id && req.user.role !== "admin") {
-    throw new APIError(`User ${req.user.id} is not authorized to update this review`, 403);
+    throw new APIError(`User is not authorized to update this review`, 403);
   }
 
   review = await Review.findByIdAndUpdate(req.params.id, req.body, {
@@ -136,10 +136,10 @@ exports.deleteReview = asyncHandler(async (req, res, next) => {
   const review = await Review.findById(req.params.id);
 
   if (!review) {
-    throw new APIError(`No review with the id of ${req.params.id}`, 404);
+    throw new APIError("Review not found", 404);
   }
   if (review.user.toString() !== req.user.id && req.user.role !== "admin") {
-    throw new APIError(`User ${req.user.id} is not authorized to delete this review`, 403);
+    throw new APIError(`User is not authorized to delete this review`, 403);
   }
 
   await review.deleteOne();

@@ -6,7 +6,6 @@ import { getAuthCookie } from '@/libs/User/getAuthCookie';
 import getUserProfile from '@/libs/User/getUserProfile';
 import addMenu from '@/libs/Menu/addMenu';
 
-
 const tagOptions: { label: string; description: string }[] = [
   { label: "Spicy", description: "Dish is hot and flavorful with spices." },
   { label: "Vegan", description: "No animal products." },
@@ -54,7 +53,6 @@ export default function CreateMenuPage() {
     fetchToken();
   }, []);
 
-
   const addTag = () => {
     if (tag && !tags.includes(tag) && tags.length < 8) {
       setTags([...tags, tag]);
@@ -69,16 +67,21 @@ export default function CreateMenuPage() {
     e.preventDefault();
 
     if (name.trim().length < 2 || name.trim().length > 30) {
-      alert("ชื่อเมนูต้องมีความยาว 2-30 ตัวอักษร");
+      alert("Menu name must be 2-30 characters long");
       return;
     }
 
     if (description.length > 300) {
-      alert("คำอธิบายต้องไม่เกิน 300 ตัวอักษร");
+      alert("Description must not exceed 300 characters");
       return;
     }
+
     const restaurantId = typeof id === 'string' ? id : id?.[0];
+
     try {
+      if (!restaurantId) throw new Error("Missing restaurant ID");
+      if (!token) throw new Error("Unauthorized");
+
       const menuData = {
         name,
         picture: image,
@@ -86,43 +89,40 @@ export default function CreateMenuPage() {
         type,
         description,
         tags,
-        restaurant: restaurantId || "",
+        restaurant: restaurantId,
         tag: tags
       };
 
-
-      if (!restaurantId) throw new Error("Missing restaurant ID");
-      if (!token) throw new Error("Missing unauthorized");
       await addMenu(token, restaurantId, menuData);
-      alert("✅ เมนูถูกเพิ่มเรียบร้อยแล้ว");
+      alert("✅ Menu added successfully!");
       router.push(`/restaurants/${restaurantId}`);
     } catch (err) {
       console.error("❌ Failed to create menu:", err);
-      alert("❌ เกิดข้อผิดพลาดในการเพิ่มเมนู");
+      alert("❌ Error occurred while adding the menu");
     }
   };
 
   return (
-    <main className="min-h-screen bg-white">  
+    <main className="min-h-screen bg-white">
       <div className="max-w-4xl mx-auto px-6 pt-24 pb-12">
-        <h1 className="text-3xl font-bold text-center mb-10">เพิ่มเมนู</h1>
+        <h1 className="text-3xl font-bold text-center mb-10">Add Menu</h1>
 
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
-            <label className="block font-medium">ชื่อเมนู</label>
+            <label className="block font-medium">Menu Name</label>
             <input
               type="text"
               value={name}
               onChange={(e) => setName(e.target.value)}
               maxLength={30}
               className="w-full border px-3 py-2"
-              placeholder="ชื่อเมนู"
+              placeholder="Menu Name"
               required
             />
           </div>
 
           <div>
-            <label className="block font-medium">Image source (URL)</label>
+            <label className="block font-medium">Image URL</label>
             <input
               type="text"
               value={image}
@@ -151,15 +151,15 @@ export default function CreateMenuPage() {
                 onChange={(e) => setType(e.target.value)}
                 className="w-full border px-3 py-2"
               >
-                <option value="dish">อาหาร</option>
-                <option value="drink">เครื่องดื่ม</option>
-                <option value="set">ชุด</option>
+                <option value="dish">Dish</option>
+                <option value="drink">Drink</option>
+                <option value="set">Set</option>
               </select>
             </div>
           </div>
 
           <div>
-            <label className="block font-medium">Description <span className="text-sm text-gray-500">(≤ 300 ตัว)</span></label>
+            <label className="block font-medium">Description <span className="text-sm text-gray-500">(≤ 300 characters)</span></label>
             <textarea
               value={description}
               onChange={(e) => setDescription(e.target.value)}
@@ -177,7 +177,7 @@ export default function CreateMenuPage() {
                 onChange={(e) => setTag(e.target.value)}
                 className="border px-3 py-2"
               >
-                <option value="">เลือกแท็ก</option>
+                <option value="">Select a tag</option>
                 {tagOptions.map((t) => (
                   <option key={t.label} value={t.label} title={t.description}>
                     {t.label} - {t.description}
@@ -190,7 +190,7 @@ export default function CreateMenuPage() {
                 disabled={tags.length >= 8}
                 className="bg-gray-800 text-white px-4 py-2"
               >
-                เพิ่ม
+                Add
               </button>
             </div>
 
@@ -201,7 +201,7 @@ export default function CreateMenuPage() {
                   onClick={() => removeTag(t)}
                   type="button"
                   className="w-8 h-8 bg-gray-300 rounded hover:bg-red-400"
-                  title={`ลบ ${t}`}
+                  title={`Remove ${t}`}
                 >
                   {t[0]}
                 </button>

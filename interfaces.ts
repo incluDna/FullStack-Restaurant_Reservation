@@ -69,6 +69,8 @@ export interface Profile{
   tel: string,
   email: string,
   role: string, 
+  password:string,
+  employedAt?:string,
   createdAt:string
   
 }
@@ -132,6 +134,7 @@ export interface User {
   tel: string;
   email: string;
   password: string;
+  employedAt?:string;
 }
 
 export interface Queue {

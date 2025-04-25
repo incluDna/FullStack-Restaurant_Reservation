@@ -4,7 +4,7 @@ import { useSelector, TypedUseSelectorHook } from "react-redux";
 import createWebStorage from "redux-persist/lib/storage/createWebStorage";
 import { WebStorage } from "redux-persist/lib/types";
 
-// import notificationReducer from "./notificationSlice";
+import notificationReducer, { NotificationState } from "./notificationSlice";
 
 function createPersistStorage(): WebStorage {
     const isServer = typeof window === "undefined";
@@ -32,10 +32,7 @@ const persistConfig = {
   storage,
 };
 
-const rootReducer = combineReducers({
-//   notification: notificationReducer,
-});
-const persistedReducer = persistReducer(persistConfig, rootReducer);
+const persistedReducer = persistReducer(persistConfig, notificationReducer);
 
 // Configure store
 export const store = configureStore({
@@ -49,6 +46,6 @@ export const store = configureStore({
 });
 
 // Export RootState and AppDispatch types
-export type RootState = ReturnType<typeof store.getState>;
+export type RootState = NotificationState;
 export type AppDispatch = typeof store.dispatch;
 export const useTypedSelector: TypedUseSelectorHook<RootState> = useSelector;

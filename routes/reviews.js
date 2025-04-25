@@ -5,7 +5,7 @@ const {
   addReview,
   updateReview,
   deleteReview,
-  getReviewsForRestaurant,
+  getAverageReviewForRestaurant,
 } = require("../controllers/reviews");
 
 const router = express.Router({ mergeParams: true });
@@ -21,6 +21,6 @@ router
   .get(getReview)
   .put(protect, authorize("admin", "user"), updateReview)
   .delete(protect, authorize("admin", "user"), deleteReview);
-router.route("/means/:id").get(getReviewsForRestaurant);
+router.route("/means/:id").get(getAverageReviewForRestaurant);
 
 module.exports = router;

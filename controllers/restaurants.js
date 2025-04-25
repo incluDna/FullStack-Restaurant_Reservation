@@ -2,12 +2,14 @@ const Restaurant = require("../models/Restaurant");
 const Reservation = require("../models/Reservation");
 const Review = require("../models/Review");
 const Queue = require("../models/Queue");
+const Menu = require("../models/Menu");
 const asyncHandler = require("../utils/asyncHandler");
 const APIFeatures = require("../utils/APIFeatures");
+const APIError = require("../utils/APIError");
 const { toMinutes } = require("../utils/parseTimes");
 
 /**
- * @description Get all restaurants
+ * @description Get ALL restaurants. Supports filtering, sorting, selecting fields, and pagination.
  * @route GET /api/restaurants
  * @access Public
  */
@@ -18,15 +20,18 @@ exports.getRestaurants = asyncHandler(async (req, res, next) => {
     .limitFields()
     .paginate();
 
-  const restaurants = await features.query;
-  const total = await Restaurant.countDocuments(features.query.getFilter());
+  const restaurants = await features.query.lean();
 
+  const data = await appendAverageReview(restaurants);
+  
+  const total = await Restaurant.countDocuments(features.query.getFilter());
   const [totalPages, pagination] = features.getPaginationMetadata(total);
+  
   res.status(200).json({
     success: true,
-    count: restaurants.length,
+    count: data.length,
     totalPages,
-    data: restaurants,
+    data: data,
     pagination,
   });
 });
@@ -40,9 +45,7 @@ exports.getRestaurant = asyncHandler(async (req, res, next) => {
   const restaurant = await Restaurant.findById(req.params.id);
 
   if (!restaurant) {
-    const error = new Error(`No restaurant with the id of ${req.params.id}`);
-    error.statusCode = 404;
-    throw error;
+    throw new APIError("Restaurant not found", 404);
   }
 
   res.status(200).json({
@@ -65,9 +68,7 @@ exports.createRestaurant = asyncHandler(async (req, res, next) => {
     throw error;
   }
   if (openMinutes >= closeMinutes) {
-    const error = new Error("Opening time must be before closing time in the same day");
-    error.statusCode = 400;
-    throw error;
+    throw new APIError("Opening time must be before closing time in the same day", 400);
   }
 
   const restaurant = await Restaurant.create(req.body);
@@ -90,9 +91,7 @@ exports.updateRestaurant = asyncHandler(async (req, res, next) => {
   });
 
   if (!restaurant) {
-    const error = new Error(`No restaurant with the id of ${req.params.id}`);
-    error.statusCode = 404;
-    throw error;
+    throw new APIError("Restaurant not found", 404);
   }
 
   res.status(200).json({
@@ -110,9 +109,7 @@ exports.deleteRestaurant = asyncHandler(async (req, res, next) => {
   const restaurant = await Restaurant.findById(req.params.id);
 
   if (!restaurant) {
-    const error = new Error(`No restaurant with the id of ${req.params.id}`);
-    error.statusCode = 404;
-    throw error;
+    throw new APIError("Restaurant not found", 404);
   }
 
   // Delete all reservations, reviews, and queues associated with the restaurant
@@ -120,11 +117,40 @@ exports.deleteRestaurant = asyncHandler(async (req, res, next) => {
     Reservation.deleteMany({ restaurant: req.params.id }),
     Review.deleteMany({ restaurant: req.params.id }),
     Queue.deleteMany({ restaurant: req.params.id }),
+    Menu.deleteMany({ restaurant: req.params.id }),
   ]);
   await Restaurant.deleteOne({ _id: req.params.id });
 
-  res.status(200).json({
+  res.status(204).json({
     success: true,
     data: {},
   });
 });
+
+async function appendAverageReview(restaurants) {
+  const ratingStats = await Review.aggregate([
+    { $match: { restaurant: { $in: restaurants.map((r) => r._id) } } },
+    {
+      $group: {
+        _id: "$restaurant",
+        avgRating: { $avg: "$reviewStar" },
+        reviewCount: { $sum: 1 },
+      },
+    },
+  ]);
+
+  const statsMap = ratingStats.reduce((map, s) => {
+    map[s._id.toString()] = {
+      avgRating: Number(s.avgRating.toFixed(2)),
+      reviewCount: s.reviewCount,
+    };
+    return map;
+  }, {});
+
+  const data = restaurants.map((r) => {
+    const stat = statsMap[r._id.toString()] || { avgRating: 0, reviewCount: 0 };
+    return { ...r, ...stat };
+  });
+
+  return data;
+}

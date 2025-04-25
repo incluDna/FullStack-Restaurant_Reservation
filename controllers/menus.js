@@ -1,178 +1,106 @@
 const Menu = require("../models/Menu");
 const Restaurant = require("../models/Restaurant");
+const APIFeatures = require("../utils/APIFeatures");
+const APIError = require("../utils/APIError");
+const asyncHandler = require("../utils/asyncHandler");
+const { isValidObjectId } = require("mongoose");
 
 /**
  * @description Get all menus
- * @route GET /api/menus
+ * @route GET /api/restaurants/:restaurantId/menus
  * @access Public
  */
-exports.getMenus = async (req, res, next) => {
-  if (!req.params.restaurantId) {
-    return res.status(400).json({
-      success: false,
-      message: "Please provide restaurantId",
-    });
+exports.getMenus = asyncHandler(async (req, res, next) => {
+  if (!isValidObjectId(req.params.restaurantId)) {
+    throw new APIError(`Invalid id: not an ObjectID`, 400);
   }
 
-  try {
-    const query = await Menu.find({ restaurant: req.params.restaurantId });
-    return res.status(200).json({
-      success: true,
-      count: query.length,
-      data: query,
-    });
-  } catch (error) {
-    console.error(error);
-    return res.status(500).json({
-      success: false,
-      message: "Cannot find Menu",
-    });
-  }
-};
+  const features = new APIFeatures(Menu.find(), req.query).filter().sort().limitFields();
+  const menus = await features.query;
+
+  return res.status(200).json({
+    success: true,
+    count: menus.length,
+    data: menus,
+  });
+});
 
 /**
  * @description Get single menu
- * @route GET /api/menus/:id
+ * @route GET /api/restaurants/:restaurantId/menus/:id
  * @access Public
  */
-exports.getMenu = async (req, res, next) => {
-  if (!req.params.restaurantId) {
-    return res.status(400).json({
-      success: false,
-      message: "Please provide restaurantId",
-    });
+exports.getMenu = asyncHandler(async (req, res, next) => {
+  const query = await Menu.findById(req.params.id);
+  if (!query) {
+    throw new APIError(`Menu not found`, 404);
   }
 
-  try {
-    const query = await Menu.findById(req.params.id);
-    if (!query) {
-      return res.status(404).json({
-        success: false,
-        message: "Menu not found",
-      });
-    }
-    return res.status(200).json({
-      success: true,
-      data: query,
-    });
-  } catch (error) {
-    console.error(error);
-    return res.status(500).json({
-      success: false,
-      message: "Cannot find Menu",
-    });
-  }
-};
+  return res.status(200).json({
+    success: true,
+    data: query,
+  });
+});
 
 /**
  * @description Create menu
- * @route POST /api/menus
+ * @route POST /api/restaurants/:restaurantId/menus
  * @access Private
  */
-exports.createMenu = async (req, res, next) => {
-  if (!req.params.restaurantId) {
-    return res.status(400).json({
-      success: false,
-      message: "Please provide restaurantId",
-    });
+exports.createMenu = asyncHandler(async (req, res, next) => {
+  if (!isValidObjectId(req.params.restaurantId)) {
+    throw new APIError(`Invalid id: not an ObjectID`, 400);
   }
 
-  try {
-    const restaurant = await Restaurant.findById(req.params.restaurantId);
-    if (!restaurant) {
-      return res.status(404).json({
-        success: false,
-        message: "Restaurant not found",
-      });
-    }
-
-    req.body.restaurant = req.params.restaurantId;
-    const menu = await Menu.create(req.body);
-
-    return res.status(201).json({
-      success: true,
-      data: menu,
-    });
-  } catch (error) {
-    console.error(error);
-    return res.status(500).json({
-      success: false,
-      message: "Cannot create Menu",
-    });
+  const restaurant = await Restaurant.findById(req.params.restaurantId);
+  if (!restaurant) {
+    throw new APIError(`Restaurant not found`, 404);
   }
-};
+
+  req.body.restaurant = req.params.restaurantId;
+  const menu = await Menu.create(req.body);
+
+  return res.status(201).json({
+    success: true,
+    data: menu,
+  });
+});
 
 /**
  * @description Update menu
- * @route PUT /api/menus/:id
+ * @route PUT /api/restaurants/:restaurantId/menus/:id
  * @access Private
  */
-exports.updateMenu = async (req, res, next) => {
-  if (!req.params.restaurantId) {
-    return res.status(400).json({
-      success: false,
-      message: "Please provide restaurantId",
-    });
+exports.updateMenu = asyncHandler(async (req, res, next) => {
+  const menu = await Menu.findByIdAndUpdate(req.params.id, req.body, {
+    new: true,
+    runValidators: true,
+  });
+
+  if (!menu) {
+    throw new APIError(`Menu not found`, 404);
   }
 
-  try {
-    const menu = await Menu.findByIdAndUpdate(req.params.id, req.body, {
-      new: true,
-      runValidators: true,
-    });
-
-    if (!menu) {
-      return res.status(404).json({
-        success: false,
-        message: "Menu not found",
-      });
-    }
-
-    return res.status(200).json({
-      success: true,
-      data: menu,
-    });
-  } catch (error) {
-    console.error(error);
-    return res.status(500).json({
-      success: false,
-      message: "Cannot update Menu",
-    });
-  }
-};
+  return res.status(200).json({
+    success: true,
+    data: menu,
+  });
+});
 
 /**
  * @description Delete menu
- * @route DELETE /api/menus/:id
+ * @route DELETE /api/restaurants/:restaurantId/menus/:id
  * @access Private
  */
-exports.deleteMenu = async (req, res, next) => {
-  if (!req.params.restaurantId) {
-    return res.status(400).json({
-      success: false,
-      message: "Please provide restaurantId",
-    });
+exports.deleteMenu = asyncHandler(async (req, res, next) => {
+  const menu = await Menu.findByIdAndDelete(req.params.id);
+
+  if (!menu) {
+    throw new APIError(`Menu not found`, 404);
   }
 
-  try {
-    const menu = await Menu.findByIdAndDelete(req.params.id);
-
-    if (!menu) {
-      return res.status(404).json({
-        success: false,
-        message: "Menu not found",
-      });
-    }
-
-    return res.status(200).json({
-      success: true,
-      data: {},
-    });
-  } catch (error) {
-    console.error(error);
-    return res.status(500).json({
-      success: false,
-      message: "Cannot delete Menu",
-    });
-  }
-};
+  return res.status(204).json({
+    success: true,
+    data: {},
+  });
+});

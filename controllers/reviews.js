@@ -1,298 +1,176 @@
 const Review = require("../models/Review");
 const Restaurant = require("../models/Restaurant");
+const APIError = require("../utils/APIError");
+const APIFeatures = require("../utils/APIFeatures");
+const asyncHandler = require("../utils/asyncHandler");
+const { isValidObjectId } = require("mongoose");
+
+const restaurantPopulate = {
+  path: "restaurant",
+  select: "name province shortLocation tel",
+};
+const userPopulate = {
+  path: "user",
+  select: "name tel",
+};
 
 /**
  * @description Get all reviews
- * @route GET /api/reviews
+ * @route GET /api/reviews | /api/restaurants/:restaurantId/reviews
  * @access Public
  */
-exports.getReviews = async (req, res, next) => {
-  let query;
+exports.getReviews = asyncHandler(async (req, res, next) => {
+  let baseQuery;
 
-  const restaurantPopulate = {
-    path: "restaurant",
-    select: "name province tel",
-  };
-  const userPopulate = {
-    path: "user",
-    select: "name tel",
-  };
-
-  // Check if the user is authenticated (req.user exists)
-  if (req.user) {
-    // If the user is authenticated, they can see reviews based on their role
-    if (req.user.role !== "admin") {
-      // General users can only see their own reviews or reviews for a specific restaurant
-      if (req.params.restaurantId) {
-        query = Review.find({ restaurant: req.params.restaurantId })
-          .populate(restaurantPopulate)
-          .populate(userPopulate);
-      } else {
-        query = Review.find({ user: req.user.id })
-          .populate(restaurantPopulate)
-          .populate(userPopulate);
-      }
-    } else {
-      // Admin users can view all reviews or reviews for a specific restaurant
-      if (req.params.restaurantId) {
-        query = Review.find({ restaurant: req.params.restaurantId })
-          .populate(restaurantPopulate)
-          .populate(userPopulate);
-      } else {
-        query = Review.find().populate(restaurantPopulate).populate(userPopulate);
-      }
+  if (req.params.restaurantId) {
+    if (!isValidObjectId(req.params.restaurantId)) {
+      throw new APIError("Invalid Object ID", 400);
     }
+    baseQuery = Review.find({ restaurant: req.params.restaurantId });
+  } else if (req.user && req.user.role === "user") {
+    baseQuery = Review.find({ user: req.user.id });
+  } else if (req.user && req.user.role == "admin") {
+    baseQuery = Review.find();
   } else {
-    // If the user is not logged in (guest user), allow them to see reviews for a specific restaurant
-    if (req.params.restaurantId) {
-      query = Review.find({ restaurant: req.params.restaurantId })
-        .populate(restaurantPopulate)
-        .populate(userPopulate);
-    } else {
-      // Allow guest users to see all reviews if no specific restaurant is provided
-      query = Review.find().populate(restaurantPopulate).populate(userPopulate);
-    }
+    throw new APIError("Not authorized to access this resource", 403);
   }
 
-  const page = parseInt(req.query.page, 10) || 1;
-  const limit = parseInt(req.query.limit, 10) || 25;
-  const startIndex = (page - 1) * limit;
-  const endIndex = page * limit;
+  const features = new APIFeatures(baseQuery, req.query).filter().sort().limitFields();
 
-  try {
-    const total = await Review.countDocuments(query.getQuery());
-    const totalPages = Math.ceil(total / limit);
-    query = query.skip(startIndex).limit(limit);
+  const reviews = await features.query.populate(restaurantPopulate).populate(userPopulate);
 
-    const reviews = await query;
-
-    const pagination = {};
-    // next
-    if (endIndex < total) {
-      pagination.next = {
-        page: page + 1,
-        limit,
-      };
-    }
-    // previous
-    if (startIndex > 0) {
-      pagination.prev = {
-        page: page - 1,
-        limit,
-      };
-    }
-
-    res.status(200).json({
-      success: true,
-      count: reviews.length,
-      data: reviews,
-      totalPages: totalPages,
-    });
-  } catch (error) {
-    console.log(error);
-    return res.status(500).json({
-      success: false,
-      message: "Cannot find Review",
-    });
-  }
-};
+  res.status(200).json({
+    success: true,
+    count: reviews.length,
+    data: reviews,
+  });
+});
 
 /**
  * @description Get single review
- * @route GET /api/reviews/:id
+ * @route GET /api/reviews/:id | /api/restaurants/:restaurantId/reviews/:id
  * @access Public
  */
-exports.getReview = async (req, res, next) => {
-  const restaurantPopulate = {
-    path: "restaurant",
-    select: "name province tel",
-  };
-  const userPopulate = {
-    path: "user",
-    select: "name tel",
-  };
+exports.getReview = asyncHandler(async (req, res, next) => {
+  const review = await Review.findById(req.params.id)
+    .populate(restaurantPopulate)
+    .populate(userPopulate);
 
-  try {
-    const review = await Review.findById(req.params.id)
-      .populate(restaurantPopulate)
-      .populate(userPopulate);
-
-    if (!review) {
-      return res.status(404).json({
-        success: false,
-        message: `No review with the id of ${req.params.id}`,
-      });
-    }
-
-    res.status(200).json({
-      success: true,
-      data: review,
-    });
-  } catch (error) {
-    console.log(error);
-    return res.status(500).json({
-      success: false,
-      message: "Cannot find Review",
-    });
+  if (!review) {
+    throw new APIError("Review not found", 404);
   }
-};
+
+  res.status(200).json({
+    success: true,
+    data: review,
+  });
+});
+
 /**
  * @description Create a review
- * @route POST /api/reviews/:id
+ * @route POST /api/reviews | /api/restaurants/:restaurantId/reviews
  * @access Private
  */
-exports.addReview = async (req, res, next) => {
-  try {
-    req.body.restaurant = req.params.restaurantId;
-
-    const restaurant = await Restaurant.findById(req.params.restaurantId);
-
-    if (!restaurant) {
-      return res.status(404).json({
-        success: false,
-        message: `No restaurant with the id of ${req.params.restaurantId}`,
-      });
-    }
-    // Add user ID to req.body
-    req.body.user = req.user.id;
-
-    // Check for existing reviews
-    
-    const existingReview = await Review.find({
-      user: req.user.id,
-      restaurant: req.params.restaurantId,
-    });
-
-    
-    if (existingReview.length > 0) {
-      return res.status(400).json({
-        success: false,
-        message: `This user already review`,
-      });
-    }
-
-    
-
-    const review = await Review.create(req.body);
-
-    res.status(200).json({
-      success: true,
-      data: review,
-    });
-  } catch (error) {
-    console.log(error);
-    return res.status(500).json({
-      success: false,
-      message: "Cannot create Review",
-    });
+exports.addReview = asyncHandler(async (req, res, next) => {
+  if (!isValidObjectId(req.params.restaurantId)) {
+    throw new APIError("Invalid restaurant id: not an ObjectID", 400);
   }
-};
+  req.body.restaurant = req.params.restaurantId;
+
+  const restaurant = await Restaurant.findById(req.params.restaurantId);
+  if (!restaurant) {
+    throw new APIError("Restaurant not found", 404);
+  }
+
+  req.body.user = req.user.id;
+
+  const existingReview = await Review.find({
+    user: req.user.id,
+    restaurant: req.params.restaurantId,
+  });
+
+  if (existingReview.length > 0) {
+    throw new APIError("This user has already reviewed", 400);
+  }
+
+  const review = await Review.create(req.body);
+
+  res.status(201).json({
+    success: true,
+    data: review,
+  });
+});
 
 /**
  * @description Update a review
- * @route PUT /api/reviews/:id
+ * @route PUT /api/reviews/:id | /api/restaurants/:restaurantId/reviews/:id
  * @access Private
  */
-exports.updateReview = async (req, res, next) => {
-  // Make sure user is the review owner
+exports.updateReview = asyncHandler(async (req, res, next) => {
+  let review = await Review.findById(req.params.id);
 
-  try {
-    let review = await Review.findById(req.params.id);
-
-    if (!review) {
-      return res.status(404).json({
-        success: false,
-        message: `No review with the id of ${req.params.id}`,
-      });
-    }
-    if (review.user.toString() !== req.user.id && req.user.role !== "admin") {
-      return res.status(401).json({
-        success: false,
-        message: `User ${req.user.id} is not authorized to update this review`,
-      });
-    }
-
-    review = await Review.findByIdAndUpdate(req.params.id, req.body, {
-      new: true,
-      runValidators: true,
-    });
-
-    res.status(200).json({
-      success: true,
-      data: review,
-    });
-  } catch (error) {
-    console.log(error);
-    return res.status(500).json({
-      success: false,
-      message: "Cannot update Review",
-    });
+  if (!review) {
+    throw new APIError("Review not found", 404);
   }
-};
+  if (review.user.toString() !== req.user.id && req.user.role !== "admin") {
+    throw new APIError(`User is not authorized to update this review`, 403);
+  }
+
+  review = await Review.findByIdAndUpdate(req.params.id, req.body, {
+    new: true,
+    runValidators: true,
+  });
+
+  res.status(200).json({
+    success: true,
+    data: review,
+  });
+});
 
 /**
  * @description Delete a review
- * @route DELETE /api/reviews/:id
+ * @route DELETE /api/reviews/:id | /api/restaurants/:restaurantId/reviews/:id
  * @access Private
  */
-exports.deleteReview = async (req, res, next) => {
-  try {
-    const review = await Review.findById(req.params.id);
+exports.deleteReview = asyncHandler(async (req, res, next) => {
+  const review = await Review.findById(req.params.id);
 
-    if (!review) {
-      return res.status(404).json({
-        success: false,
-        message: `No review with the id of ${req.params.id}`,
-      });
-    }
-    if (review.user.toString() !== req.user.id && req.user.role !== "admin") {
-      return res.status(401).json({
-        success: false,
-        message: `User ${req.user.id} is not authorized to delete this review`,
-      });
-    }
-    await review.deleteOne();
-
-    res.status(200).json({
-      success: true,
-      data: {},
-    });
-  } catch (error) {
-    console.log(error);
-    return res.status(500).json({
-      success: false,
-      message: "Cannot delete Review",
-    });
+  if (!review) {
+    throw new APIError("Review not found", 404);
   }
-};
+  if (review.user.toString() !== req.user.id && req.user.role !== "admin") {
+    throw new APIError(`User is not authorized to delete this review`, 403);
+  }
+
+  await review.deleteOne();
+
+  res.status(204).json({
+    success: true,
+    data: {},
+  });
+});
 
 /**
  * @description Get reviews for a restaurant
  * @route GET /api/reviews/means/:id
  * @access Public
  */
-exports.getReviewsForRestaurant = async (req, res, next) => {
-  const restaurantID = req.params.id;
-
-  try {
-    // Find all reviews for the given restaurant ID
-    const reviews = await Review.find({ restaurant: restaurantID });
-
-    const totalRating = reviews.reduce((sum, review) => sum + review.reviewStar, 0);
-    const meanRating = totalRating / reviews.length;
-
-    const restaurant = await Restaurant.findById(req.params.id);
-    res.status(200).json({
-      success: true,
-      name: restaurant.name,
-      totalRating: meanRating.toFixed(2),
-      count: reviews.length,
-    });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({
-      success: false,
-      message: "Server Error",
-    });
+exports.getAverageReviewForRestaurant = asyncHandler(async (req, res, next) => {
+  if (!isValidObjectId(req.params.id)) {
+    throw new APIError("Invalid restaurant id: not an ObjectID", 400);
   }
-};
+
+  // Find all reviews for the given restaurant ID
+  const reviews = await Review.find({ restaurant: req.params.id });
+
+  const totalRating = reviews.reduce((sum, review) => sum + review.reviewStar, 0);
+  const meanRating = totalRating / reviews.length;
+
+  const restaurant = await Restaurant.findById(req.params.id);
+  res.status(200).json({
+    success: true,
+    name: restaurant.name,
+    totalRating: meanRating.toFixed(2),
+    count: reviews.length,
+  });
+});

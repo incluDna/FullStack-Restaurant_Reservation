@@ -166,6 +166,7 @@ export default function CreateMenuPage() {
               maxLength={300}
               className="w-full border px-3 py-2"
               rows={3}
+              required
             />
           </div>
 

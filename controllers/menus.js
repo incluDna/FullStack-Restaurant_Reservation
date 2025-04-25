@@ -44,7 +44,7 @@ exports.getMenu = asyncHandler(async (req, res, next) => {
 
 /**
  * @description Create menu
- * @route POST /api/restaurants/:restaurantId/menus/:id
+ * @route POST /api/restaurants/:restaurantId/menus
  * @access Private
  */
 exports.createMenu = asyncHandler(async (req, res, next) => {

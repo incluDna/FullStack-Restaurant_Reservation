@@ -69,7 +69,7 @@ exports.getReservation = asyncHandler(async (req, res, next) => {
 
 /**
  * @description Add a reservation
- * @route /api/reservations/:id | /api/restaurants/:restaurantId/reservations/:id
+ * @route POST /api/reservations | /api/restaurants/:restaurantId/reservations
  * @access Private
  */
 exports.addReservation = asyncHandler(async (req, res, next) => {
@@ -118,7 +118,7 @@ exports.addReservation = asyncHandler(async (req, res, next) => {
 
 /**
  * @description Update a reservation
- * @route /api/reservations/:id | /api/restaurants/:restaurantId/reservations/:id
+ * @route PUT /api/reservations/:id | /api/restaurants/:restaurantId/reservations/:id
  * @access Private
  */
 exports.updateReservation = asyncHandler(async (req, res, next) => {
@@ -161,7 +161,7 @@ exports.updateReservation = asyncHandler(async (req, res, next) => {
 
 /**
  * @description Delete a reservation
- * @route /api/reservations/:id | /api/restaurants/:restaurantId/reservations/:id
+ * @route DELETE /api/reservations/:id | /api/restaurants/:restaurantId/reservations/:id
  * @access Private
  */
 exports.deleteReservation = asyncHandler(async (req, res, next) => {

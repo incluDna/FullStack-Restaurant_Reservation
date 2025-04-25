@@ -13,6 +13,11 @@ const userPopulate = {
   select: "name tel",
 };
 
+/**
+ * @description Get all queues
+ * @route GET /api/queues | /api/restaurants/:restaurantId/queues
+ * @access Private
+ */
 exports.getQueues = asyncHandler(async (req, res, next) => {
   let baseQuery;
   if (req.params.restaurantId && req.user.role !== "user") {
@@ -36,6 +41,11 @@ exports.getQueues = asyncHandler(async (req, res, next) => {
   });
 });
 
+/**
+ * @description Get all incomplete queues
+ * @route GET /api/restaurants/:restaurantId/queues/incomplete
+ * @access Private
+ */
 exports.getIncompleteQueues = asyncHandler(async (req, res, next) => {
   let baseQuery;
   if (req.params.restaurantId && req.user.role !== "user") {
@@ -62,6 +72,11 @@ exports.getIncompleteQueues = asyncHandler(async (req, res, next) => {
   });
 });
 
+/**
+ * @description Get a queue's position
+ * @route GET /api/restaurants/:restaurantId/queues/:id/position
+ * @access Private
+ */
 exports.getQueuePosition = asyncHandler(async (req, res, next) => {
   if (!req.params.restaurantId) {
     throw new APIError(`Restaurant ID not provided: please access through a restaurant`, 400);
@@ -85,6 +100,11 @@ exports.getQueuePosition = asyncHandler(async (req, res, next) => {
   });
 });
 
+/**
+ * @description Create a queue
+ * @route POST /api/restaurants/:restaurantId/queues
+ * @access Private
+ */
 exports.createQueue = asyncHandler(async (req, res, next) => {
   if (!req.params.restaurantId) {
     throw new APIError(`Restaurant ID not provided: please access through a restaurant`, 400);
@@ -119,6 +139,11 @@ exports.createQueue = asyncHandler(async (req, res, next) => {
   });
 });
 
+/**
+ * @description Update a queue's status
+ * @route PUT /api/queues/:id | /api/restaurants/:restaurantId/queues/:id
+ * @access Private
+ */
 exports.updateQueueStatus = asyncHandler(async (req, res, next) => {
   let queue = await Queue.findById(req.params.id);
 
@@ -145,6 +170,11 @@ exports.updateQueueStatus = asyncHandler(async (req, res, next) => {
   });
 });
 
+/**
+ * @description Delete a queue
+ * @route DELETE /api/queues/:id | /api/restaurants/:restaurantId/queues/:id
+ * @access Private
+ */
 exports.deleteQueue = asyncHandler(async (req, res, next) => {
   const queue = await Queue.findById(req.params.id);
 

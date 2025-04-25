@@ -68,7 +68,7 @@ exports.getReview = asyncHandler(async (req, res, next) => {
 
 /**
  * @description Create a review
- * @route POST /api/reviews/:id | /api/restaurants/:restaurantId/reviews/:id
+ * @route POST /api/reviews | /api/restaurants/:restaurantId/reviews
  * @access Private
  */
 exports.addReview = asyncHandler(async (req, res, next) => {

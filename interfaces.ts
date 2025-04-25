@@ -136,7 +136,7 @@ export interface User {
 
 export interface Queue {
   _id?: string;
-  restaurant: string;
+  restaurant: Restaurant;
   user: string;
   seatCount: number;
   createdAt: Date;

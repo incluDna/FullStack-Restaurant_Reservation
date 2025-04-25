@@ -173,7 +173,7 @@ exports.deleteReservation = asyncHandler(async (req, res, next) => {
   if (reservation.user.toString() !== req.user.id && req.user.role === "user") {
     throw new APIError(`User is not authorized to delete this reservation`, 403);
   }
-  await reservation.deleteOne({ _id: req.params.id });
+  await reservation.deleteOne();
 
   res.status(204).json({
     success: true,

@@ -43,7 +43,7 @@ exports.getQueues = asyncHandler(async (req, res, next) => {
 
 /**
  * @description Get all incomplete queues
- * @route GET /api/restaurants/:restaurantId/queues/incomplete
+ * @route GET /api/queues/incomplete | /api/restaurants/:restaurantId/queues/incomplete
  * @access Private
  */
 exports.getIncompleteQueues = asyncHandler(async (req, res, next) => {

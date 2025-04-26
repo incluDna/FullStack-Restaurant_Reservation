@@ -72,6 +72,68 @@ exports.getIncompleteQueues = asyncHandler(async (req, res, next) => {
   });
 });
 
+exports.pollIncompleteQueues = asyncHandler(async (req, res, next) => {
+  const MAX_WAIT = 25_000;   // Vercel hard-limit safety
+  const SLEEP    = 1_000;    // DB probe interval
+
+  // ---------- 1. build the *same* base query you already use ----------
+  let baseQuery;
+  if (req.params.restaurantId && req.user.role !== 'user') {
+    baseQuery = Queue.find({
+      restaurant : req.params.restaurantId,
+      queueStatus: { $ne: 'completed' },
+    });
+  } else if (!req.params.restaurantId && req.user.role === 'user') {
+    baseQuery = Queue.find({
+      user       : req.user.id,
+      queueStatus: { $ne: 'completed' },
+    });
+  } else {
+    throw new APIError('User cannot access this resource', 403);
+  }
+
+  // ---------- 2. get the client’s last snapshot ----------
+  // we use a POSIX time-stamp (ms since epoch)
+  const since = Number(req.query.since ?? 0);
+
+  const deadline = Date.now() + MAX_WAIT;
+  while (Date.now() < deadline) {
+    /* 2a ▸ fetch the newest change time among the matching docs.
+            Thanks to the {restaurant, updatedAt} index this is O(log n). */
+    const latest = await baseQuery
+      .sort({ updatedAt: -1 })
+      .select('updatedAt')
+      .lean()          // no mongoose hydration
+      .limit(1);
+
+    const latestTs = latest[0]?.updatedAt?.getTime() ?? 0;
+
+    /* 2b ▸ If the list changed since client’s last version, send data */
+    if (latestTs > since) {
+      const features = new APIFeatures(baseQuery, req.query)
+        .filter()
+        .limitFields();          // keep your existing helpers
+
+      const queues = await features.query
+        .sort({ createdAt: 1 })
+        .populate(restaurantPopulate)
+        .populate(userPopulate);
+
+      return res.json({
+        version: latestTs,        // ← client sends this back next time
+        count  : queues.length,
+        data   : queues,
+      });
+    }
+
+    /* 2c ▸ Nothing new yet – wait a bit */
+    await new Promise(r => setTimeout(r, SLEEP));
+  }
+
+  /* 3 ▸  Timed out – let the client restart immediately */
+  res.status(204).end();
+});
+
 /**
  * @description Get a queue's position
  * @route GET /api/restaurants/:restaurantId/queues/:id/position

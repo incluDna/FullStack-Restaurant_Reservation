@@ -69,6 +69,8 @@ export interface Profile{
   tel: string,
   email: string,
   role: string, 
+  password:string,
+  employedAt?:string,
   createdAt:string
   
 }
@@ -132,13 +134,14 @@ export interface User {
   tel: string;
   email: string;
   password: string;
+  employedAt?:string;
 }
 
 export interface Queue {
   _id?: string;
-  restaurant: string;
+  restaurant: Restaurant;
   user: string;
   seatCount: number;
   createdAt: Date;
-  status: string;
+  queueStatus: string;
 }

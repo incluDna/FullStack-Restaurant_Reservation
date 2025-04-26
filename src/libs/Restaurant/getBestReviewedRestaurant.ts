@@ -13,7 +13,7 @@ export default async function getBestReviewedRestaurant(): Promise<Restaurant | 
       const restaurantResponse: RestaurantJSON = await getRestaurants(page);
       const restaurants = restaurantResponse.data;
 
-      console.log(`Page ${page} - received ${restaurants.length} restaurants`);
+      // console.log(`Page ${page} - received ${restaurants.length} restaurants`);
 
       if (!restaurants || restaurants.length === 0) break;
 
@@ -36,10 +36,10 @@ export default async function getBestReviewedRestaurant(): Promise<Restaurant | 
     allRestaurants.sort((a, b) => (b.avgRating ?? 0) - (a.avgRating ?? 0));
 
     // Debug
-    console.log("=== SORTED RESTAURANTS ===");
-    allRestaurants.forEach((r, i) => {
-      console.log(`${i + 1}. ${r.name} → rating:`, r.avgRating, typeof r.avgRating);
-    });
+    // console.log("=== SORTED RESTAURANTS ===");
+    // allRestaurants.forEach((r, i) => {
+    //   console.log(`${i + 1}. ${r.name} → rating:`, r.avgRating, typeof r.avgRating);
+    // });
 
     return allRestaurants[0];
   } catch (error) {

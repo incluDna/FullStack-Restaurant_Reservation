@@ -16,6 +16,7 @@ export interface Restaurant {
   seatPerReservationLimit: number
   reservationLimit: number
   avgRating: number
+  reviewCount: number
 }
 
 export interface Reservation {

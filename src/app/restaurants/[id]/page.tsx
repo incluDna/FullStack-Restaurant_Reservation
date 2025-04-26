@@ -89,7 +89,7 @@ export default function RestaurantInfo() {
       }
     };
     fetchData();
-  }, [id]);
+  }, [id, isEditable]);
 
   useEffect(() => {
     if (!restaurantData?.openTime || !restaurantData?.closeTime) return;
@@ -212,9 +212,9 @@ export default function RestaurantInfo() {
     <main className="w-full bg-white">
       {/* Top Info */}
       <TopInfo
-        restaurantData={restaurantData} 
+        restaurantData={restaurantData}
         isEditable={isEditable}
-        setRestaurantData={restaurantData}
+        setRestaurantData={setRestaurantData}
       ></TopInfo>
       <div className="lg:px-20">
         {/* Success Message for Deletion */}
@@ -225,14 +225,14 @@ export default function RestaurantInfo() {
         )}
 
         {profile?.data?.role === "user" && (
-          <section className="flex flex-col lg:flex-row gap-4 p-10">         
+          <section className="flex flex-col lg:flex-row gap-4 p-10">
             <QueueCard id={id!} currentQueue={restaurantData.queue}/>           
             <ReservationCardInPageID
-            restaurantData={restaurantData}
-            token={token}
-            profile={profile}
+              restaurantData={restaurantData}
+              token={token}
+              profile={profile}
             />
-            
+
           </section>
         )}
         {/* Edit button for Admin & Employee */}
@@ -249,29 +249,28 @@ export default function RestaurantInfo() {
               >
                 Manage Reservation
               </motion.button>
-
-
               {/* Show Edit and Delete buttons only when not in edit mode */}
-              {!isEditable && (
-                <>
-                  <motion.button
-                    whileHover={{ backgroundColor: "black", scale: 1.02 }}
-                    transition={{ duration: 0.3 }}
-                    onClick={() => setIsEditable(true)}
-                    className="w-[65px] h-[65px] bg-[#3d3c3a] text-white text-xl border-0 rounded-none"
-                  >
-                    Edit
-                  </motion.button>
-                  <motion.button
-                    whileHover={{ backgroundColor: "black", scale: 1.02 }}
-                    transition={{ duration: 0.3 }}
-                    onClick={handleDelete}
-                    className="w-[65px] h-[65px] bg-[#3d3c3a] text-white text-xl border-0 rounded-none"
-                  >
-                    Delete
-                  </motion.button>
-                </>
-              )}
+              {profile?.data?.role === "admin" && !isEditable &&
+                (
+                  <>
+                    <motion.button
+                      whileHover={{ backgroundColor: "black", scale: 1.02 }}
+                      transition={{ duration: 0.3 }}
+                      onClick={() => setIsEditable(true)}
+                      className="w-[65px] h-[65px] bg-[#3d3c3a] text-white text-xl border-0 rounded-none"
+                    >
+                      Edit
+                    </motion.button>
+                    <motion.button
+                      whileHover={{ backgroundColor: "black", scale: 1.02 }}
+                      transition={{ duration: 0.3 }}
+                      onClick={handleDelete}
+                      className="w-[65px] h-[65px] bg-[#3d3c3a] text-white text-xl border-0 rounded-none"
+                    >
+                      Delete
+                    </motion.button>
+                  </>
+                )}
 
               {/* Show Save and Cancel buttons only when in edit mode */}
               {isEditable && (
@@ -300,10 +299,10 @@ export default function RestaurantInfo() {
 
 
         <MenuSection
-        id={restaurantData._id}
-        token={token}
-        profile={profile}
-        menuData={menuData}
+          id={restaurantData._id}
+          token={token}
+          profile={profile}
+          menuData={menuData}
         />
 
         {/* Reviews section */}

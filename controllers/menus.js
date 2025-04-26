@@ -15,7 +15,7 @@ exports.getMenus = asyncHandler(async (req, res, next) => {
     throw new APIError(`Invalid id: not an ObjectID`, 400);
   }
 
-  const features = new APIFeatures(Menu.find(), req.query).filter().sort().limitFields();
+  const features = new APIFeatures(Menu.find({ restaurant: req.params.restaurantId }), req.query).filter().sort().limitFields();
   const menus = await features.query;
 
   return res.status(200).json({

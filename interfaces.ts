@@ -12,10 +12,11 @@ export interface Restaurant {
   openTime: string;
   closeTime: string;
   rating?: number;
-  queue?: string;
+  queue?: number;
   seatPerReservationLimit: number
   reservationLimit: number
-
+  avgRating: number
+  reviewCount: number
 }
 
 export interface Reservation {
@@ -68,7 +69,8 @@ export interface Profile{
   name: string,
   tel: string,
   email: string,
-  role: string, 
+  role: string,
+  employedAt?:string,
   createdAt:string
   
 }
@@ -128,17 +130,18 @@ export interface MenuJSON {
   data: Menu[]
 }
 export interface User {
+  _id?: string;
   name: string;
   tel: string;
   email: string;
-  password: string;
+  employedAt?:string;
 }
 
 export interface Queue {
   _id?: string;
-  restaurant: string;
-  user: string;
+  restaurant: Restaurant;
+  user: User;
   seatCount: number;
   createdAt: Date;
-  status: string;
+  queueStatus: string;
 }

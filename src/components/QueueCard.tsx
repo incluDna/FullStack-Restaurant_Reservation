@@ -6,9 +6,10 @@ import { useRouter } from "next/navigation";
 
 type QueueCardProps = {
   id: string;
+  currentQueue:number
 };
 
-export default function QueueCard({ id }: QueueCardProps) {
+export default function QueueCard({ id, currentQueue }: QueueCardProps) {
   const [token, setToken] = useState("");
   const [role, setRole] = useState("");
   const [seatCount, setSeatCount] = useState(0);
@@ -64,6 +65,9 @@ export default function QueueCard({ id }: QueueCardProps) {
         Get Queue
       </h2>
       <div className="flex flex-col items-center justify-center flex-grow gap-4">
+      <span className="font-semibold text-xl leading-[35px]">
+              Current queue: {currentQueue || 0}
+      </span>
         <label className="text-lg text-black">How many people?</label>
         <input
           type="number"

@@ -4,7 +4,19 @@ import { Menu, MenuJSON } from "../../interfaces";
 import editMenu from "@/libs/Menu/editMenu";
 import getMenu from "@/libs/Menu/getMenu";
 import deleteMenu from "@/libs/Menu/deleteMenu";
-
+const tagOptions: { label: string}[] = [
+  { label: "Spicy"},
+  { label: "Vegan"},
+  { label: "Gluten-free"},
+  { label: "Dairy-free"},
+  { label: "Nut-free"},
+  { label: "Halal"},
+  { label: "Locally-sourced"},
+  { label: "Signature-dish" },
+  { label: "Seasonal"},
+  { label: "Sustainable"},
+  { label: "Vegetarian"},
+];
 export default function MenuCard({ menu, role, token }: { menu: Menu, role: string | null, token: string | null }) {
   const [isEditable, setIsEditable] = useState<boolean>(false);
   const [menuData, setMenuData] = useState<any>(menu);
@@ -14,6 +26,9 @@ export default function MenuCard({ menu, role, token }: { menu: Menu, role: stri
     price: false,
     description: false,
   });
+
+  const [tag, setTag] = useState('');
+  const [tags, setTags] = useState<string[]>(menu.tag);
 
   const handleSave = async () => {
     const isNameEmpty = !menuData.name?.trim();
@@ -48,7 +63,8 @@ export default function MenuCard({ menu, role, token }: { menu: Menu, role: stri
       const updatedFields = {
         name: menuData?.name,
         price: menuData?.price,
-        description: menuData?.description
+        description: menuData?.description,
+        tag: tags
       };
 
       if (!menuData || !token) {
@@ -90,6 +106,19 @@ export default function MenuCard({ menu, role, token }: { menu: Menu, role: stri
     }
   };
 
+  const addTag = () => {
+    if (tag && !tags.includes(tag) && tags.length < 8) {
+      setTags([...tags, tag]);
+      setWarning("");
+    }
+    else if(tags.length>=8) setWarning("You can add up to 8 tags only.");
+    
+  };
+
+  const removeTag = (tagToRemove: string) => {
+    setTags(tags.filter((t) => t !== tagToRemove));
+  };
+
   useEffect(() => {
     const fetchMenu = async () => {
       const menuResponse: MenuJSON = await getMenu(menuData.restaurant, menuData._id);
@@ -99,6 +128,7 @@ export default function MenuCard({ menu, role, token }: { menu: Menu, role: stri
       fetchMenu();
       setWarning("");
       setEmptyFields({ name: false, price: false, description: false });
+      setTags(menuData.tag);
     }
   }, [isEditable]);
 
@@ -136,6 +166,60 @@ export default function MenuCard({ menu, role, token }: { menu: Menu, role: stri
           />
         ) :
           (`${menuData.description}`)}</p>
+
+      {
+        !isEditable ? (
+          <div className="mt-4 flex gap-2 flex-wrap">
+            {menuData.tag?.map((t:string, i:number) => (
+              <button
+                key={i}
+                type="button"
+                className="w-fit h-8 bg-gray-300 rounded"
+                title={`Remove ${t}`}
+              >
+                {t}
+              </button>
+            ))}
+          </div>
+        ) : (
+          <div className="mt-4 flex gap-2 flex-wrap">
+            {tags.map((t:string, i:number) => (
+              <button
+                key={i}
+                onClick={() => removeTag(t)}
+                type="button"
+                className="w-fit h-8 bg-gray-300 rounded hover:bg-red-400"
+                title={`Remove ${t}`}
+              >
+                {t}
+              </button>
+            ))
+            }
+            <div className="flex gap-2 items-center mt-1">
+              <select
+                value={tag}
+                onChange={(e) => setTag(e.target.value)}
+                className="border px-3 py-2"
+              >
+                <option value="">Select a tag</option>
+                {tagOptions.map((t) => (
+                  !tags.includes(t.label) &&
+                  <option key={t.label} value={t.label}>
+                    {t.label}
+                  </option>
+                ))}
+              </select>
+              <button
+                type="button"
+                onClick={addTag}
+                className="bg-gray-800 text-white px-4 py-2"
+              >
+                Add
+              </button>
+            </div>
+          </div>
+        )
+      }
       {
         isEditable && warning && <p className="text-red-500 text-sm mt-2">{warning}</p>
       }

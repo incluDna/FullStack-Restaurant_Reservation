@@ -13,7 +13,7 @@ export default async function getBestReviewedRestaurant(): Promise<Restaurant | 
       const restaurantResponse: RestaurantJSON = await getRestaurants(page);
       const restaurants = restaurantResponse.data;
 
-      console.log(`Page ${page} - received ${restaurants.length} restaurants`);
+      // console.log(`Page ${page} - received ${restaurants.length} restaurants`);
 
       if (!restaurants || restaurants.length === 0) break;
 
@@ -32,28 +32,16 @@ export default async function getBestReviewedRestaurant(): Promise<Restaurant | 
 
     if (allRestaurants.length === 0) return null;
 
-    // 2. Fetch mean reviews for all restaurants
-    const ratedRestaurants = await Promise.all(
-      allRestaurants.map(async (restaurant) => {
-        const ratingData = await getMeanReviews(restaurant._id || "");
-        const rating = parseFloat(ratingData?.totalRating) || 0;
-        return {
-          ...restaurant,
-          rating,
-        };
-      })
-    );
-
-    // 3. Sort by rating and return the best one
-    ratedRestaurants.sort((a, b) => (b.rating ?? 0) - (a.rating ?? 0));
+    // 2. Sort by rating and return the best one
+    allRestaurants.sort((a, b) => (b.avgRating ?? 0) - (a.avgRating ?? 0));
 
     // Debug
-    console.log("=== SORTED RESTAURANTS ===");
-    ratedRestaurants.forEach((r, i) => {
-      console.log(`${i + 1}. ${r.name} → rating:`, r.rating, typeof r.rating);
-    });
+    // console.log("=== SORTED RESTAURANTS ===");
+    // allRestaurants.forEach((r, i) => {
+    //   console.log(`${i + 1}. ${r.name} → rating:`, r.avgRating, typeof r.avgRating);
+    // });
 
-    return ratedRestaurants[0];
+    return allRestaurants[0];
   } catch (error) {
     console.error("Error getting best-rated restaurant:", error);
     return null;

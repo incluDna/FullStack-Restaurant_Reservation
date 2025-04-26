@@ -174,7 +174,6 @@ export default function ReservationCard({
           <p className="text-sm text-black">
             Number of people: {res.seatCount}
           </p>
-          <p className="text-sm text-orange-400 mt-2">status: wait</p>
 
           {error && <p className="text-red-500 text-sm">{error}</p>}
 
@@ -190,7 +189,7 @@ export default function ReservationCard({
               onClick={handleDelete}
               disabled={loading}
             >
-              {loading ? "Removing..." : "Remove"}
+              {loading ? "Canceling..." : "Cancel"}
             </button>
           </div>
         </>

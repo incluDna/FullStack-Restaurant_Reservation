@@ -4,18 +4,18 @@ import { Menu, MenuJSON } from "../../interfaces";
 import editMenu from "@/libs/Menu/editMenu";
 import getMenu from "@/libs/Menu/getMenu";
 import deleteMenu from "@/libs/Menu/deleteMenu";
-const tagOptions: { label: string}[] = [
-  { label: "Spicy"},
-  { label: "Vegan"},
-  { label: "Gluten-free"},
-  { label: "Dairy-free"},
-  { label: "Nut-free"},
-  { label: "Halal"},
-  { label: "Locally-sourced"},
+const tagOptions: { label: string }[] = [
+  { label: "Spicy" },
+  { label: "Vegan" },
+  { label: "Gluten-free" },
+  { label: "Dairy-free" },
+  { label: "Nut-free" },
+  { label: "Halal" },
+  { label: "Locally-sourced" },
   { label: "Signature-dish" },
-  { label: "Seasonal"},
-  { label: "Sustainable"},
-  { label: "Vegetarian"},
+  { label: "Seasonal" },
+  { label: "Sustainable" },
+  { label: "Vegetarian" },
 ];
 export default function MenuCard({ menu, role, token }: { menu: Menu, role: string | null, token: string | null }) {
   const [isEditable, setIsEditable] = useState<boolean>(false);
@@ -93,7 +93,7 @@ export default function MenuCard({ menu, role, token }: { menu: Menu, role: stri
     try {
       const response = await deleteMenu(token, menuData.restaurant, menuData._id);
 
-      if (response.status==204) {
+      if (response.status == 204) {
         alert("Menu deleted successfully");
         location.reload();
       }
@@ -108,8 +108,8 @@ export default function MenuCard({ menu, role, token }: { menu: Menu, role: stri
       setTags([...tags, tag]);
       setWarning("");
     }
-    else if(tags.length>=8) setWarning("You can add up to 8 tags only.");
-    
+    else if (tags.length >= 8) setWarning("You can add up to 8 tags only.");
+
   };
 
   const removeTag = (tagToRemove: string) => {
@@ -167,20 +167,19 @@ export default function MenuCard({ menu, role, token }: { menu: Menu, role: stri
       {
         !isEditable ? (
           <div className="mt-4 flex gap-2 flex-wrap">
-            {menuData.tag?.map((t:string, i:number) => (
-              <button
+            {menuData.tag?.map((t: string, i: number) => (
+              <div
                 key={i}
-                type="button"
-                className="w-fit h-8 bg-gray-300 rounded"
+                className="w-fit h-8 bg-gray-300 rounded flex items-center"
                 title={`Remove ${t}`}
               >
                 {t}
-              </button>
+              </div>
             ))}
           </div>
         ) : (
           <div className="mt-4 flex gap-2 flex-wrap">
-            {tags.map((t:string, i:number) => (
+            {tags.map((t: string, i: number) => (
               <button
                 key={i}
                 onClick={() => removeTag(t)}

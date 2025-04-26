@@ -12,6 +12,5 @@ export default async function deleteQueue (token:string, queueID:string,) {
         throw new Error("failed to delete the queue")
     }
 
-    const text = await response.text();
-    return text ? JSON.parse(text) : null;
+    return response;
 }

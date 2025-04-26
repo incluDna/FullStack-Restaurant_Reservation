@@ -149,18 +149,13 @@ export default function RestaurantInfo() {
     try {
       const response = await deleteRestaurant(id, token);
 
-      if (response.success) {
+      if (response.status==204) {
         alert("Restaurant deleted successfully");
+        setDeletionSuccess(true);
         router.push("/restaurants");
-      } else {
-        console.error("Failed to delete restaurant:", response.error);
-        alert("Failed to delete restaurant");
       }
     } catch (error) {
       console.error("Error deleting restaurant:", error);
-      alert(
-        "An error occurred while deleting the restaurant. Please try again."
-      );
     }
   };
   if (!restaurantData || !reviewData) {

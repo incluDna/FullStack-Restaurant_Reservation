@@ -18,7 +18,7 @@ export default async function deleteReservation(
             throw new Error(`Failed to delete restaurant: ${errorMessage}`);
         }
 
-        return await response.json();  
+        return await response;  
     } catch (error) {
         console.error("Delete reservation error:", error);
         throw error;

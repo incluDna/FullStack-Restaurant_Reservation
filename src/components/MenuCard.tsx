@@ -93,12 +93,9 @@ export default function MenuCard({ menu, role, token }: { menu: Menu, role: stri
     try {
       const response = await deleteMenu(token, menuData.restaurant, menuData._id);
 
-      if (response.success) {
+      if (response.status==204) {
         alert("Menu deleted successfully");
         location.reload();
-      } else {
-        console.error("Failed to delete restaurant:", response.error);
-        alert("Failed to delete restaurant");
       }
     } catch (error) {
       console.error("Error deleting restaurant:", error);

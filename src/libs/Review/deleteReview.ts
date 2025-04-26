@@ -16,7 +16,7 @@ export default async function deleteReview(
             throw new Error(`Failed to delete review: ${errorMessage}`);
         }
 
-        return await response.json();  
+        return response;
     } catch (error) {
         console.error("Delete review error:", error);
         throw error;

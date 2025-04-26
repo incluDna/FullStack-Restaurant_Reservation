@@ -50,7 +50,7 @@ export default function ReserveManageSection({ token, restaurantID }: { token?: 
     const removeFunction = async (reservationId:string) => {
         if (token && token !== null) {
             const res = await deleteReservation(token, reservationId);
-            if (res.success) {
+            if (res.status==204) {
                 setPleaseReload(!pleaseReload);
             }
         } else {

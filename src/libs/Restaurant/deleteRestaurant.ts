@@ -19,5 +19,5 @@ export default async function deleteRestaurant(id: string, token: string) {
         throw new Error("Failed to delete restaurant");
     }
 
-    return await response.json();
+    return response;
 }

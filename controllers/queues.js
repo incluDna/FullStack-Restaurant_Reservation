@@ -100,6 +100,33 @@ exports.getQueuePosition = asyncHandler(async (req, res, next) => {
   });
 });
 
+exports.pollQueuePosition = asyncHandler(async (req, res, next) => {
+  const MAX_WAIT = 25000;
+  const SLEEP = 1000; 
+
+  const { id } = req.params;
+  const since = Number(req.query.since || 0);
+  const deadline = Date.now() + MAX_WAIT;
+
+  while (Date.now() < deadline) {
+    // pick up Mongoose’s versionKey (__v) and the status
+    const q = await Queue.findById(id).select('__v queueStatus');
+    if (!q) return res.status(404).end();
+
+    if (q.__v > since) {
+      // return the new version and the updated status
+      return res.json({
+        version: q.__v,
+        status:  q.queueStatus
+      });
+    }
+
+    // pause 1 s, then try again
+    await new Promise(r => setTimeout(r, SLEEP));
+  }
+  res.status(204).end();
+});
+
 /**
  * @description Create a queue
  * @route POST /api/restaurants/:restaurantId/queues
@@ -155,14 +182,8 @@ exports.updateQueueStatus = asyncHandler(async (req, res, next) => {
     throw new APIError(`Queue status not provided`, 400);
   }
 
-  queue = await Queue.findByIdAndUpdate(
-    req.params.id,
-    { queueStatus: req.body.queueStatus },
-    {
-      new: true,
-      runValidators: true,
-    }
-  );
+  queue.queueStatus = req.body.queueStatus;
+  await queue.save();
 
   return res.status(200).json({
     success: true,

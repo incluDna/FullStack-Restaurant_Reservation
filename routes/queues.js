@@ -20,5 +20,6 @@ router
   .delete(protect, deleteQueue);
 
 router.route("/:id/position").get(protect, getQueuePosition);
+router.route("/:id/long-poll").get(protect, pollQueuePosition);
 
 module.exports = router;

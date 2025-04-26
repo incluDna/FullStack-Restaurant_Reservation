@@ -100,30 +100,41 @@ exports.getQueuePosition = asyncHandler(async (req, res, next) => {
   });
 });
 
-exports.pollQueuePosition = asyncHandler(async (req, res, next) => {
-  const MAX_WAIT = 25000;
-  const SLEEP = 1000; 
+exports.pollQueueState = asyncHandler(async (req, res, next) => {
+  const MAX_WAIT = 25_000; // 25 s Vercel hard-limit safety
+  const SLEEP = 1_000; // pause between probes
 
   const { id } = req.params;
-  const since = Number(req.query.since || 0);
+  const since = Number(req.query.since || 0); // last version the client saw
   const deadline = Date.now() + MAX_WAIT;
 
   while (Date.now() < deadline) {
-    // pick up Mongoose’s versionKey (__v) and the status
-    const q = await Queue.findById(id).select('__v queueStatus');
-    if (!q) return res.status(404).end();
+    // We only need a few fields to decide and to calculate the rank
+    const q = await Queue.findById(id).select("__v queueStatus restaurant createdAt");
+    if (!q) return res.status(404).end(); // queue vanished
 
+    /* 1️⃣ Has anything changed since the client’s last snapshot? */
     if (q.__v > since) {
-      // return the new version and the updated status
+      /* 2️⃣  If yes, figure out where the ticket now stands         */
+      const position = await Queue.countDocuments({
+        restaurant: q.restaurant,
+        queueStatus: { $ne: "completed" },
+        createdAt: { $lt: q.createdAt }, // strictly before us
+      });
+
+      /* 3️⃣  Send the full update in one go                         */
       return res.json({
         version: q.__v,
-        status:  q.queueStatus
+        status: q.queueStatus,
+        position,
       });
     }
 
-    // pause 1 s, then try again
-    await new Promise(r => setTimeout(r, SLEEP));
+    /* 4️⃣  Nothing new yet – sleep a bit and try again              */
+    await new Promise((r) => setTimeout(r, SLEEP));
   }
+
+  /* 5️⃣  Timed out – client may reconnect immediately               */
   res.status(204).end();
 });
 

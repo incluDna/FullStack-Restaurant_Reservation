@@ -15,7 +15,7 @@ export interface Restaurant {
   queue?: string;
   seatPerReservationLimit: number
   reservationLimit: number
-
+  avgRating: number
 }
 
 export interface Reservation {

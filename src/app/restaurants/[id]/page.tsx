@@ -39,17 +39,11 @@ export default function RestaurantInfo() {
   const [reviewData, setReviewData] = useState<Review[] | null>(null);
   const [meanReview, setMeanReview] = useState<number>(0);
   const [menuData, setMenuData] = useState<Menu[] | null>(null);
-  const [filteredMenu, setFilteredMenu] = useState<Menu[] | null>(null);
   const [token, setToken] = useState<string | null>(null);
   const [role, setRole] = useState<string | null>(null);
   const [profile, setProfile] = useState<any>(null);
   const [isEditable, setIsEditable] = useState<boolean>(false);
   const [deletionSuccess, setDeletionSuccess] = useState<boolean>(false);
-  const [reservationError, setReservationError] = useState<string | null>(null);
-  const [reservationSuccess, setReservationSuccess] = useState<boolean>(false);
-  const [numberOfPeople, setNumberOfPeople] = useState<number>(1);
-  const [selectedDate, setSelectedDate] = useState<string>("");
-  const [selectedTime, setSelectedTime] = useState<string>("");
   const [timeOptions, setTimeOptions] = useState<string[]>([]);
 
   useEffect(() => {
@@ -117,39 +111,6 @@ export default function RestaurantInfo() {
 
     setTimeOptions(times);
   }, [restaurantData]);
-  const handleReservation = async () => {
-    if (!token) {
-      alert("User is not authenticated");
-      return;
-    }
-
-    // console.log(numberOfPeople, selectedDate, selectedTime)
-    if (!numberOfPeople || !selectedDate || !selectedTime) {
-      alert("Please fill out all fields.");
-      return;
-    }
-    const userId = profile?.data?._id;
-
-    const reservationDateString = `${selectedDate}T${selectedTime}:00.000Z`;
-    const reservationDate = new Date(reservationDateString);
-    const response = await addReservation(
-      token,
-      reservationDate,
-      userId,
-      id!,
-      numberOfPeople
-    );
-    if (!response.success) {
-      setReservationSuccess(false);
-      setReservationError(response.message);
-    } else {
-      setReservationError(null);
-      setReservationSuccess(true);
-      setTimeout(() => {
-        setReservationSuccess(false);
-      }, 700);
-    }
-  };
 
   const handleSave = async () => {
     try {
@@ -207,7 +168,7 @@ export default function RestaurantInfo() {
   }
 
   const totalReviews = reviewData.length;
-  console.log("filter menu", filteredMenu);
+  
   return (
     <main className="w-full bg-white">
       {/* Top Info */}

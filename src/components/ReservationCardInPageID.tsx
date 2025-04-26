@@ -2,7 +2,7 @@
 import { motion } from "framer-motion";
 import { useEffect, useMemo, useState } from "react";
 import { Restaurant, ProfileJSON } from "../../interfaces";
-import addReservation from "@/libs/Reservation/addReservations"; 
+import addReservation from "@/libs/Reservation/addReservations";
 
 interface ReservationCardProps {
   restaurantData: Restaurant;
@@ -21,6 +21,10 @@ export default function ReservationCardInPageID({
   const [reservationError, setReservationError] = useState<string | null>(null);
   const [reservationSuccess, setReservationSuccess] = useState(false);
   const [timeOptions, setTimeOptions] = useState<string[]>([]);
+
+  const [numberError, setNumberError] = useState(false);
+  const [dateError, setDateError] = useState(false);
+  const [timeError, setTimeError] = useState(false);
 
   const minDate = useMemo(() => {
     const today = new Date();
@@ -54,13 +58,37 @@ export default function ReservationCardInPageID({
   }, [restaurantData]);
 
   const handleReservation = async () => {
+    let hasError = false;
+    setReservationError(null);
+
     if (!token) {
-      alert("User is not authenticated");
+      setReservationError("You must be logged in to make a reservation.");
       return;
     }
 
-    if (!numberOfPeople || !selectedDate || !selectedTime) {
-      alert("Please fill out all fields.");
+    if (!numberOfPeople || numberOfPeople < 1) {
+      setNumberError(true);
+      hasError = true;
+    } else {
+      setNumberError(false);
+    }
+
+    if (!selectedDate) {
+      setDateError(true);
+      hasError = true;
+    } else {
+      setDateError(false);
+    }
+
+    if (!selectedTime) {
+      setTimeError(true);
+      hasError = true;
+    } else {
+      setTimeError(false);
+    }
+
+    if (hasError) {
+      setReservationError("Please correct the highlighted fields.");
       return;
     }
 
@@ -100,7 +128,9 @@ export default function ReservationCardInPageID({
               type="number"
               value={numberOfPeople}
               onChange={(e) => setNumberOfPeople(Number(e.target.value))}
-              className="w-24 h-10 p-2 bg-white border"
+              className={`w-24 h-10 p-2 bg-white border ${
+                numberError ? "border-red-500" : "border-gray-300"
+              }`}
               min={1}
             />
           </div>
@@ -112,12 +142,16 @@ export default function ReservationCardInPageID({
               value={selectedDate}
               onChange={(e) => setSelectedDate(e.target.value)}
               min={minDate}
-              className="w-40 h-10 p-2 text-gray-700 bg-white border"
+              className={`w-40 h-10 p-2 text-gray-700 bg-white border ${
+                dateError ? "border-red-500" : "border-gray-300"
+              }`}
             />
             <select
               value={selectedTime}
               onChange={(e) => setSelectedTime(e.target.value)}
-              className="w-40 h-10 p-2 bg-white border text-gray-700"
+              className={`w-40 h-10 p-2 bg-white text-gray-700 border ${
+                timeError ? "border-red-500" : "border-gray-300"
+              }`}
             >
               <option value="" disabled hidden>
                 - Select Time -

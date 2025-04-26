@@ -29,7 +29,7 @@ export default function ProfilePage() {
   const [formData, setFormData] = useState<User>(user);
   const [showReviews, setShowReviews] = useState(false);
   const [queues, setQueues] = useState<Queue[]>([]);
-
+  const [reviews, setReviews] = useState<Review[]>([]);
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
@@ -54,7 +54,6 @@ export default function ProfilePage() {
       setLoading(false);
     };
   }, []);
-  const [reviews, setReviews] = useState<Review[]>([]);
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -244,6 +243,7 @@ export default function ProfilePage() {
                       description={rev.reviewText}
                       restaurant={rev.restaurant.name!}
                       reviewId={rev._id!}
+                      token={token}                  
                     />
                   ))}
                 </ul>
@@ -262,7 +262,7 @@ export default function ProfilePage() {
                 <ul className="flex flex-wrap gap-5">
                   {queues.map((que, index) => {
                     if(!que.restaurant._id || !que._id) return <p>failed loading queue</p>;
-
+                    
                     return (
                       <QueueCardInProfile
                         key={que._id || index}

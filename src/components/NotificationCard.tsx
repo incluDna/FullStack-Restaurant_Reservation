@@ -1,8 +1,10 @@
 'use client'
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, use, useRef } from "react";
 import Image from "next/image";
 import { useSelector } from "react-redux";
 import { RootState } from "../redux/store";
+import { getAuthCookie } from "@/libs/User/getAuthCookie";
+import pollQueuePositionAndStatus from "@/libs/Queue/pollQueuePositionAndStatus";
 
 export default function NotificationCard() {
 
@@ -37,6 +39,51 @@ export default function NotificationCard() {
             setExpanded(false);
         } 
     }, [notiStatus]);
+
+    // polling function to get queue position and status
+    const stopPollingRef = useRef<(() => void) | undefined>(null);
+    useEffect(() => {
+        const checkAuth = async () => {
+            const { success } = await getAuthCookie();
+            if (!success && stopPollingRef.current) {
+                stopPollingRef.current();
+            }
+        };
+
+        // check every 1 minutes
+        const authCheckInterval = setInterval(checkAuth, 60 * 1000);
+
+        return () => {
+            clearInterval(authCheckInterval);
+            if (stopPollingRef.current) {
+                stopPollingRef.current();
+            }
+        };
+    }, []);
+
+    useEffect(() => {
+        const pollFunction = async () => {
+            
+            // get Token
+            const { success, token: newToken, role } = await getAuthCookie();
+
+            // check if it user
+            if (!success || role !== "user") return; // not user
+            else {                   
+                // call pollQueuePositionAndStatus function
+                stopPollingRef.current = pollQueuePositionAndStatus(newToken);
+            }
+        }
+
+        pollFunction();
+
+        return () => {
+            if (stopPollingRef.current) {
+                stopPollingRef.current();
+            }
+        };
+        
+    }, []);
 
     return (      
         <div

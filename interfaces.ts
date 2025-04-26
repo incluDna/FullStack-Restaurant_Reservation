@@ -68,8 +68,7 @@ export interface Profile{
   name: string,
   tel: string,
   email: string,
-  role: string, 
-  password:string,
+  role: string,
   employedAt?:string,
   createdAt:string
   
@@ -133,7 +132,6 @@ export interface User {
   name: string;
   tel: string;
   email: string;
-  password: string;
   employedAt?:string;
 }
 

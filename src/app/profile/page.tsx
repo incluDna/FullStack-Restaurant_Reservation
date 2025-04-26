@@ -17,7 +17,6 @@ export default function ProfilePage() {
     name: "",
     email: "",
     tel: "",
-    password: "",
     employedAt:''
   });
 

@@ -201,10 +201,10 @@ export default function CreateMenuPage() {
                   key={i}
                   onClick={() => removeTag(t)}
                   type="button"
-                  className="w-8 h-8 bg-gray-300 rounded hover:bg-red-400"
+                  className="w-fit h-8 bg-gray-300 rounded hover:bg-red-400"
                   title={`Remove ${t}`}
                 >
-                  {t[0]}
+                  {t}
                 </button>
               ))}
             </div>

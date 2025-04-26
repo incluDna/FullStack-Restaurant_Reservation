@@ -22,8 +22,7 @@ exports.getRestaurants = asyncHandler(async (req, res, next) => {
 
   const restaurants = await features.query.lean();
 
-  const data = await appendAverageReview(restaurants);
-  
+  const data = await appendQueue(await appendAverageReview(restaurants));
   const total = await Restaurant.countDocuments(features.query.getFilter());
   const [totalPages, pagination] = features.getPaginationMetadata(total);
   
@@ -150,6 +149,35 @@ async function appendAverageReview(restaurants) {
   const data = restaurants.map((r) => {
     const stat = statsMap[r._id.toString()] || { avgRating: 0, reviewCount: 0 };
     return { ...r, ...stat };
+  });
+
+  return data;
+}
+
+async function appendQueue(restaurants) {
+  const queues = await Queue.aggregate([
+    { 
+      $match: { 
+        restaurant: { $in: restaurants.map((r) => r._id) },
+        queueStatus: { $ne: "completed" }
+      } 
+    },
+    {
+      $group: {
+        _id: "$restaurant",
+        queue: { $sum: 1 },
+      },
+    },
+  ]);
+
+  const queueMap = queues.reduce((map, q) => {
+    map[q._id.toString()] = q.queue;
+    return map;
+  }, {});
+
+  const data = restaurants.map((r) => {
+    const queue = queueMap[r._id.toString()] || 0;
+    return { ...r, queue };
   });
 
   return data;

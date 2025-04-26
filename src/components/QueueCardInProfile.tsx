@@ -94,7 +94,7 @@ export default function QueueCardInProfile({que, tokenRecieve, onDelete, restaur
             onClick={handleDelete}
             disabled={loading}
           >
-            {loading ? "Removing..." : "Remove"}
+            {loading ? "Canceling..." : "Cancel"}
           </button>
         </div>
       )}

@@ -6,7 +6,7 @@ export default async function getRestaurants(page = 1, limit = 10) {
 
     // Loop through pages until no more data
     while (hasMore) {
-      const res = await fetch(`${process.env.BACKEND_URL}/api/restaurants?page=${currentPage}&limit=100`);
+      const res = await fetch(`${process.env.BACKEND_URL}/api/restaurants?page=${currentPage}&limit=${limit}&sort=name`);
       if (!res.ok) throw new Error(`Failed at page ${currentPage}`);
 
       const data = await res.json();

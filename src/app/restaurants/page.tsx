@@ -140,7 +140,7 @@ export default function RestaurantCatalog() {
         }
         {
 
-          (page < totalPages - 1) ?
+          (page < totalPages) ?
             <motion.button className="flex items-center justify-center gap-4 pr-[var(--size-space-1000)] pl-[var(--size-space-1000)] py-2 bg-[#C2C2C2] rounded-[75px] border-none text-[24px] font-semibold w-full max-w-[200px] mr-8 mt-12 hover:bg-[#999]"
               initial={{ backgroundColor: "#C2C2C2" }}
               whileHover={{ backgroundColor: "#999", scale: 1.02 }}

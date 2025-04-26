@@ -25,7 +25,7 @@ exports.getRestaurants = asyncHandler(async (req, res, next) => {
   const data = await appendQueue(await appendAverageReview(restaurants));
   const total = await Restaurant.countDocuments(features.query.getFilter());
   const [totalPages, pagination] = features.getPaginationMetadata(total);
-  
+
   res.status(200).json({
     success: true,
     count: data.length,
@@ -41,15 +41,19 @@ exports.getRestaurants = asyncHandler(async (req, res, next) => {
  * @access Public
  */
 exports.getRestaurant = asyncHandler(async (req, res, next) => {
-  const restaurant = await Restaurant.findById(req.params.id);
-
+  const restaurant = await Restaurant.findById(req.params.id).lean();
+  
   if (!restaurant) {
     throw new APIError("Restaurant not found", 404);
   }
+  const queueCount = await Queue.countDocuments({
+    restaurant: restaurant._id,
+    queueStatus: { $ne: "completed" },
+  });
 
   res.status(200).json({
     success: true,
-    data: restaurant,
+    data: { ...restaurant, queue: queueCount },
   });
 });
 
@@ -156,11 +160,11 @@ async function appendAverageReview(restaurants) {
 
 async function appendQueue(restaurants) {
   const queues = await Queue.aggregate([
-    { 
-      $match: { 
+    {
+      $match: {
         restaurant: { $in: restaurants.map((r) => r._id) },
         queueStatus: { $ne: "completed" }
-      } 
+      }
     },
     {
       $group: {

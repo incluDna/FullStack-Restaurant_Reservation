@@ -45,7 +45,6 @@ export default function RestaurantInfo() {
   const [isEditable, setIsEditable] = useState<boolean>(false);
   const [deletionSuccess, setDeletionSuccess] = useState<boolean>(false);
   const [timeOptions, setTimeOptions] = useState<string[]>([]);
-
   useEffect(() => {
     async function fetchToken() {
       try {

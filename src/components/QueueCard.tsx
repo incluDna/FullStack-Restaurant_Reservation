@@ -13,7 +13,7 @@ export default function QueueCard({ id, currentQueue }: QueueCardProps) {
   const [token, setToken] = useState("");
   const [role, setRole] = useState("");
   const [seatCount, setSeatCount] = useState(0);
-  const [error, setError] = useState(""); // state for error message
+  const [error, setError] = useState(""); 
   const router = useRouter();
 
   useEffect(() => {
@@ -35,7 +35,12 @@ export default function QueueCard({ id, currentQueue }: QueueCardProps) {
   }, []);
 
   const handleGetQueue = async () => {
-    setError(""); 
+    setError("");
+
+    if (seatCount <= 0) {
+      setError("Please enter the number of people.");
+      return;
+    }
 
     const fieldValues = {
       restaurantId: id,
@@ -50,7 +55,7 @@ export default function QueueCard({ id, currentQueue }: QueueCardProps) {
       alert("You are now in line!");
       setTimeout(() => router.push("/profile"), 1000);
     } else {
-      setError(result.message); 
+      setError(result.message);
     }
   };
 
@@ -66,7 +71,9 @@ export default function QueueCard({ id, currentQueue }: QueueCardProps) {
         <label className="text-lg text-black">How many people?</label>
         <input
           type="number"
-          className="w-24 h-10 text-base p-2 bg-white border"
+          className={`w-24 h-10 text-base p-2 bg-white border ${
+            error ? "border-red-500" : "border"
+          }`}
           onChange={(e) => setSeatCount(Number(e.target.value))}
         />
       </div>
@@ -81,7 +88,7 @@ export default function QueueCard({ id, currentQueue }: QueueCardProps) {
 
       {/* Error Message */}
       {error && (
-        <p className="text-red-600 text-sm text-center mt-2">{error}</p>
+        <p className="text-red-500 text-center mt-4">{error}</p>
       )}
     </div>
   );

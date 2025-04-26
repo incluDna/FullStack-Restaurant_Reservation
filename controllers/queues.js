@@ -101,6 +101,7 @@ exports.pollIncompleteQueues = asyncHandler(async (req, res, next) => {
     /* 2a ▸ fetch the newest change time among the matching docs.
             Thanks to the {restaurant, updatedAt} index this is O(log n). */
     const latest = await baseQuery
+      .clone()
       .sort({ updatedAt: -1 })
       .select('updatedAt')
       .lean()          // no mongoose hydration
@@ -256,6 +257,7 @@ exports.updateQueueStatus = asyncHandler(async (req, res, next) => {
   }
 
   queue.queueStatus = req.body.queueStatus;
+  queue.increment();
   await queue.save();
 
   return res.status(200).json({

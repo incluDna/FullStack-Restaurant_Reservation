@@ -17,7 +17,7 @@ export default function RestaurantCard({
   location: string;
   openCloseTime: string;
   rating: number | null;
-  currentQueue: string;
+  currentQueue: number;
 }) {
   // Generate star rating display dynamically based on the rating
   const renderStars = () => {

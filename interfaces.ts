@@ -12,7 +12,7 @@ export interface Restaurant {
   openTime: string;
   closeTime: string;
   rating?: number;
-  queue?: string;
+  queue?: number;
   seatPerReservationLimit: number
   reservationLimit: number
   avgRating: number

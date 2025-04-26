@@ -116,7 +116,7 @@ export default function RestaurantCatalog() {
               location={`${restaurant.address}, ${restaurant.district}, ${restaurant.province}`}
               openCloseTime={`${restaurant.openTime} - ${restaurant.closeTime}`}
               rating={restaurant.reviewCount === 0 ? null : restaurant.avgRating}
-              currentQueue={restaurant.queue || "0"}
+              currentQueue={restaurant.queue || 0}
             />
           );
         })}

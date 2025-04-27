@@ -30,7 +30,7 @@ export default function MenuForm({
   const onSubmit = () => {
     if (form) {
       addMenu(token, id, form);
-      showNotice("Add Menu Successfully!");
+      showNotice("Add Menu Successfully!", true);
       router.push(`/restaurants/${id}`);
     }
   };

@@ -15,6 +15,7 @@ export default function QueueCard({ id, currentQueue }: QueueCardProps) {
   const [seatCount, setSeatCount] = useState(0);
   const [error, setError] = useState(""); 
   const router = useRouter();
+  const { showNotice } = useNotice();
 
   useEffect(() => {
     async function fetchToken() {
@@ -50,10 +51,10 @@ export default function QueueCard({ id, currentQueue }: QueueCardProps) {
     };
 
     const result = await createQueue(fieldValues);
-    const { showNotice } = useNotice();
+
 
     if (result.success) {
-      showNotice("You are now in line!");
+      showNotice("You are now in line!", true);
       setTimeout(() => router.push("/profile"), 1000);
     } else {
       setError(result.message);

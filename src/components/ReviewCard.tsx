@@ -10,7 +10,7 @@ export default function ReviewCard({ time, rating,description ,restaurant,token,
         const { showNotice } = useNotice();
       
     const onDelete = (rid: string) => {
-        showNotice('delete review')
+        showNotice('delete review', true)
         deleteReview(rid, token) 
         window.location.reload();
     };

@@ -8,7 +8,7 @@ export interface NotificationState {
 
 const initialState: NotificationState = {
     notiStatus: 0,
-    queueNumber: 0,
+    queueNumber: -1,
     queueStatus: "waiting",
 }
 
@@ -31,7 +31,7 @@ const updateNotiStatus = (state:any) => {
   let sta = state.queueStatus;
 
   // Not show
-  if (num > 3 && sta !== "calling") {
+  if ((num > 3 || num < 0) && sta !== "calling") {
     state.notiStatus = 0;
   } 
   

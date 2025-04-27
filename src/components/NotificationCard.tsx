@@ -5,11 +5,16 @@ import { useSelector } from "react-redux";
 import { RootState } from "../redux/store";
 import { getAuthCookie } from "@/libs/User/getAuthCookie";
 import pollQueuePositionAndStatus from "@/libs/Queue/pollQueuePositionAndStatus";
+import { store } from "../redux/store";
+import { updateNotification } from "@/redux/notificationSlice";
 
 export default function NotificationCard() {
 
     const notiStatus = useSelector((state: RootState) => state.notiStatus);
     const queueNumber = useSelector((state: RootState) => state.queueNumber);
+    const refreshRedux = () => {
+        store.dispatch(updateNotification({num: -1, sta: "waiting"}));
+    }
 
     // status === 1 : waiting for queue
     // status === 2 : queue is called
@@ -44,9 +49,26 @@ export default function NotificationCard() {
     const stopPollingRef = useRef<(() => void) | undefined>(null);
     useEffect(() => {
         const checkAuth = async () => {
-            const { success } = await getAuthCookie();
-            if (!success && stopPollingRef.current) {
-                stopPollingRef.current();
+            try {
+                const auth = await getAuthCookie();
+                if (auth === undefined) {
+                    if (stopPollingRef.current) {
+                        stopPollingRef.current();
+                    }
+                    refreshRedux();
+                }
+                if (!auth.success && stopPollingRef.current) {
+                    if (stopPollingRef.current) {
+                        stopPollingRef.current();
+                    }
+                    refreshRedux();
+                }
+            } catch (error) {
+                console.error("Error in getAuthCookie:", error);
+                if (stopPollingRef.current) {
+                    stopPollingRef.current();
+                }
+                refreshRedux();
             }
         };
 
@@ -58,6 +80,7 @@ export default function NotificationCard() {
             if (stopPollingRef.current) {
                 stopPollingRef.current();
             }
+            refreshRedux();
         };
     }, []);
 
@@ -68,10 +91,19 @@ export default function NotificationCard() {
             const { success, token: newToken, role } = await getAuthCookie();
 
             // check if it user
-            if (!success || role !== "user") return; // not user
+            if (!success || !newToken || role !== "user") {
+                if (stopPollingRef.current) {
+                    stopPollingRef.current();
+                    stopPollingRef.current = null;
+                }
+                refreshRedux();
+                return;
+            }
             else {                   
                 // call pollQueuePositionAndStatus function
-                stopPollingRef.current = pollQueuePositionAndStatus(newToken);
+                if (!stopPollingRef.current) {
+                    stopPollingRef.current = pollQueuePositionAndStatus(newToken);
+                }
             }
         }
 
@@ -80,7 +112,9 @@ export default function NotificationCard() {
         return () => {
             if (stopPollingRef.current) {
                 stopPollingRef.current();
+                stopPollingRef.current = null;
             }
+            refreshRedux();
         };
         
     }, []);

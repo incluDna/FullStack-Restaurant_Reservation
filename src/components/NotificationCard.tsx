@@ -122,7 +122,7 @@ export default function NotificationCard() {
     return (      
         <div
         className={`fixed bottom-4 left-1/2 z-50 transform -translate-x-1/2 transition-all duration-300 ease-in-out
-            h-[50px] rounded-full flex items-center justify-start content-center px-[10px] gap-[7px]
+            h-[50px] rounded-full flex items-center justify-start content-center px-[10px] gap-[7px] shadow-md
             ${ notiStatus === 2 ? "bg-red-500" : "bg-yellow-400" }
             ${ visible && notiStatus !== 0 ? "translate-y-0 opacity-100" : "translate-y-20 opacity-0" }
             ${ expanded ? "w-[220px]" : "w-[50px] bg-yellow-400"}`}

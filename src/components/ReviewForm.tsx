@@ -6,7 +6,7 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useNotice } from "./NoticeContext";
-
+import { motion } from "framer-motion";
 export default function Reviewform({ token, profile, restaurantID }: { token: string, profile: any, restaurantID?: string }) {
   const router = useRouter()
   const urlParams = useSearchParams();
@@ -22,8 +22,8 @@ export default function Reviewform({ token, profile, restaurantID }: { token: st
   const [reviewStar, setReviewStar] = useState<number>(0);
   const [description, setDescription] = useState<string>('');
   const [errorMessage, setErrorMessage] = useState<string>('');
-  const {showNotice} = useNotice();
-  
+  const { showNotice } = useNotice();
+
   const makeReview = async () => {
 
     if (user && rid && (reviewStar && description)) {
@@ -62,7 +62,7 @@ export default function Reviewform({ token, profile, restaurantID }: { token: st
   };
 
   return (
-    <div className="p-3 ">
+    <div className="p-16">
       {id ?
         <div style={{ fontSize: "96px" }}>Edit Review</div>
         :
@@ -70,7 +70,7 @@ export default function Reviewform({ token, profile, restaurantID }: { token: st
       }
 
       <div className="text-center">
-        <div className="text-left font-bold text-xl">
+        <div className="text-left font-bold text-xl mt-8">
           Review Information
         </div>
 
@@ -105,13 +105,14 @@ export default function Reviewform({ token, profile, restaurantID }: { token: st
           </div>
         </div>
       </div>
-      <button
-        className="font-serif m-autoblock rounded-md bg-[#F89640] 
-        hover:bg-green-600 px-3 py-2 text-white shadow-sm"
+      <motion.button
+        whileHover={{ backgroundColor: "#5A2934", scale: 1.02 }}
+        transition={{ duration: 0.3 }}
+        className="font-serif m-autoblock rounded-md bg-[#f79540] text-white text-lg mt-8 px-3 py-2"
         onClick={makeReview}
       >
         Submit
-      </button>
+      </motion.button>
       <div className="text-red-500 font-mono p-5">{errorMessage}</div>
     </div>
   );

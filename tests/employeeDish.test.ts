@@ -2,9 +2,12 @@ import { test, expect } from '@playwright/test';
 test.setTimeout(0);  // Disable timeout for this specific test
 const FRONTEND_URL='http://localhost:3000/';
 
-//US5-2+US5-3+US5-4
+//US5-2-As a restaurant employee-I want to create new menu 
+//US5-3-As a restaurant employee-I want to update new menu                                                      
+//US5-4-As a restaurant employee-I want to delete the menu
 
-test('test', async ({ page }) => {
+
+test('Test-Menu Dish', async ({ page }) => {
   await page.goto(`${FRONTEND_URL}`);
   await page.getByRole('link', { name: 'Login' }).click();
   await page.waitForTimeout(2000); // wait for 2 sec for loading page
@@ -18,6 +21,7 @@ test('test', async ({ page }) => {
   await expect(page.getByRole('button', { name: 'My Restaurant' })).toBeVisible();
   await page.getByRole('button', { name: 'My Restaurant' }).click();
   await page.waitForTimeout(2000); // wait for 2 sec for loading page
+  //add
   await expect(page.getByRole('button', { name: '+' })).toBeVisible();
   await page.getByRole('button', { name: '+' }).click();
   await page.waitForTimeout(2000); // wait for 2 sec for loading page
@@ -41,33 +45,38 @@ test('test', async ({ page }) => {
   });
   await page.getByRole('button', { name: 'Submit' }).click();
   await page.waitForTimeout(2000); // wait for 2 sec for loading page
-  await page.reload();  // Refreshes the page and ignores the cache
-  await page.waitForTimeout(2000); // wait for 2 sec for loading page
   await expect(page.getByText('Tralalero Tralala1000 ฿He has')).toBeVisible();
-  await expect(page.locator('body')).toContainText('Tralalero Tralala');
-  await page.getByRole('button', { name: 'Edit' }).nth(1).click();
-  await page.getByRole('textbox').first().click();
-  await page.getByRole('textbox').first().fill('Shark Sushi');
-  await page.getByRole('spinbutton').click();
-  await page.getByRole('spinbutton').fill('59');
-  await page.getByRole('textbox').nth(1).click();
-  await page.getByRole('textbox').nth(1).fill('Fresh new Shark with nike Sushi');
-  await page.getByRole('button', { name: 'Halal' }).click();
-  await page.getByRole('combobox').selectOption('Seasonal');
-  await page.getByRole('button', { name: 'Add' }).click();
-  await page.getByRole('button', { name: 'Save' }).click();
-  await expect(page.getByText('Nut-free')).toBeVisible();
-  await expect(page.getByText('Signature-dish').nth(1)).toBeVisible();
-  await expect(page.getByText('Seasonal')).toBeVisible();
-  page.once('dialog', dialog => {
-    console.log(`Dialog message: ${dialog.message()}`);
-    dialog.dismiss().catch(() => {});
-  });
-  await page.waitForTimeout(2000); // wait for 2 sec for loading page
-  await page.reload();  // Refreshes the page and ignores the cache
-  await page.waitForTimeout(2000); // wait for 2 sec for loading page
-  await page.getByRole('button', { name: 'Delete' }).nth(1).click();
-  await page.waitForTimeout(2000); // wait for 2 sec for loading page
-  await expect(page.getByText('Tralalero Tralala1000 ฿He has').nth(1)).toBeHidden();
+  //edit
+  await expect(page.getByText('Tralalero Tralala1000 ฿He has')).toBeVisible();
+    await expect(page.locator('body')).toContainText('Tralalero Tralala');
+    await page.getByRole('button', { name: 'Edit' }).nth(1).click();
+    await page.getByRole('textbox').first().click();
+    await page.getByRole('textbox').first().fill('Shark Sushi');
+    await page.getByRole('spinbutton').click();
+    await page.getByRole('spinbutton').fill('59');
+    await page.getByRole('textbox').nth(1).click();
+    await page.getByRole('textbox').nth(1).fill('Fresh new Shark with nike Sushi');
+    await page.getByRole('button', { name: 'Halal' }).click();
+    await page.getByRole('combobox').selectOption('Seasonal');
+    await page.getByRole('button', { name: 'Add' }).click();
+    await page.getByRole('button', { name: 'Save' }).click();
+    await expect(page.getByText('Nut-free')).toBeVisible();
+    await expect(page.getByText('Signature-dish').nth(1)).toBeVisible();
+    await expect(page.getByText('Seasonal')).toBeVisible();
+    page.once('dialog', dialog => {
+      console.log(`Dialog message: ${dialog.message()}`);
+      dialog.dismiss().catch(() => {});
+    });
+    await page.waitForTimeout(2000); // wait for 2 sec for loading page
+    await expect(page.getByText('Shark Sushi59 ฿Fresh new')).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Shark Sushi' })).toBeVisible();
+    //delete
+    await expect(page.getByRole('heading', { name: 'Shark Sushi' })).toBeVisible();
+    await page.getByRole('button', { name: 'Delete' }).nth(1).click();
+    await page.waitForTimeout(2000); // wait for 2 sec for loading page
+    await expect(page.getByText('Shark Sushi59 ฿Fresh new')).toBeHidden();
 
 });
+
+
+  

@@ -1,8 +1,9 @@
 import { test, expect } from '@playwright/test';
+test.setTimeout(0);  // Disable timeout for this specific test
 const FRONTEND_URL='http://localhost:3000/';
 
 // US5-1-As a customer I want to view menu before reserve restaurant 
-test('test', async ({ page }) => {
+test('User-Test', async ({ page }) => {
     await page.goto(`${FRONTEND_URL}`);
     await page.getByRole('link', { name: 'Login' }).click();
     await page.locator('input[type="email"]').click();

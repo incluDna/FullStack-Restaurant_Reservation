@@ -5,7 +5,7 @@ import { useState, useEffect } from "react";
 type NoticePopupProps = {
   message: string;
   isVisible: boolean;
-  isNotice?: boolean; // `true` for success, `false` for error
+  isNotice?: boolean;
   onClose: () => void;
 };
 
@@ -27,18 +27,18 @@ export default function NoticePopup({ message, isVisible, isNotice = false, onCl
 
   return (
     <div
-      className={`fixed top-5 left-1/2 -translate-x-1/2 z-50 w-full max-w-sm p-4 text-sm font-semibold rounded-lg shadow-lg border-l-4 flex items-center gap-3 
+      className={`font-inter font-semibold fixed top-5 left-1/2 -translate-x-1/2 z-50 w-full max-w-sm p-4 text-sm rounded-lg shadow-lg border-l-4 flex items-center justify-center gap-3 
       transition-transform duration-300 ease-out ${
         show ? "translate-y-0 opacity-100" : "-translate-y-10 opacity-0"
       } 
       ${
         isNotice
-          ? "bg-[#D96C00] border-[#D96C00] text-white" // Success (dark orange)
-          : "bg-[#B91C1C] border-[#B91C1C] text-white" // Error (dark red)
+          ? "bg-[#D96C00] border-[#D96C00] text-white"
+          : "bg-[#B91C1C] border-[#B91C1C] text-white"
       }`}
     >
       <span className="text-xl">{isNotice ? "✅" : "⚠️"}</span>
-      <p>{message}</p>
+      <p className="text-center">{message}</p>
     </div>
   );
 }

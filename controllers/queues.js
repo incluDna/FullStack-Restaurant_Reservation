@@ -148,7 +148,7 @@ exports.getQueuePosition = asyncHandler(async (req, res, next) => {
   const position = await Queue.countDocuments({
     restaurant: req.params.restaurantId,
     queueStatus: { $ne: "completed" },
-    createdAt: { $lt: q.createdAt }, // strictly before us
+    createdAt: { $lt: thisQueue.createdAt }, // strictly before us
   });
 
   return res.status(200).json({

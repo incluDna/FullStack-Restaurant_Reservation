@@ -23,7 +23,13 @@ export default function NotificationCard() {
     const [expanded, setExpanded] = useState(false);
     const [visible, setVisible] = useState(false);
 
-    const text = notiStatus === 1 ? `Waiting for ${queueNumber} queue..` : notiStatus === 2 ? "Your queue is called !" : "" ;
+    let text = "";
+    if (notiStatus === 1) {
+        if (queueNumber === 0) text = "Prepare to be called...";
+        else text = `Waiting for ${queueNumber} queue..`;
+    } else if (notiStatus === 2) {
+        text = "Your queue is called !";
+    }
 
     useEffect(() => {  
         setVisible(false);  

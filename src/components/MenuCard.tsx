@@ -4,10 +4,13 @@ import { Menu, MenuJSON } from "../../interfaces";
 import editMenu from "@/libs/editMenu";
 import getMenu from "@/libs/getMenu";
 import deleteMenu from "@/libs/deleteMenu";
+import { useNotice } from "./NoticeContext";
 
 export default function MenuCard({ menu, role, token }: { menu: Menu, role: string | null, token: string | null }) {
   const [isEditable, setIsEditable] = useState<boolean>(false);
   const [menuData, setMenuData] = useState<any>(menu);
+  const { showNotice } = useNotice();
+
   const handleSave = async () => {
     try {
       const updatedFields = {
@@ -42,15 +45,15 @@ export default function MenuCard({ menu, role, token }: { menu: Menu, role: stri
       const response = await deleteMenu(token, menuData.restaurant, menuData._id);
 
       if (response.success) {
-        alert("Menu deleted successfully");
+        showNotice("Menu deleted successfully");
         location.reload();
       } else {
         console.error("Failed to delete restaurant:", response.error);
-        alert("Failed to delete restaurant");
+        showNotice("Failed to delete restaurant");
       }
     } catch (error) {
       console.error("Error deleting restaurant:", error);
-      alert("An error occurred while deleting the restaurant. Please try again.");
+      showNotice("An error occurred while deleting the restaurant. Please try again.");
     }
   };
 

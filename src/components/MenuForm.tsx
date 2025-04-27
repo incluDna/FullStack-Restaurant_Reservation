@@ -3,7 +3,7 @@
 import addMenu from "@/libs/addMenu";
 import { useParams, useRouter } from "next/navigation";
 import { useState } from "react";
-
+import { useNotice } from "./NoticeContext";
 export default function MenuForm({
   token,
   profile,
@@ -13,6 +13,7 @@ export default function MenuForm({
 }) {
   const { id } = useParams() as { id: string };
   const router = useRouter();
+  const { showNotice } = useNotice();
 
   if (!id) return <div>Loading...</div>; // Or handle error
 
@@ -29,7 +30,7 @@ export default function MenuForm({
   const onSubmit = () => {
     if (form) {
       addMenu(token, id, form);
-      alert("Add Menu Successfully!");
+      showNotice("Add Menu Successfully!");
       router.push(`/restaurants/${id}`);
     }
   };

@@ -7,7 +7,7 @@ import { Pattaya } from "next/font/google";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
-
+import { useNotice } from "./NoticeContext";
 const pattaya = Pattaya({ weight: "400", subsets: ["thai", "latin"] }); 
 
 
@@ -16,7 +16,7 @@ export default   function Reviewform({ session,profile}: { session: Session  ,pr
   const urlParams = useSearchParams();
   const [rid, setRid] = useState<string>("");
   const [id, setId] = useState<string>("");
-
+  const { showNotice } = useNotice();
   useEffect(() => {
     const idFromUrl = urlParams.get("rid");
     if (idFromUrl) setRid(idFromUrl);
@@ -50,7 +50,7 @@ export default   function Reviewform({ session,profile}: { session: Session  ,pr
         }
         
       );
-      alert("Add Review Successfully!");
+      showNotice("Add Review Successfully!");
       router.push(`/restaurants/${rid}`);
 
       
@@ -61,7 +61,7 @@ export default   function Reviewform({ session,profile}: { session: Session  ,pr
 
 
       editReview(session.user.token, id, reviewStar,Description);
-      alert("Review updated ");
+      showNotice("Review updated ");
       router.push('/profile/view/review')
 
     }

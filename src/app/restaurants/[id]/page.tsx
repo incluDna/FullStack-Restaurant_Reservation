@@ -29,6 +29,7 @@ import QueueCard from "@/components/QueueCard";
 import ReservationCardInPageID from "@/components/ReservationCardInPageID";
 import MenuSection from "@/components/MenuSection";
 const tabOptions = ["dish", "drink", "set"];
+import { useNotice } from "@/components/NoticeContext";
 
 export default function RestaurantInfo() {
   const router = useRouter();
@@ -52,6 +53,7 @@ export default function RestaurantInfo() {
   const [selectedDate, setSelectedDate] = useState<string>("");
   const [selectedTime, setSelectedTime] = useState<string>("");
   const [timeOptions, setTimeOptions] = useState<string[]>([]);
+  const { showNotice } = useNotice();
 
   useEffect(() => {
     async function fetchToken() {
@@ -120,13 +122,13 @@ export default function RestaurantInfo() {
   }, [restaurantData]);
   const handleReservation = async () => {
     if (!token) {
-      alert("User is not authenticated");
+      showNotice("User is not authenticated");
       return;
     }
 
     // console.log(numberOfPeople, selectedDate, selectedTime)
     if (!numberOfPeople || !selectedDate || !selectedTime) {
-      alert("Please fill out all fields.");
+      showNotice("Please fill out all fields.");
       return;
     }
     const userId = profile?.data?._id;
@@ -190,15 +192,15 @@ export default function RestaurantInfo() {
       const response = await deleteRestaurant(id, token);
 
       if (response.success) {
-        alert("Restaurant deleted successfully");
+        showNotice("Restaurant deleted successfully");
         router.push("/restaurants");
       } else {
         console.error("Failed to delete restaurant:", response.error);
-        alert("Failed to delete restaurant");
+        showNotice("Failed to delete restaurant");
       }
     } catch (error) {
       console.error("Error deleting restaurant:", error);
-      alert(
+      showNotice(
         "An error occurred while deleting the restaurant. Please try again."
       );
     }

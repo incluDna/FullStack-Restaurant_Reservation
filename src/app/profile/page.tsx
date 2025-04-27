@@ -9,6 +9,7 @@ import updateUserProfile from "@/libs/updateUserProfile";
 import ReservationCard from "@/components/ReservationCard";
 import getReviews from "@/libs/getReviews";
 import ReviewCard from "@/components/ReviewCard";
+import { useNotice } from "@/components/NoticeContext";
 export default function ProfilePage() {
   const [user, setUser] = useState<User>({
     name: "",
@@ -25,6 +26,7 @@ export default function ProfilePage() {
   const [formData, setFormData] = useState<User>(user);
   const [showReviews, setShowReviews] = useState(false);
   const [profile, setProfile] = useState<any>(null);
+  const { showNotice } = useNotice();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -76,11 +78,11 @@ export default function ProfilePage() {
     try {
       await updateUserProfile(token, formData);
       setUser(formData);
-      alert("Profile updated successfully!");
+      showNotice ("Profile updated successfully!");
       setEditing(false);
     } catch (err) {
       console.log(err);
-      alert("Failed to update profile");
+      showNotice ("Failed to update profile");
     }
   };
 

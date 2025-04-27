@@ -5,7 +5,7 @@ import { useParams, useRouter } from 'next/navigation';
 import { getAuthCookie } from '@/libs/getAuthCookie';
 import getUserProfile from '@/libs/getUserProfile';
 import addMenu from '@/libs/addMenu';
-
+import { useNotice } from "@/components/NoticeContext";
 
 const tagOptions: { label: string; description: string }[] = [
   { label: "Spicy", description: "Dish is hot and flavorful with spices." },
@@ -32,7 +32,7 @@ export default function CreateMenuPage() {
 
   const [token, setToken] = useState<string | null>(null);
   const [profile, setProfile] = useState<any>(null);
-
+  const { showNotice } = useNotice();
   useEffect(() => {
     async function fetchToken() {
       try {
@@ -66,12 +66,12 @@ export default function CreateMenuPage() {
     e.preventDefault();
 
     if (name.trim().length < 2 || name.trim().length > 30) {
-      alert("ชื่อเมนูต้องมีความยาว 2-30 ตัวอักษร");
+      showNotice("ชื่อเมนูต้องมีความยาว 2-30 ตัวอักษร");
       return;
     }
 
     if (description.length > 300) {
-      alert("คำอธิบายต้องไม่เกิน 300 ตัวอักษร");
+      showNotice("คำอธิบายต้องไม่เกิน 300 ตัวอักษร");
       return;
     }
     const restaurantId = typeof id === 'string' ? id : id?.[0];
@@ -91,11 +91,11 @@ export default function CreateMenuPage() {
       if (!restaurantId) throw new Error("Missing restaurant ID");
       if (!token) throw new Error("Missing unauthorized");
       await addMenu(token, restaurantId, menuData);
-      alert("✅ เมนูถูกเพิ่มเรียบร้อยแล้ว");
+      showNotice("✅ เมนูถูกเพิ่มเรียบร้อยแล้ว");
       router.push(`/restaurants/${restaurantId}`);
     } catch (err) {
       console.error("❌ Failed to create menu:", err);
-      alert("❌ เกิดข้อผิดพลาดในการเพิ่มเมนู");
+      showNotice("❌ เกิดข้อผิดพลาดในการเพิ่มเมนู");
     }
   };
 

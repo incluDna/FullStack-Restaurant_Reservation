@@ -5,7 +5,7 @@ import ReserveManageCard from "./card/managementComp/ReserveManageCard";
 import { Reservation, ReservationJSON } from "../../interfaces";
 import getReservationsByRestaurant from "@/libs/getReservationsByRestaurant";
 import deleteReservation from "@/libs/deleteReservation";
-
+import { useNotice } from "@/components/NoticeContext";
 export default function ReserveManageSection({ token, restaurantID }: { token?: string, restaurantID?: string }) {
     const [reservations, setReservations] = useState<Reservation[] | undefined>(
         undefined,
@@ -14,7 +14,7 @@ export default function ReserveManageSection({ token, restaurantID }: { token?: 
     const [error, setError] = useState<string | null>(null);
     // force to fetch
     const [pleaseReload, setPleaseReload] = useState<boolean>(false);
-
+    const { showNotice } = useNotice();
     if (restaurantID == null) return (
         <div className="w-1/2 h-full text-center break-words text-xl font-bold">
             Invalid Restaurant ID
@@ -54,7 +54,7 @@ export default function ReserveManageSection({ token, restaurantID }: { token?: 
                 setPleaseReload(!pleaseReload);
             }
         } else {
-            alert("No token");
+            showNotice("No token");
             return;
         }
     };

@@ -5,13 +5,13 @@ import { ProfileJSON } from "../../interfaces";
 import deleteReview from "@/libs/deleteReview";
 import { Session } from "next-auth";
 import ReviewInteractiveCard from "./ReviewInteractiveCard";
-
+import { useNotice } from "./NoticeContext";
 export default function ReviewCard({ time, rating,description ,restaurant,profile,reviewId}: 
     { time: string, rating: number ,description:string,restaurant:string,
         profile:ProfileJSON,reviewId:string}) {
-
+    const { showNotice } = useNotice();
     const onDelete = (rid: string) => {
-        alert('delete review')
+        showNotice('delete review')
         // deleteReview(rid, session.user.token) , TEST LATER
     };
     return (

@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 import { useEffect, useMemo, useState } from "react";
 import { Restaurant, ProfileJSON } from "../../interfaces";
 import addReservation from "@/libs/addReservations"; 
-
+import { useNotice } from "@/components/NoticeContext";
 interface ReservationCardProps {
   restaurantData: Restaurant;
   token: string | null;
@@ -21,6 +21,7 @@ export default function ReservationCardInPageID({
   const [reservationError, setReservationError] = useState<string | null>(null);
   const [reservationSuccess, setReservationSuccess] = useState(false);
   const [timeOptions, setTimeOptions] = useState<string[]>([]);
+  const { showNotice } = useNotice();
 
   const minDate = useMemo(() => {
     const today = new Date();
@@ -55,12 +56,12 @@ export default function ReservationCardInPageID({
 
   const handleReservation = async () => {
     if (!token) {
-      alert("User is not authenticated");
+      showNotice("User is not authenticated");
       return;
     }
 
     if (!numberOfPeople || !selectedDate || !selectedTime) {
-      alert("Please fill out all fields.");
+      showNotice("Please fill out all fields.");
       return;
     }
 

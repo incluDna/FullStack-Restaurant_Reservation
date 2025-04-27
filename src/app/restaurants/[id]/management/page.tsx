@@ -4,7 +4,7 @@ import { cookies } from "next/headers";
 import { Queue } from "../../../../../interfaces";
 import QueueManageSection from "@/components/QueueManageSection";
 
-export default async function restaurant({ params }: { params: { id: string } }) {
+export default async function restaurant({ params }: { params: Promise<{ id: string }> }) {
   const pr = await params; // params should be awaited
   try {
     const cookieStore = await cookies(); // This only works on the server

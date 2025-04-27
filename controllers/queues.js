@@ -72,67 +72,62 @@ exports.getIncompleteQueues = asyncHandler(async (req, res, next) => {
   });
 });
 
+/**
+ * @description Poll incomplete queues
+ * @route /api/queue/incomplete/long-poll
+ * @access Private
+ */
 exports.pollIncompleteQueues = asyncHandler(async (req, res, next) => {
-  const MAX_WAIT = 25_000;   // Vercel hard-limit safety
-  const SLEEP    = 1_000;    // DB probe interval
+  const MAX_WAIT = 25_000; // Vercel hard-limit safety
+  const SLEEP = 1_000; // DB probe interval
 
-  // ---------- 1. build the *same* base query you already use ----------
-  let baseQuery;
-  if (req.params.restaurantId && req.user.role !== 'user') {
+  let baseQuery; // build base query
+  if (req.params.restaurantId && req.user.role !== "user") {
     baseQuery = Queue.find({
-      restaurant : req.params.restaurantId,
-      queueStatus: { $ne: 'completed' },
+      restaurant: req.params.restaurantId,
+      queueStatus: { $ne: "completed" },
     });
-  } else if (!req.params.restaurantId && req.user.role === 'user') {
+  } else if (!req.params.restaurantId && req.user.role === "user") {
     baseQuery = Queue.find({
-      user       : req.user.id,
-      queueStatus: { $ne: 'completed' },
+      user: req.user.id,
+      queueStatus: { $ne: "completed" },
     });
   } else {
-    throw new APIError('User cannot access this resource', 403);
+    throw new APIError("User cannot access this resource", 403);
   }
 
-  // ---------- 2. get the client’s last snapshot ----------
-  // we use a POSIX time-stamp (ms since epoch)
-  const since = Number(req.query.since ?? 0);
+  const since = Number(req.query.since ?? 0); // previous updatedAt
 
   const deadline = Date.now() + MAX_WAIT;
   while (Date.now() < deadline) {
-    /* 2a ▸ fetch the newest change time among the matching docs.
-            Thanks to the {restaurant, updatedAt} index this is O(log n). */
-    const latest = await baseQuery
+    const latest = await baseQuery // clone base query
       .clone()
       .sort({ updatedAt: -1 })
-      .select('updatedAt')
-      .lean()          // no mongoose hydration
+      .select("updatedAt")
+      .lean() // no mongoose hydration
       .limit(1);
 
     const latestTs = latest[0]?.updatedAt?.getTime() ?? 0;
 
-    /* 2b ▸ If the list changed since client’s last version, send data */
+    // send new fetch response if new data is present
     if (latestTs > since) {
-      const features = new APIFeatures(baseQuery, req.query)
-        .filter()
-        .limitFields();          // keep your existing helpers
-
+      const features = new APIFeatures(baseQuery, req.query).filter().limitFields();
       const queues = await features.query
         .sort({ createdAt: 1 })
         .populate(restaurantPopulate)
         .populate(userPopulate);
 
       return res.json({
-        version: latestTs,        // ← client sends this back next time
-        count  : queues.length,
-        data   : queues,
+        version: latestTs,
+        count: queues.length,
+        data: queues,
       });
     }
-
-    /* 2c ▸ Nothing new yet – wait a bit */
-    await new Promise(r => setTimeout(r, SLEEP));
+    // keeps the connection alive on unchanged state
+    await new Promise((r) => setTimeout(r, SLEEP));
   }
 
-  /* 3 ▸  Timed out – let the client restart immediately */
-  res.status(204).end();
+  res.status(204).end(); // time limit reached
 });
 
 /**
@@ -163,42 +158,45 @@ exports.getQueuePosition = asyncHandler(async (req, res, next) => {
   });
 });
 
+/**
+ * @description Poll the queue state
+ * @route /api/queue/:id/long-poll
+ * @access Private
+ */
 exports.pollQueueState = asyncHandler(async (req, res, next) => {
   const MAX_WAIT = 25_000; // 25 s Vercel hard-limit safety
   const SLEEP = 1_000; // pause between probes
 
   const { id } = req.params;
-  const since = Number(req.query.since || 0); // last version the client saw
+
+  // last version and position the client saw
+  const since = Number(req.query.since || 0);
+  const lastPosition = Number(req.query.lastPosition || -1);
+
   const deadline = Date.now() + MAX_WAIT;
-
   while (Date.now() < deadline) {
-    // We only need a few fields to decide and to calculate the rank
     const q = await Queue.findById(id).select("__v queueStatus restaurant createdAt");
-    if (!q) return res.status(404).end(); // queue vanished
+    if (!q) return res.status(404).end(); // queue document does not exist
 
-    /* 1️⃣ Has anything changed since the client’s last snapshot? */
-    if (q.__v > since) {
-      /* 2️⃣  If yes, figure out where the ticket now stands         */
-      const position = await Queue.countDocuments({
-        restaurant: q.restaurant,
-        queueStatus: { $ne: "completed" },
-        createdAt: { $lt: q.createdAt }, // strictly before us
-      });
+    const position = await Queue.countDocuments({
+      restaurant: q.restaurant,
+      queueStatus: { $ne: "completed" },
+      createdAt: { $lt: q.createdAt }, // strictly before us
+    });
 
-      /* 3️⃣  Send the full update in one go                         */
+    // if position or version changed, send new data
+    if (q.__v > since || position !== lastPosition) {
       return res.json({
         version: q.__v,
         status: q.queueStatus,
         position,
       });
     }
-
-    /* 4️⃣  Nothing new yet – sleep a bit and try again              */
+    // keeps the connection alive on unchanged state
     await new Promise((r) => setTimeout(r, SLEEP));
   }
 
-  /* 5️⃣  Timed out – client may reconnect immediately               */
-  res.status(204).end();
+  res.status(204).end(); // time limit reached
 });
 
 /**

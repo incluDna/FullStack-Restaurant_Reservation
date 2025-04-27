@@ -63,7 +63,7 @@ export default function pollQueuePositionAndStatus(token: string) {
                     console.log("queueStatus.success is false");
                     refreshRedux();
                     break;
-                } else if ('response' in queueStatus) {
+                } else if ('response' in queueStatus && queueStatus.response.status != 'completed') {
                         // handle timeout
                         if (queueStatus.response.timeout) {
                             continue;
@@ -77,13 +77,13 @@ export default function pollQueuePositionAndStatus(token: string) {
                         lastPosition = queueStatus.response.position;
                     }//         const token = getAuthCookie();
                 } else {
-                    throw new Error("No response from server");
+                    throw new Error("Queue Status invalid");
                 }              
             }
 
         } catch (error) {
             refreshRedux();
-            console.error("Error in pollQueueStateLoop:", error, "Back to fetch incomplete queue...");
+            console.log("Error in pollQueueStateLoop:", error, "Back to fetch incomplete queue...");
         } finally {
             refreshRedux();
             ctrl.abort();

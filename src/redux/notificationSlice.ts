@@ -31,12 +31,12 @@ const updateNotiStatus = (state:any) => {
   let sta = state.queueStatus;
 
   // Not show
-  if ((num > 3 || num < 0) && sta !== "calling") {
+  if ((num > 2 || num < 0) && sta !== "calling") {
     state.notiStatus = 0;
   } 
   
   // Yellow State
-  else if (num <= 3 && sta === "waiting") {
+  else if (num <= 2 && sta === "waiting") {
     state.notiStatus = 1;
   } 
   

@@ -63,7 +63,7 @@ export default function pollQueuePositionAndStatus(token: string) {
                     console.log("queueStatus.success is false");
                     refreshRedux();
                     break;
-                } else if ('response' in queueStatus) {
+                } else if ('response' in queueStatus && queueStatus.response.status != 'completed') {
                         // handle timeout
                         if (queueStatus.response.timeout) {
                             continue;
@@ -75,15 +75,15 @@ export default function pollQueuePositionAndStatus(token: string) {
                         // update version and position
                         stateVersion = queueStatus.response.version
                         lastPosition = queueStatus.response.position;
-                    }//         const token = getAuthCookie();
+                    }         
                 } else {
-                    throw new Error("No response from server");
+                    throw new Error("Queue Status Invalid");
                 }              
             }
 
         } catch (error) {
             refreshRedux();
-            console.error("Error in pollQueueStateLoop:", error, "Back to fetch incomplete queue...");
+            console.log("Error in pollQueueStateLoop:", error, "Back to fetch incomplete queue...");
         } finally {
             refreshRedux();
             ctrl.abort();
@@ -102,13 +102,13 @@ export default function pollQueuePositionAndStatus(token: string) {
             },
             signal: signal,
         })
-        .then((response) => {           
+        .then((response) => {                     
             if (response.status === 204) {
                 console.log("Timeout at pollQueueState, Please try again");
                 return { timeout: true };
             }
             else if (!response.ok) {
-                return new Error("Response was not ok");
+                throw new Error("Response was not ok");
             }
             return response.json();
         })
@@ -116,7 +116,8 @@ export default function pollQueuePositionAndStatus(token: string) {
             return { success: true, response: data };
         })
         .catch((error) => {
-            console.error("Error fetching queue state:", error); 
+            // cannot delete this comment
+            console.log("Error fetching queue state:", error); 
             return { success: false, error };
         });
     }
@@ -132,7 +133,7 @@ export default function pollQueuePositionAndStatus(token: string) {
         })
         .then((response) => {
             if (!response.ok) {
-                return new Error("Response was not ok");
+                throw new Error("Response was not ok");
             } else if (response.status === 204) {
                 console.log("Timeout at pollIncompleteQueue, Please try again");
                 return { timeout: true };

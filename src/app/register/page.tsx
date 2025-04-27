@@ -24,7 +24,18 @@ export default function Register() {
 
     try {
       const res = await userRegister(name, email, telephone, password);
-      if (!res.success) throw new Error('Invalid Credential.');
+      
+      if (!res.success) {
+        // Handle the error and sanitize sensitive fields like password
+        const sanitizedError = res.message
+          .replace(/password.*?[\.,]/, 'Password is too short. ') // Replace password-related errors
+          .replace(/email.*?[\.,]/, 'Please add a valid email address. ') // Replace email-related errors
+          .replace(/tel.*?[\.,]/, 'Please add a valid telephone number. '); // Replace telephone-related errors
+
+        setError(sanitizedError || "Registration failed. Please try again.");
+        return;
+      }
+
       if ("token" in res) {
         // set cookie
         await fetch("/api/auth", {
@@ -35,13 +46,14 @@ export default function Register() {
           body: JSON.stringify({ token: res.token, role: 'user' }),
         });
       }
+
       setSuccess('Registration successful!')
       setName('')
       setTelephone('')
       setEmail('')
       setPassword('')
     } catch (err: any) {
-      setError(err.message)
+      setError(err.message || "An unexpected error occurred.");
     } finally {
       setLoading(false)
     }

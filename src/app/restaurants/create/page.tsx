@@ -6,6 +6,7 @@ import addRestaurants from "@/libs/Restaurant/addRestaurant";
 import { getAuthCookie } from "@/libs/User/getAuthCookie";
 import { useRouter } from "next/navigation";
 import { useNotice } from "@/components/NoticeContext";
+
 export default function CreateRestaurant() {
     const [name, setName] = useState("");
     const [picture, setPicture] = useState("");
@@ -22,9 +23,10 @@ export default function CreateRestaurant() {
     const [token, setToken] = useState("");
     const [role, setRole] = useState("");
     const [errors, setErrors] = useState<{ [key: string]: boolean }>({});
-    const [success, setSuccess] = useState(false);
     const router = useRouter();
     const { showNotice } = useNotice();
+
+    // Fetch token and role for authenticated user
     useEffect(() => {
         async function fetchToken() {
             try {
@@ -34,57 +36,72 @@ export default function CreateRestaurant() {
                     setRole(data.role || "");
                 } else {
                     console.error("Auth error:", data.error);
+                    showNotice("Authentication error. Please log in.", false);
                 }
             } catch (err) {
                 console.error("Failed to fetch auth cookie", err);
+                showNotice("Failed to fetch auth cookie.", false);
             }
         }
 
         fetchToken();
     }, []);
 
+    // Handle form submission
     const handleSubmit = async () => {
+        // Field values object
         const fieldValues = {
-            name: name,
-            picture: picture,
-            address: address,
-            district: district,
-            province: province,
-            postalCode: postalCode,
-            region: region,
-            tel: tel,
-            openTime: openTime,
-            closeTime: closeTime,
-            seatPerReservationLimit: seatPerReservationLimit,
-            reservationLimit: reservationLimit,
-            shortLocation: `${address}, ${district}, ${province}`
+            name,
+            picture,
+            address,
+            district,
+            province,
+            postalCode,
+            region,
+            tel,
+            openTime,
+            closeTime,
+            seatPerReservationLimit,
+            reservationLimit,
+            shortLocation: `${address}, ${district}, ${province}`,
         };
 
+        // Validate form fields
         const newErrors: { [key: string]: boolean } = {};
         Object.entries(fieldValues).forEach(([key, value]) => {
             if (value === "" || value === null || value === undefined) newErrors[key] = true;
         });
 
         setErrors(newErrors);
-        if (Object.keys(newErrors).length > 0 || !token) return;
+
+        if (Object.keys(newErrors).length > 0 || !token) {
+            showNotice("Please fill in all fields.", false);
+            return;
+        }
 
         try {
-            await addRestaurants(token, fieldValues);
-            showNotice("Creation completed!", true);
-            setTimeout(() => router.push("/restaurants"), 1000);
-        } catch (err) {
+            const response = await addRestaurants(token, fieldValues);
+
+            // Handle backend response
+            if (response.success) {
+                showNotice("Restaurant created successfully!", true);
+                setTimeout(() => router.push("/restaurants"), 1000);
+            } else {
+                showNotice(response.message || "An error occurred while creating the restaurant", false);
+            }
+        } catch (err: any) {
             console.error("Failed to add restaurant:", err);
+            showNotice(err.message || "An error occurred while creating the restaurant", false);
         }
     };
 
+    // Helper function to get input field styles
     const getInputClass = (hasError: boolean) =>
-        `text-base text-black border-b-2 focus:outline-none w-full ${hasError ? "border-red-500 placeholder-red-500" : "border-gray-300"
-        }`;
+        `text-base text-black border-b-2 focus:outline-none w-full ${hasError ? "border-red-500 placeholder-red-500" : "border-gray-300"}`;
 
     return (
         <div className="w-full border-none py-10 px-16">
             <div className="flex flex-col gap-16 p-8 bg-white">
-
                 <input
                     type="text"
                     value={name}
@@ -92,7 +109,6 @@ export default function CreateRestaurant() {
                     className={getInputClass(errors.name)}
                     placeholder="Enter restaurant's name"
                 />
-
                 <input
                     type="text"
                     value={picture}
@@ -192,6 +208,7 @@ export default function CreateRestaurant() {
                         min={1}
                     />
                 </div>
+
                 <div className="flex justify-center">
                     <motion.button
                         whileHover={{ backgroundColor: "#5A2934", scale: 1.02 }}

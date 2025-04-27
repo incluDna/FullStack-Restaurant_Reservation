@@ -78,11 +78,11 @@ export default function ProfilePage() {
     try {
       await updateUserProfile(token, formData);
       setUser(formData);
-      showNotice ("Profile updated successfully!");
+      showNotice("Profile updated successfully!", true); 
       setEditing(false);
     } catch (err) {
       console.log(err);
-      showNotice ("Failed to update profile");
+      showNotice("Failed to update profile", false); 
     }
   };
 

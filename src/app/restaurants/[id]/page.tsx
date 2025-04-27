@@ -122,13 +122,13 @@ export default function RestaurantInfo() {
   }, [restaurantData]);
   const handleReservation = async () => {
     if (!token) {
-      showNotice("User is not authenticated");
+      showNotice("User is not authenticated", false);
       return;
     }
 
     // console.log(numberOfPeople, selectedDate, selectedTime)
     if (!numberOfPeople || !selectedDate || !selectedTime) {
-      showNotice("Please fill out all fields.");
+      showNotice("Please fill out all fields.", false);
       return;
     }
     const userId = profile?.data?._id;
@@ -192,16 +192,16 @@ export default function RestaurantInfo() {
       const response = await deleteRestaurant(id, token);
 
       if (response.success) {
-        showNotice("Restaurant deleted successfully");
+        showNotice("Restaurant deleted successfully", true);
         router.push("/restaurants");
       } else {
         console.error("Failed to delete restaurant:", response.error);
-        showNotice("Failed to delete restaurant");
+        showNotice("Failed to delete restaurant", false);
       }
     } catch (error) {
       console.error("Error deleting restaurant:", error);
       showNotice(
-        "An error occurred while deleting the restaurant. Please try again."
+        "An error occurred while deleting the restaurant. Please try again.", false
       );
     }
   };

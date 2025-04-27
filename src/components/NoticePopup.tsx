@@ -5,7 +5,7 @@ import { useState, useEffect } from "react";
 type NoticePopupProps = {
   message: string;
   isVisible: boolean;
-  isNotice?: boolean;
+  isNotice?: boolean; // `true` for success, `false` for error
   onClose: () => void;
 };
 
@@ -31,8 +31,11 @@ export default function NoticePopup({ message, isVisible, isNotice = false, onCl
       transition-transform duration-300 ease-out ${
         show ? "translate-y-0 opacity-100" : "-translate-y-10 opacity-0"
       } 
-      ${isNotice ? "bg-green-600 border-green-800 text-white" : "bg-red-600 border-red-800 text-white"}
-      `}
+      ${
+        isNotice
+          ? "bg-[#D96C00] border-[#D96C00] text-white" // Success (dark orange)
+          : "bg-[#B91C1C] border-[#B91C1C] text-white" // Error (dark red)
+      }`}
     >
       <span className="text-xl">{isNotice ? "✅" : "⚠️"}</span>
       <p>{message}</p>

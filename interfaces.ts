@@ -12,10 +12,11 @@ export interface Restaurant {
   openTime: string;
   closeTime: string;
   rating?: number;
-  queue?: string;
+  queue?: number;
   seatPerReservationLimit: number
   reservationLimit: number
-
+  avgRating: number
+  reviewCount: number
 }
 
 export interface Reservation {
@@ -36,15 +37,18 @@ export interface Reservation {
   createdAt: Date;
 }
 export interface Review{
-  _id?: string,
-  user: string,
+  _id?: string;
+  user:  {
+    _id?: string;
+    name: string;
+  };
   restaurant:  {
     _id?: string;
     name: string;
-  },
-  reviewStar: number,
-  reviewText: string,
-  createdAt:string
+  };
+  reviewStar: number;
+  reviewText: string;
+  createdAt:Date;
 }
 export interface MeanReview{
   success:string,
@@ -65,7 +69,8 @@ export interface Profile{
   name: string,
   tel: string,
   email: string,
-  role: string, 
+  role: string,
+  employedAt?:string,
   createdAt:string
   
 }
@@ -125,8 +130,18 @@ export interface MenuJSON {
   data: Menu[]
 }
 export interface User {
+  _id?: string;
   name: string;
   tel: string;
   email: string;
-  password: string;
+  employedAt?:string;
+}
+
+export interface Queue {
+  _id?: string;
+  restaurant: Restaurant;
+  user: User;
+  seatCount: number;
+  createdAt: Date;
+  queueStatus: string;
 }

@@ -27,7 +27,7 @@ export default async function addReviews(token:string,
     if(!response.ok){
         const error = await response.json();  // Log server response for more details
         console.error("Error response:", error);
-        throw new Error("failed to add the review")
+        throw new Error(error.message);
     }
     return await response.json();
 }

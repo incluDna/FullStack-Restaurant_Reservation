@@ -1,5 +1,8 @@
+import QueueCard from "@/components/card/managementComp/QueueManageCard";
 import ReserveManageSection from "@/components/ReserveManageSection";
 import { cookies } from "next/headers";
+import { Queue } from "../../../../../interfaces";
+import QueueManageSection from "@/components/QueueManageSection";
 
 export default async function restaurant({ params }: { params: { id: string } }) {
   const pr = await params; // params should be awaited
@@ -8,7 +11,7 @@ export default async function restaurant({ params }: { params: { id: string } })
     const token = cookieStore.get("token")?.value;
     return (
       <div className="w-full min-h-full h-fit flex flex-row font-sans">
-        <div className="w-1/2 min-h-full bg-blue-100" />
+        <QueueManageSection token={token} restaurantID={pr.id}/>
         <ReserveManageSection token={token}
           restaurantID={pr.id} />
       </div>

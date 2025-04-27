@@ -3,8 +3,8 @@
 import { useEffect, useState } from "react";
 import ReserveManageCard from "./card/managementComp/ReserveManageCard";
 import { Reservation, ReservationJSON } from "../../interfaces";
-import getReservationsByRestaurant from "@/libs/getReservationsByRestaurant";
-import deleteReservation from "@/libs/deleteReservation";
+import getReservationsByRestaurant from "@/libs/Reservation/getReservationsByRestaurant";
+import deleteReservation from "@/libs/Reservation/deleteReservation";
 import { useNotice } from "@/components/NoticeContext";
 export default function ReserveManageSection({ token, restaurantID }: { token?: string, restaurantID?: string }) {
     const [reservations, setReservations] = useState<Reservation[] | undefined>(
@@ -50,11 +50,11 @@ export default function ReserveManageSection({ token, restaurantID }: { token?: 
     const removeFunction = async (reservationId:string) => {
         if (token && token !== null) {
             const res = await deleteReservation(token, reservationId);
-            if (res.success) {
+            if (res.status==204) {
                 setPleaseReload(!pleaseReload);
             }
         } else {
-            showNotice("No token");
+            showNotice("No token", false);
             return;
         }
     };

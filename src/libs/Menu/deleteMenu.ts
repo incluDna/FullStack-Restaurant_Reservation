@@ -12,5 +12,5 @@ export default async function deleteMenu (token:string, restaurantId:string, id:
     if(!response.ok){
         throw new Error("failed to delete the menu")
     }
-    return await response.json();
+    return await response;
 }

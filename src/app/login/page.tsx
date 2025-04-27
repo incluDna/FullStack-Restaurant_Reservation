@@ -1,9 +1,9 @@
 'use client'
 
 import { useState } from 'react'
-import userLogin from '@/libs/userLogin'
-import getUserProfile from '@/libs/getUserProfile'
-import { setAuthCookie } from '@/libs/setAuthCookie'
+import userLogin from '@/libs/User/userLogin'
+import getUserProfile from '@/libs/User/getUserProfile'
+import { setAuthCookie } from '@/libs/User/setAuthCookie'
 import { useRouter } from 'next/navigation'
 export default function LoginPage() {
   const [email, setEmail] = useState('')

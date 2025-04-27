@@ -32,7 +32,7 @@ export default function MenuSection({
     <section className="flex flex-col gap-3 px-4 lg:px-20 pb-12">
       <div className="flex flex-row justify-center items-center gap-x-4 mb-8">
         <h1 className="text-3xl font-bold text-center">Menu</h1>
-        {(profile?.data?.role === "admin" || profile?.data?.role === "employee") && (
+        {(profile?.data?.role === "admin" || (profile?.data?.role === "employee" && profile?.data?.employedAt===id)) && (
           <motion.button
             whileHover={{ backgroundColor: "black", scale: 1.02 }}
             transition={{ duration: 0.3 }}
@@ -53,11 +53,10 @@ export default function MenuSection({
               if (activeTab !== tab) setFilteredMenu(null);
               setActiveTab(tab);
             }}
-            className={`px-6 py-2 border-b-4 text-lg ${
-              activeTab === tab
-                ? "border-[#F89640] text-[#F89640]"
-                : "border-transparent text-gray-500"
-            }`}
+            className={`px-6 py-2 border-b-4 text-lg ${activeTab === tab
+              ? "border-[#F89640] text-[#F89640]"
+              : "border-transparent text-gray-500"
+              }`}
           >
             {tab}
           </button>
@@ -65,27 +64,26 @@ export default function MenuSection({
       </div>
 
       {/* Cards */}
-      {activeTab === "dish" && (
-        <div className="h-[320px] grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-          {filteredMenu?.map((item, i) => (
-            <MenuCard key={i} menu={item} role={profile?.data?.role} token={token} />
-          ))}
+      <div className="w-full flex justify-center">
+        <div className="justify-items-center h-full w-4/5 min-w-[800px] grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+          {activeTab === "dish" && (
+            filteredMenu?.map((item, i) => (
+              <MenuCard key={i} menu={item} role={profile?.data?.role} token={token} />
+            ))
+
+          )}
+          {activeTab === "set" && (
+            filteredMenu?.map((item, i) => (
+              <MenuCard key={i} menu={item} role={profile?.data?.role} token={token} />
+            ))
+          )}
+          {activeTab === "drink" && (
+            filteredMenu?.map((item, i) => (
+              <MenuCard key={i} menu={item} role={profile?.data?.role} token={token} />
+            ))
+          )}
         </div>
-      )}
-      {activeTab === "set" && (
-        <div className="h-[320px] grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-          {filteredMenu?.map((item, i) => (
-            <MenuCard key={i} menu={item} role={profile?.data?.role} token={token} />
-          ))}
-        </div>
-      )}
-      {activeTab === "drink" && (
-        <div className="h-[320px] grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-          {filteredMenu?.map((item, i) => (
-            <MenuCard key={i} menu={item} role={profile?.data?.role} token={token} />
-          ))}
-        </div>
-      )}
+      </div>
     </section>
   );
 }

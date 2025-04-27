@@ -1,7 +1,7 @@
 // import { Pattaya } from "next/font/google";
-import getRestaurant from '@/libs/getRestaurant';
-import getReviewsForRestaurant from "@/libs/getReviewForRestaurant";
-import getMeanReviews from "@/libs/getMeanReview";
+import getRestaurant from '@/libs/Restaurant/getRestaurant';
+import getReviewsForRestaurant from "@/libs/Review/getReviewForRestaurant";
+import getMeanReviews from "@/libs/Review/getMeanReview";
 import { LinearProgress, Link } from "@mui/material";
 import { Suspense } from "react";
 import ReviewCatalogue from "@/components/ReviewCatalog";

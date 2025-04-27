@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Reservation } from "../../interfaces";
-import editReservation from "@/libs/editReservation";
-import deleteReservation from "@/libs/deleteReservation";
+import editReservation from "@/libs/Reservation/editReservation";
+import deleteReservation from "@/libs/Reservation/deleteReservation";
 
 interface ReservationCardProps {
   res: Reservation;
@@ -174,7 +174,6 @@ export default function ReservationCard({
           <p className="text-sm text-black">
             Number of people: {res.seatCount}
           </p>
-          <p className="text-sm text-orange-400 mt-2">status: wait</p>
 
           {error && <p className="text-red-500 text-sm">{error}</p>}
 
@@ -190,7 +189,7 @@ export default function ReservationCard({
               onClick={handleDelete}
               disabled={loading}
             >
-              {loading ? "Removing..." : "Remove"}
+              {loading ? "Canceling..." : "Cancel"}
             </button>
           </div>
         </>

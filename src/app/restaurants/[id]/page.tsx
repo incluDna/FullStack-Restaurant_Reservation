@@ -1,13 +1,12 @@
 "use client";
 
-import MenuCard from "@/components/MenuCard";
 import { motion } from "framer-motion";
 import React, { useState, useEffect, Suspense } from "react";
 import { useParams } from "next/navigation";
-import getRestaurant from "@/libs/getRestaurant";
-import getReviewForRestaurant from "@/libs/getReviewForRestaurant";
-import getMeanReviews from "@/libs/getMeanReview";
-import addReservation from "@/libs/addReservations";
+import getRestaurant from "@/libs/Restaurant/getRestaurant";
+import getReviewForRestaurant from "@/libs/Review/getReviewForRestaurant";
+import getMeanReviews from "@/libs/Review/getMeanReview";
+import addReservation from "@/libs/Reservation/addReservations";
 import {
   MeanReview,
   Menu,
@@ -18,12 +17,12 @@ import {
 } from "../../../../interfaces";
 import { LinearProgress } from "@mui/material";
 import ReviewCatalogExample from "@/components/ReviewCatalogExample";
-import { getAuthCookie } from "@/libs/getAuthCookie";
+import { getAuthCookie } from "@/libs/User/getAuthCookie";
 import { useRouter } from "next/navigation";
-import getUserProfile from "@/libs/getUserProfile";
-import editRestaurants from "@/libs/editRestaurant";
-import deleteRestaurant from "@/libs/deleteRestaurant";
-import getMenus from "@/libs/getMenus";
+import getUserProfile from "@/libs/User/getUserProfile";
+import editRestaurants from "@/libs/Restaurant/editRestaurant";
+import deleteRestaurant from "@/libs/Restaurant/deleteRestaurant";
+import getMenus from "@/libs/Menu/getMenus";
 import TopInfo from "@/components/TopInfo";
 import QueueCard from "@/components/QueueCard";
 import ReservationCardInPageID from "@/components/ReservationCardInPageID";
@@ -41,17 +40,11 @@ export default function RestaurantInfo() {
   const [reviewData, setReviewData] = useState<Review[] | null>(null);
   const [meanReview, setMeanReview] = useState<number>(0);
   const [menuData, setMenuData] = useState<Menu[] | null>(null);
-  const [filteredMenu, setFilteredMenu] = useState<Menu[] | null>(null);
   const [token, setToken] = useState<string | null>(null);
   const [role, setRole] = useState<string | null>(null);
   const [profile, setProfile] = useState<any>(null);
   const [isEditable, setIsEditable] = useState<boolean>(false);
   const [deletionSuccess, setDeletionSuccess] = useState<boolean>(false);
-  const [reservationError, setReservationError] = useState<string | null>(null);
-  const [reservationSuccess, setReservationSuccess] = useState<boolean>(false);
-  const [numberOfPeople, setNumberOfPeople] = useState<number>(1);
-  const [selectedDate, setSelectedDate] = useState<string>("");
-  const [selectedTime, setSelectedTime] = useState<string>("");
   const [timeOptions, setTimeOptions] = useState<string[]>([]);
   const { showNotice } = useNotice();
 
@@ -92,7 +85,7 @@ export default function RestaurantInfo() {
       }
     };
     fetchData();
-  }, [id]);
+  }, [id, isEditable]);
 
   useEffect(() => {
     if (!restaurantData?.openTime || !restaurantData?.closeTime) return;
@@ -120,39 +113,6 @@ export default function RestaurantInfo() {
 
     setTimeOptions(times);
   }, [restaurantData]);
-  const handleReservation = async () => {
-    if (!token) {
-      showNotice("User is not authenticated", false);
-      return;
-    }
-
-    // console.log(numberOfPeople, selectedDate, selectedTime)
-    if (!numberOfPeople || !selectedDate || !selectedTime) {
-      showNotice("Please fill out all fields.", false);
-      return;
-    }
-    const userId = profile?.data?._id;
-
-    const reservationDateString = `${selectedDate}T${selectedTime}:00.000Z`;
-    const reservationDate = new Date(reservationDateString);
-    const response = await addReservation(
-      token,
-      reservationDate,
-      userId,
-      id!,
-      numberOfPeople
-    );
-    if (!response.success) {
-      setReservationSuccess(false);
-      setReservationError(response.message);
-    } else {
-      setReservationError(null);
-      setReservationSuccess(true);
-      setTimeout(() => {
-        setReservationSuccess(false);
-      }, 700);
-    }
-  };
 
   const handleSave = async () => {
     try {
@@ -191,18 +151,13 @@ export default function RestaurantInfo() {
     try {
       const response = await deleteRestaurant(id, token);
 
-      if (response.success) {
+      if (response.status==204) {
         showNotice("Restaurant deleted successfully", true);
+        setDeletionSuccess(true);
         router.push("/restaurants");
-      } else {
-        console.error("Failed to delete restaurant:", response.error);
-        showNotice("Failed to delete restaurant", false);
       }
     } catch (error) {
       console.error("Error deleting restaurant:", error);
-      showNotice(
-        "An error occurred while deleting the restaurant. Please try again.", false
-      );
     }
   };
   if (!restaurantData || !reviewData) {
@@ -210,14 +165,14 @@ export default function RestaurantInfo() {
   }
 
   const totalReviews = reviewData.length;
-  console.log("filter menu", filteredMenu);
+  
   return (
     <main className="w-full bg-white">
       {/* Top Info */}
       <TopInfo
-        restaurantData={restaurantData} 
+        restaurantData={restaurantData}
         isEditable={isEditable}
-        setRestaurantData={restaurantData}
+        setRestaurantData={setRestaurantData}
       ></TopInfo>
       <div className="lg:px-20">
         {/* Success Message for Deletion */}
@@ -228,14 +183,14 @@ export default function RestaurantInfo() {
         )}
 
         {profile?.data?.role === "user" && (
-          <section className="flex flex-col lg:flex-row gap-4 p-10">         
-            <QueueCard/>           
+          <section className="flex flex-col lg:flex-row gap-4 p-10">
+            <QueueCard id={id!} currentQueue={restaurantData.queue}/>           
             <ReservationCardInPageID
-            restaurantData={restaurantData}
-            token={token}
-            profile={profile}
+              restaurantData={restaurantData}
+              token={token}
+              profile={profile}
             />
-            
+
           </section>
         )}
         {/* Edit button for Admin & Employee */}
@@ -252,29 +207,28 @@ export default function RestaurantInfo() {
               >
                 Manage Reservation
               </motion.button>
-
-
               {/* Show Edit and Delete buttons only when not in edit mode */}
-              {!isEditable && (
-                <>
-                  <motion.button
-                    whileHover={{ backgroundColor: "black", scale: 1.02 }}
-                    transition={{ duration: 0.3 }}
-                    onClick={() => setIsEditable(true)}
-                    className="w-[65px] h-[65px] bg-[#3d3c3a] text-white text-xl border-0 rounded-none"
-                  >
-                    Edit
-                  </motion.button>
-                  <motion.button
-                    whileHover={{ backgroundColor: "black", scale: 1.02 }}
-                    transition={{ duration: 0.3 }}
-                    onClick={handleDelete}
-                    className="w-[65px] h-[65px] bg-[#3d3c3a] text-white text-xl border-0 rounded-none"
-                  >
-                    Delete
-                  </motion.button>
-                </>
-              )}
+              {profile?.data?.role === "admin" && !isEditable &&
+                (
+                  <>
+                    <motion.button
+                      whileHover={{ backgroundColor: "black", scale: 1.02 }}
+                      transition={{ duration: 0.3 }}
+                      onClick={() => setIsEditable(true)}
+                      className="w-[65px] h-[65px] bg-[#3d3c3a] text-white text-xl border-0 rounded-none"
+                    >
+                      Edit
+                    </motion.button>
+                    <motion.button
+                      whileHover={{ backgroundColor: "black", scale: 1.02 }}
+                      transition={{ duration: 0.3 }}
+                      onClick={handleDelete}
+                      className="w-[65px] h-[65px] bg-[#3d3c3a] text-white text-xl border-0 rounded-none"
+                    >
+                      Delete
+                    </motion.button>
+                  </>
+                )}
 
               {/* Show Save and Cancel buttons only when in edit mode */}
               {isEditable && (
@@ -303,10 +257,10 @@ export default function RestaurantInfo() {
 
 
         <MenuSection
-        id={restaurantData._id}
-        token={token}
-        profile={profile}
-        menuData={menuData}
+          id={restaurantData._id}
+          token={token}
+          profile={profile}
+          menuData={menuData}
         />
 
         {/* Reviews section */}

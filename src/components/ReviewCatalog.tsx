@@ -33,7 +33,7 @@ export default function ReviewCatalog({ reviews, meanReviews, page, restaurant, 
           review.map((review:Review)=>(
           <div className="bg-[#FFECAD] p-4"
           key={review._id}>
-            <div className='text-left font-semibold'>User : {review.user}</div>
+            <div className='text-left font-semibold'>User : {review.user.name}</div>
             <div className='text-left font-extrabold'>Star : {review.reviewStar}</div>
             <div className='text-left font-semibold'>
               <ClientRating rating={Number(review.reviewStar)}/>

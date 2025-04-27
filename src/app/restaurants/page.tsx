@@ -2,13 +2,13 @@
 import { useState, useEffect } from "react";
 import RestaurantCard from "@/components/RestaurantCard";
 import { MeanReview, Restaurant, RestaurantJSON } from "../../../interfaces";
-import getRestaurants from "@/libs/getRestaurants";
-import getMeanReviews from "@/libs/getMeanReview";
+import getRestaurants from "@/libs/Restaurant/getRestaurants";
+import getMeanReviews from "@/libs/Review/getMeanReview";
 import { useRouter , useSearchParams } from "next/navigation";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import { motion } from "framer-motion";
-import { getAuthCookie } from "@/libs/getAuthCookie";
-import getUserProfile from "@/libs/getUserProfile";
+import { getAuthCookie } from "@/libs/User/getAuthCookie";
+import getUserProfile from "@/libs/User/getUserProfile";
 export default function RestaurantCatalog() {
   const [restaurants, setRestaurants] = useState<Restaurant[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
@@ -18,7 +18,6 @@ export default function RestaurantCatalog() {
   const [role, setRole] = useState<string | null>(null);
   const [profile, setProfile] = useState<any>(null);
   const [totalPages, setTotalPages] = useState(1);
-  const [reviewsMap, setReviewsMap] = useState<{ [key: string]: number | null }>({}); // Store reviews for each restaurant
 
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -37,36 +36,6 @@ export default function RestaurantCatalog() {
         setRestaurants(response.data);
         setTotalPages(response.totalPages);
         setLoading(false);
-
-        // Fetch reviews for each restaurant
-        const fetchReviews = async () => {
-          const reviewsPromises = response.data.map(async (restaurant) => {
-            try {
-              const reviewResponse = await getMeanReviews(restaurant._id || "");
-              const review = reviewResponse.count == 0 ? null : reviewResponse.totalRating;
-              console.log(`Fetched review for restaurant ${restaurant._id}:`, review);
-              return { id: restaurant._id, review };
-            } catch (err) {
-              // If getMeanReviews fails, default to review = null
-              return { id: restaurant._id, review: null };
-            }
-          });
-
-          const reviews = await Promise.all(reviewsPromises);
-          // console.log("Reviews fetched:", reviews); 
-
-          const reviewsMap = reviews.reduce<{ [key: string]: number | null }>((acc, { id, review }) => {
-            if (id !== undefined) {
-              acc[id.toString()] = review;
-            }
-            return acc;
-          }, {});
-
-          // console.log("Reviews Map:", reviewsMap); 
-          setReviewsMap(reviewsMap);
-        };
-
-        fetchReviews();
       } catch (error) {
         console.error("Error fetching restaurants:", error);
         setError("Error fetching restaurants.");
@@ -123,10 +92,20 @@ export default function RestaurantCatalog() {
 
   return (
     <main className="flex flex-col w-full items-start pt-20">
+       {profile?.data?.role === 'admin' && (
+         <div className="flex justify-end w-full pr-16 mb-8">
+           <motion.button
+             whileHover={{ backgroundColor: "black", scale: 1.02 }}
+             transition={{ duration: 0.3 }}
+             onClick={() => router.push(`/restaurants/create`)}
+             className="w-[65px] h-[65px] bg-[#3d3c3a] text-white text-xl border-0 rounded-none"
+           >
+           </motion.button>
+         </div>
+       )}
       <section className="flex flex-wrap justify-center w-full bg-white">
         {restaurants.map((restaurant) => {
           const restaurantId = restaurant._id?.toString() || '';
-          const reviewRating = reviewsMap[restaurantId] ?? null;
 
           return (
             <RestaurantCard
@@ -136,8 +115,8 @@ export default function RestaurantCatalog() {
               imgSrc={restaurant.picture}
               location={`${restaurant.address}, ${restaurant.district}, ${restaurant.province}`}
               openCloseTime={`${restaurant.openTime} - ${restaurant.closeTime}`}
-              rating={reviewRating}
-              currentQueue={restaurant.queue || "0"}
+              rating={restaurant.reviewCount === 0 ? null : restaurant.avgRating}
+              currentQueue={restaurant.queue || 0}
             />
           );
         })}
@@ -161,7 +140,7 @@ export default function RestaurantCatalog() {
         }
         {
 
-          (page < totalPages - 1) ?
+          (page < totalPages) ?
             <motion.button className="flex items-center justify-center gap-4 pr-[var(--size-space-1000)] pl-[var(--size-space-1000)] py-2 bg-[#C2C2C2] rounded-[75px] border-none text-[24px] font-semibold w-full max-w-[200px] mr-8 mt-12 hover:bg-[#999]"
               initial={{ backgroundColor: "#C2C2C2" }}
               whileHover={{ backgroundColor: "#999", scale: 1.02 }}

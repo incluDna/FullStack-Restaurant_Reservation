@@ -151,7 +151,6 @@ exports.getQueuePosition = asyncHandler(async (req, res, next) => {
     createdAt: { $lt: q.createdAt }, // strictly before us
   });
 
-
   return res.status(200).json({
     success: true,
     position: position,
@@ -285,8 +284,5 @@ exports.deleteQueue = asyncHandler(async (req, res, next) => {
 
   await Queue.findByIdAndDelete(req.params.id);
 
-  return res.status(204).json({
-    success: true,
-    data: {},
-  });
+  return res.status(204).send();
 });

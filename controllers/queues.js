@@ -43,7 +43,7 @@ exports.getQueues = asyncHandler(async (req, res, next) => {
 
 /**
  * @description Get all incomplete queues
- * @route GET /api/restaurants/:restaurantId/queues/incomplete
+ * @route GET /api/queues/incomplete | /api/restaurants/:restaurantId/queues/incomplete
  * @access Private
  */
 exports.getIncompleteQueues = asyncHandler(async (req, res, next) => {
@@ -73,6 +73,64 @@ exports.getIncompleteQueues = asyncHandler(async (req, res, next) => {
 });
 
 /**
+ * @description Poll incomplete queues
+ * @route /api/queue/incomplete/long-poll
+ * @access Private
+ */
+exports.pollIncompleteQueues = asyncHandler(async (req, res, next) => {
+  const MAX_WAIT = 25_000; // Vercel hard-limit safety
+  const SLEEP = 1_000; // DB probe interval
+
+  let baseQuery; // build base query
+  if (req.params.restaurantId && req.user.role !== "user") {
+    baseQuery = Queue.find({
+      restaurant: req.params.restaurantId,
+      queueStatus: { $ne: "completed" },
+    });
+  } else if (!req.params.restaurantId && req.user.role === "user") {
+    baseQuery = Queue.find({
+      user: req.user.id,
+      queueStatus: { $ne: "completed" },
+    });
+  } else {
+    throw new APIError("User cannot access this resource", 403);
+  }
+
+  const since = Number(req.query.since ?? 0); // previous updatedAt
+
+  const deadline = Date.now() + MAX_WAIT;
+  while (Date.now() < deadline) {
+    const latest = await baseQuery // clone base query
+      .clone()
+      .sort({ updatedAt: -1 })
+      .select("updatedAt")
+      .lean() // no mongoose hydration
+      .limit(1);
+
+    const latestTs = latest[0]?.updatedAt?.getTime() ?? 0;
+
+    // send new fetch response if new data is present
+    if (latestTs > since) {
+      const features = new APIFeatures(baseQuery, req.query).filter().limitFields();
+      const queues = await features.query
+        .sort({ createdAt: 1 })
+        .populate(restaurantPopulate)
+        .populate(userPopulate);
+
+      return res.json({
+        version: latestTs,
+        count: queues.length,
+        data: queues,
+      });
+    }
+    // keeps the connection alive on unchanged state
+    await new Promise((r) => setTimeout(r, SLEEP));
+  }
+
+  res.status(204).end(); // time limit reached
+});
+
+/**
  * @description Get a queue's position
  * @route GET /api/restaurants/:restaurantId/queues/:id/position
  * @access Private
@@ -82,22 +140,63 @@ exports.getQueuePosition = asyncHandler(async (req, res, next) => {
     throw new APIError(`Restaurant ID not provided: please access through a restaurant`, 400);
   }
 
-  const allQueues = await Queue.find({
-    restaurant: req.params.restaurantId,
-    queueStatus: { $ne: "completed" },
-  }).sort({ createdAt: 1 });
   const thisQueue = await Queue.findById(req.params.id);
-
-  const index = allQueues.findIndex((queue) => queue._id.toString() === thisQueue._id.toString());
-  if (index === -1) {
+  if (!thisQueue) {
     throw new APIError(`Queue not found`, 404);
   }
 
+  const position = await Queue.countDocuments({
+    restaurant: req.params.restaurantId,
+    queueStatus: { $ne: "completed" },
+    createdAt: { $lt: thisQueue.createdAt }, // strictly before us
+  });
+
   return res.status(200).json({
     success: true,
-    position: index,
+    position: position,
     data: thisQueue,
   });
+});
+
+/**
+ * @description Poll the queue state
+ * @route /api/queue/:id/long-poll
+ * @access Private
+ */
+exports.pollQueueState = asyncHandler(async (req, res, next) => {
+  const MAX_WAIT = 25_000; // 25 s Vercel hard-limit safety
+  const SLEEP = 1_000; // pause between probes
+
+  const { id } = req.params;
+
+  // last version and position the client saw
+  const since = Number(req.query.since || 0);
+  const lastPosition = Number(req.query.lastPosition || -1);
+
+  const deadline = Date.now() + MAX_WAIT;
+  while (Date.now() < deadline) {
+    const q = await Queue.findById(id).select("__v queueStatus restaurant createdAt");
+    if (!q) return res.status(404).end(); // queue document does not exist
+
+    const position = await Queue.countDocuments({
+      restaurant: q.restaurant,
+      queueStatus: { $ne: "completed" },
+      createdAt: { $lt: q.createdAt }, // strictly before us
+    });
+
+    // if position or version changed, send new data
+    if (q.__v > since || position !== lastPosition) {
+      return res.json({
+        version: q.__v,
+        status: q.queueStatus,
+        position,
+      });
+    }
+    // keeps the connection alive on unchanged state
+    await new Promise((r) => setTimeout(r, SLEEP));
+  }
+
+  res.status(204).end(); // time limit reached
 });
 
 /**
@@ -117,9 +216,10 @@ exports.createQueue = asyncHandler(async (req, res, next) => {
   const exists = await Queue.exists({
     user: req.user.id,
     restaurant: req.params.restaurantId,
+    queueStatus: { $ne: "completed" },
   });
   if (exists) {
-    throw new APIError(`You already have a queue in this restaurant`, 400);
+    throw new APIError(`You already have an ongoing queue in this restaurant`, 400);
   }
 
   // Ensure seatCount is not greater than the restaurant's limit
@@ -155,14 +255,9 @@ exports.updateQueueStatus = asyncHandler(async (req, res, next) => {
     throw new APIError(`Queue status not provided`, 400);
   }
 
-  queue = await Queue.findByIdAndUpdate(
-    req.params.id,
-    { queueStatus: req.body.queueStatus },
-    {
-      new: true,
-      runValidators: true,
-    }
-  );
+  queue.queueStatus = req.body.queueStatus;
+  queue.increment();
+  await queue.save();
 
   return res.status(200).json({
     success: true,
@@ -190,8 +285,5 @@ exports.deleteQueue = asyncHandler(async (req, res, next) => {
 
   await Queue.findByIdAndDelete(req.params.id);
 
-  return res.status(204).json({
-    success: true,
-    data: {},
-  });
+  return res.status(204).send();
 });

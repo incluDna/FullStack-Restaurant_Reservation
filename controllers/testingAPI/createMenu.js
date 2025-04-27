@@ -1,8 +1,8 @@
-const Restaurant = require('../../models/Restaurant');
-const Menu = require('../../models/Menu');
-const APIError = require('../../utils/APIError');
-const asyncHandler = require('../../utils/asyncHandler');
-const { isValidObjectId } = require('mongoose');
+const Restaurant = require("../../models/Restaurant");
+const Menu = require("../../models/Menu");
+const APIError = require("../../utils/APIError");
+const asyncHandler = require("../../utils/asyncHandler");
+const { isValidObjectId } = require("mongoose");
 
 /**
  * @description Create menu

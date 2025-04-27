@@ -175,10 +175,7 @@ exports.deleteReservation = asyncHandler(async (req, res, next) => {
   }
   await reservation.deleteOne();
 
-  res.status(204).json({
-    success: true,
-    data: {},
-  });
+  res.status(204).send();
 });
 
 function checkValidTime(openTime, closeTime, resDate) {

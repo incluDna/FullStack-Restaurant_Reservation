@@ -42,7 +42,7 @@ exports.getRestaurants = asyncHandler(async (req, res, next) => {
  */
 exports.getRestaurant = asyncHandler(async (req, res, next) => {
   const restaurant = await Restaurant.findById(req.params.id).lean();
-  
+
   if (!restaurant) {
     throw new APIError("Restaurant not found", 404);
   }
@@ -124,10 +124,7 @@ exports.deleteRestaurant = asyncHandler(async (req, res, next) => {
   ]);
   await Restaurant.deleteOne({ _id: req.params.id });
 
-  res.status(204).json({
-    success: true,
-    data: {},
-  });
+  res.status(204).send();
 });
 
 async function appendAverageReview(restaurants) {
@@ -163,8 +160,8 @@ async function appendQueue(restaurants) {
     {
       $match: {
         restaurant: { $in: restaurants.map((r) => r._id) },
-        queueStatus: { $ne: "completed" }
-      }
+        queueStatus: { $ne: "completed" },
+      },
     },
     {
       $group: {

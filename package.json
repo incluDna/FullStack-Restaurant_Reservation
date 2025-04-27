@@ -3,7 +3,10 @@
   "version": "1.0.0",
   "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "jest",
+    "test-coverage": "jest --watchAll --coverage",
+    "test:updateMenu": "jest --coverage --collectCoverageFrom=controllers/testingAPI/updateMenu.js __tests__/updateMenu.test.js",
+    "test:createMenu": "jest --coverage --collectCoverageFrom=controllers/testingAPI/createMenu.js __tests__/createMenu.test.js",
     "dev": "nodemon server.js",
     "start": "node server.js"
   },
@@ -31,5 +34,8 @@
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.13.2",
     "nodemon": "^3.1.9"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0"
   }
 }

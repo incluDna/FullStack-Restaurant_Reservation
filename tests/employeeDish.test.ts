@@ -24,7 +24,6 @@ test('Test-Menu Dish', async ({ page }) => {
   //add
   await expect(page.getByRole('button', { name: '+' })).toBeVisible();
   await page.getByRole('button', { name: '+' }).click();
-  await page.waitForTimeout(2000); // wait for 2 sec for loading page
   await page.locator('div').filter({ hasText: /^Image URL$/ }).getByRole('textbox').click();
   await page.locator('div').filter({ hasText: /^Image URL$/ }).getByRole('textbox').fill('https://sushiro.co.th/wp-content/uploads/2021/03/001.jpg');
   await page.getByRole('textbox', { name: 'Menu Name' }).click();
@@ -44,7 +43,6 @@ test('Test-Menu Dish', async ({ page }) => {
     dialog.dismiss().catch(() => {});
   });
   await page.getByRole('button', { name: 'Submit' }).click();
-  await page.waitForTimeout(2000); // wait for 2 sec for loading page
   await expect(page.getByText('Tralalero Tralala1000 ฿He has')).toBeVisible();
   //edit
   await expect(page.getByText('Tralalero Tralala1000 ฿He has')).toBeVisible();
@@ -67,13 +65,11 @@ test('Test-Menu Dish', async ({ page }) => {
       console.log(`Dialog message: ${dialog.message()}`);
       dialog.dismiss().catch(() => {});
     });
-    await page.waitForTimeout(2000); // wait for 2 sec for loading page
     await expect(page.getByText('Shark Sushi59 ฿Fresh new')).toBeVisible();
     await expect(page.getByRole('heading', { name: 'Shark Sushi' })).toBeVisible();
     //delete
     await expect(page.getByRole('heading', { name: 'Shark Sushi' })).toBeVisible();
     await page.getByRole('button', { name: 'Delete' }).nth(1).click();
-    await page.waitForTimeout(2000); // wait for 2 sec for loading page
     await expect(page.getByText('Shark Sushi59 ฿Fresh new')).toBeHidden();
 
 });

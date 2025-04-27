@@ -12,7 +12,7 @@ test('User-Test', async ({ page }) => {
     await page.locator('input[type="password"]').fill('123456');
     await page.getByRole('button', { name: 'Sign in' }).click();
     await page.locator('div').filter({ hasText: 'Welcome toSCAM !Browse' }).getByRole('button').click();
-    await page.locator('div').filter({ hasText: 'See More' }).click();
+    await page.waitForTimeout(2000); // wait for 2 sec for loading page
     await page.getByRole('button', { name: 'See More' }).click();
     await page.waitForTimeout(2000); // wait for 2 sec for loading page
     await page.locator('div:nth-child(9) > div:nth-child(2) > div:nth-child(2) > .w-full').click();
@@ -20,12 +20,12 @@ test('User-Test', async ({ page }) => {
     await page.waitForTimeout(2000); // wait for 2 sec for loading page
     await page.getByText('Red Shrimp w/ Mala Sauce39 ฿').click();
     await page.getByRole('button', { name: 'drink' }).click();
-    await expect(page.getByText('Hot Café Latte (No Sugar)40 ฿')).toBeVisible();
     await page.waitForTimeout(2000); // wait for 2 sec for loading page
+    await expect(page.getByText('Hot Café Latte (No Sugar)40 ฿')).toBeVisible();
     await page.getByText('Hot Café Latte (No Sugar)40 ฿').click();
     await page.getByRole('button', { name: 'set' }).click();
     await expect(page.getByText('Triple Shrimp80 ฿Shrimp but')).toBeVisible();
-    await page.waitForTimeout(2000); // wait for 2 sec for loading page
+
   });
 
 // test('get started link', async ({ page }) => {

@@ -6,6 +6,8 @@ import { useNotice } from "./NoticeContext";
 import editMenu from "@/libs/Menu/editMenu";
 import getMenu from "@/libs/Menu/getMenu";
 import deleteMenu from "@/libs/Menu/deleteMenu";
+import { motion } from "framer-motion";
+
 const tagOptions: { label: string }[] = [
   { label: "Spicy" },
   { label: "Vegan" },
@@ -19,6 +21,7 @@ const tagOptions: { label: string }[] = [
   { label: "Sustainable" },
   { label: "Vegetarian" },
 ];
+
 export default function MenuCard({ menu, role, token }: { menu: Menu, role: string | null, token: string | null }) {
   const [isEditable, setIsEditable] = useState<boolean>(false);
   const [menuData, setMenuData] = useState<any>(menu);
@@ -33,6 +36,7 @@ export default function MenuCard({ menu, role, token }: { menu: Menu, role: stri
 
   const [tag, setTag] = useState('');
   const [tags, setTags] = useState<string[]>(menu.tag);
+  const [isDeleted, setIsDeleted] = useState(false); // Track if the item is deleted
 
   const handleSave = async () => {
     const isNameEmpty = !menuData.name?.trim();
@@ -99,7 +103,7 @@ export default function MenuCard({ menu, role, token }: { menu: Menu, role: stri
 
       if (response.status == 204) {
         showNotice("Menu deleted successfully", true);
-        location.reload();
+        setIsDeleted(true); // Trigger the fade-out animation
       }
     } catch (error) {
       console.error("Error deleting restaurant:", error);
@@ -113,7 +117,6 @@ export default function MenuCard({ menu, role, token }: { menu: Menu, role: stri
       setWarning("");
     }
     else if (tags.length >= 8) setWarning("You can add up to 8 tags only.");
-
   };
 
   const removeTag = (tagToRemove: string) => {
@@ -134,113 +137,119 @@ export default function MenuCard({ menu, role, token }: { menu: Menu, role: stri
   }, [isEditable]);
 
   return (
-    <div className="w-64 bg-white rounded-xl shadow-md p-4 flex flex-col items-center">
-      <img src={menuData.picture} className="w-32 h-32 object-cover rounded-full border-4 border-orange-400 mb-4" />
-      <h3 className="text-lg font-semibold text-center">
-        {
+    !isDeleted && (
+      <motion.div
+        initial={{ opacity: 1 }}
+        animate={{ opacity: isDeleted ? 0 : 1 }}
+        transition={{ duration: 0.5 }}
+        className="w-64 bg-white rounded-xl shadow-md p-4 flex flex-col items-center"
+      >
+        <img src={menuData.picture} className="w-32 h-32 object-cover rounded-full border-4 border-orange-400 mb-4" />
+        <h3 className="text-lg font-semibold text-center">
+          {
+            isEditable ? (
+              <input
+                type="text"
+                value={menuData.name}
+                onChange={(e) => setMenuData({ ...menuData, name: e.target.value })}
+                className={`w-full text-base text-black border-b-2 focus:outline-none ${emptyFields.name ? "border-red-500" : "border-gray-300"}`}
+              />
+            ) : (`${menuData.name}`)
+          }</h3>
+        <p className="text-orange-500 font-bold text-sm">{
+          isEditable ? (
+            <input
+              type="number"
+              value={menuData.price}
+              onChange={(e) => setMenuData({ ...menuData, price: e.target.value })}
+              className={`w-full text-base text-black border-b-2 focus:outline-none ${emptyFields.price ? "border-red-500" : "border-gray-300"}`}
+            />
+          ) :
+            (`${menuData.price} ฿`)}</p>
+        <p className="text-sm text-gray-600 text-center">{
           isEditable ? (
             <input
               type="text"
-              value={menuData.name}
-              onChange={(e) => setMenuData({ ...menuData, name: e.target.value })}
-              className={`w-full text-base text-black border-b-2 focus:outline-none ${emptyFields.name ? "border-red-500" : "border-gray-300"}`}
+              value={menuData.description}
+              onChange={(e) => setMenuData({ ...menuData, description: e.target.value })}
+              className={`w-full text-base text-black border-b-2 focus:outline-none ${emptyFields.description ? "border-red-500" : "border-gray-300"}`}
             />
-          ) : (`${menuData.name}`)
-        }</h3>
-      <p className="text-orange-500 font-bold text-sm">{
-        isEditable ? (
-          <input
-            type="number"
-            value={menuData.price}
-            onChange={(e) => setMenuData({ ...menuData, price: e.target.value })}
-            className={`w-full text-base text-black border-b-2 focus:outline-none ${emptyFields.price ? "border-red-500" : "border-gray-300"}`}
-          />
-        ) :
-          (`${menuData.price} ฿`)}</p>
-      <p className="text-sm text-gray-600 text-center">{
-        isEditable ? (
-          <input
-            type="text"
-            value={menuData.description}
-            onChange={(e) => setMenuData({ ...menuData, description: e.target.value })}
-            className={`w-full text-base text-black border-b-2 focus:outline-none ${emptyFields.description ? "border-red-500" : "border-gray-300"}`}
-          />
-        ) :
-          (`${menuData.description}`)}</p>
+          ) :
+            (`${menuData.description}`)}</p>
 
-      {
-        !isEditable ? (
-          <div className="mt-4 flex gap-2 flex-wrap">
-            {menuData.tag?.map((t: string, i: number) => (
-              <div
-                key={i}
-                className="w-fit h-8 bg-gray-300 rounded flex items-center"
-                title={`Remove ${t}`}
-              >
-                {t}
-              </div>
-            ))}
-          </div>
-        ) : (
-          <div className="mt-4 flex gap-2 flex-wrap">
-            {tags.map((t: string, i: number) => (
-              <button
-                key={i}
-                onClick={() => removeTag(t)}
-                type="button"
-                className="w-fit h-8 bg-gray-300 rounded hover:bg-red-400"
-                title={`Remove ${t}`}
-              >
-                {t}
-              </button>
-            ))
-            }
-            <div className="flex gap-2 items-center mt-1">
-              <select
-                value={tag}
-                onChange={(e) => setTag(e.target.value)}
-                className="border px-3 py-2"
-              >
-                <option value="">Select a tag</option>
-                {tagOptions.map((t) => (
-                  !tags.includes(t.label) &&
-                  <option key={t.label} value={t.label}>
-                    {t.label}
-                  </option>
-                ))}
-              </select>
-              <button
-                type="button"
-                onClick={addTag}
-                className="bg-gray-800 text-white px-4 py-2"
-              >
-                Add
-              </button>
+        {
+          !isEditable ? (
+            <div className="mt-4 flex gap-2 flex-wrap">
+              {menuData.tag?.map((t: string, i: number) => (
+                <div
+                  key={i}
+                  className="w-fit h-8 bg-gray-300 rounded flex items-center"
+                  title={`Remove ${t}`}
+                >
+                  {t}
+                </div>
+              ))}
             </div>
-          </div>
-        )
-      }
-      {
-        isEditable && warning && <p className="text-red-500 text-sm mt-2">{warning}</p>
-      }
-      {
-        (role === 'admin' || role === 'employee') && (
-          <div className="flex justify-center gap-2 mt-4">
-            {(isEditable) && (
-              <>
-                <button onClick={handleSave} className="w-20 h-5 bg-orange-400 rounded">Save</button>
-                <button onClick={() => setIsEditable(false)} className="w-20 h-5 bg-orange-500 rounded">Cancel</button>
-              </>
-            )}
-            {(!isEditable) && (
-              <>
-                <button onClick={() => setIsEditable(true)} className="w-20 h-5 bg-orange-400 rounded">Edit</button>
-                <button onClick={handleDelete} className="w-20 h-5 bg-orange-500 rounded">Delete</button>
-              </>
-            )}
-          </div>
-        )
-      }
-    </div>
+          ) : (
+            <div className="mt-4 flex gap-2 flex-wrap">
+              {tags.map((t: string, i: number) => (
+                <button
+                  key={i}
+                  onClick={() => removeTag(t)}
+                  type="button"
+                  className="w-fit h-8 bg-gray-300 rounded hover:bg-red-400"
+                  title={`Remove ${t}`}
+                >
+                  {t}
+                </button>
+              ))}
+              <div className="flex gap-2 items-center mt-1">
+                <select
+                  value={tag}
+                  onChange={(e) => setTag(e.target.value)}
+                  className="border px-3 py-2"
+                >
+                  <option value="">Select a tag</option>
+                  {tagOptions.map((t) => (
+                    !tags.includes(t.label) &&
+                    <option key={t.label} value={t.label}>
+                      {t.label}
+                    </option>
+                  ))}
+                </select>
+                <button
+                  type="button"
+                  onClick={addTag}
+                  className="bg-gray-800 text-white px-4 py-2"
+                >
+                  Add
+                </button>
+              </div>
+            </div>
+          )
+        }
+        {
+          isEditable && warning && <p className="text-red-500 text-sm mt-2">{warning}</p>
+        }
+        {
+          (role === 'admin' || role === 'employee') && (
+            <div className="flex justify-center gap-2 mt-4">
+              {(isEditable) && (
+                <>
+                  <button onClick={handleSave} className="w-20 h-5 bg-orange-400 rounded">Save</button>
+                  <button onClick={() => setIsEditable(false)} className="w-20 h-5 bg-orange-500 rounded">Cancel</button>
+                </>
+              )}
+              {(!isEditable) && (
+                <>
+                  <button onClick={() => setIsEditable(true)} className="w-20 h-5 bg-orange-400 rounded">Edit</button>
+                  <button onClick={handleDelete} className="w-20 h-5 bg-orange-500 rounded">Delete</button>
+                </>
+              )}
+            </div>
+          )
+        }
+      </motion.div>
+    )
   );
 }

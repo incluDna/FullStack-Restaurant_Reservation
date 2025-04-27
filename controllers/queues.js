@@ -216,9 +216,10 @@ exports.createQueue = asyncHandler(async (req, res, next) => {
   const exists = await Queue.exists({
     user: req.user.id,
     restaurant: req.params.restaurantId,
+    queueStatus: { $ne: "completed" },
   });
   if (exists) {
-    throw new APIError(`You already have a queue in this restaurant`, 400);
+    throw new APIError(`You already have an ongoing queue in this restaurant`, 400);
   }
 
   // Ensure seatCount is not greater than the restaurant's limit

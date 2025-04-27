@@ -140,20 +140,21 @@ exports.getQueuePosition = asyncHandler(async (req, res, next) => {
     throw new APIError(`Restaurant ID not provided: please access through a restaurant`, 400);
   }
 
-  const allQueues = await Queue.find({
-    restaurant: req.params.restaurantId,
-    queueStatus: { $ne: "completed" },
-  }).sort({ createdAt: 1 });
   const thisQueue = await Queue.findById(req.params.id);
-
-  const index = allQueues.findIndex((queue) => queue._id.toString() === thisQueue._id.toString());
-  if (index === -1) {
+  if (!thisQueue) {
     throw new APIError(`Queue not found`, 404);
   }
 
+  const position = await Queue.countDocuments({
+    restaurant: req.params.restaurantId,
+    queueStatus: { $ne: "completed" },
+    createdAt: { $lt: q.createdAt }, // strictly before us
+  });
+
+
   return res.status(200).json({
     success: true,
-    position: index,
+    position: position,
     data: thisQueue,
   });
 });

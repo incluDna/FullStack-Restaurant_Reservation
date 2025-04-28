@@ -1,6 +1,7 @@
 const express = require("express");
 const {
   getQueues,
+  getQueuesAll,
   getIncompleteQueues,
   getQueuePosition,
   createQueue,
@@ -65,12 +66,18 @@ const { protect, authorize } = require("../middleware/auth");
 
 /**
  * @swagger
- * /queues:
+ * /queues/all:
  *   get:
  *     summary: Get queues for the current user
  *     tags: [Queues]
  *     security:
  *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: restaurantId
+ *         schema:
+ *           type: string
+ *         description: Restaurant ID (required for admin/employee, ignored for user)
  *     responses:
  *       200:
  *         description: List of user's queues
@@ -102,10 +109,15 @@ const { protect, authorize } = require("../middleware/auth");
  *       201:
  *         description: Queue created successfully
  */
+
 router
   .route("/")
   .get(protect, authorize("user"), getQueues)
   .post(protect, authorize("user"), createQueue);
+
+router
+  .route("/all")
+  .get(protect, authorize("user", "admin", "employee"), getQueuesAll);
 
 /**
  * @swagger

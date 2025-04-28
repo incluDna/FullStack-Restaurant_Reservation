@@ -29,7 +29,7 @@ body {
 }
 
 .animate-progress-bar {
-  animation: progress-bar 1.5s ease-in-out infinite; 
+  animation: progress-bar 0.8s ease-in-out infinite; 
 }
 
 

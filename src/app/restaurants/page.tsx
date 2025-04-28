@@ -88,7 +88,7 @@ export default function RestaurantCatalog() {
     return (
       <div className="flex flex-col justify-center items-center w-full h-screen">
         <p className="text-2xl font-semibold text-gray-500 mb-4">Loading restaurants...</p>
-        <div className="relative w-64 h-4 bg-gray-200 rounded-full">
+        <div className="relative w-64 h-4 bg-gray-200 rounded-full overflow-hidden">
         <div className="absolute top-0 left-0 h-full rounded-full animate-progress-bar" style={{ backgroundColor: '#FF8C00' }} />
 
         </div>

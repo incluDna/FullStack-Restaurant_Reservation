@@ -7,28 +7,30 @@ const { protect, authorize } = require("../middleware/auth");
 
 /**
  * @swagger
- * tags:
- *   name: Menus
- *   description: The menu managing API
- */
-
-/**
- * @swagger
  * components:
  *   schemas:
  *     Menu:
  *       type: object
  *       required:
  *         - name
+ *         - restaurant
+ *         - picture
  *         - price
  *         - type
+ *         - description
  *       properties:
  *         id:
  *           type: string
- *           description: The auto-generated id of the menu
+ *           description: Auto-generated menu ID
+ *         restaurant:
+ *           type: string
+ *           description: ID of the restaurant this menu belongs to
  *         name:
  *           type: string
  *           description: Name of the menu item
+ *         picture:
+ *           type: string
+ *           description: URL or path of the menu picture
  *         price:
  *           type: number
  *           description: Price of the menu item
@@ -38,28 +40,61 @@ const { protect, authorize } = require("../middleware/auth");
  *           description: Type of the menu item
  *         description:
  *           type: string
- *           description: Description of the menu item
- *         image:
- *           type: string
- *           description: URL of the menu image
+ *           description: Menu description (max 300 characters)
+ *         tag:
+ *           type: array
+ *           items:
+ *             type: string
+ *             enum:
+ *               - Spicy
+ *               - Vegan
+ *               - Gluten-free
+ *               - Dairy-free
+ *               - Nut-free
+ *               - Halal
+ *               - Locally-sourced
+ *               - Signature-dish
+ *               - Seasonal
+ *               - Sustainable
+ *               - Vegetarian
+ *               - null
+ *           description: List of tags for the menu item
  *       example:
- *         id: 60c72b2f5f1b2c001c8e4b8d
+ *         id: 660abc123def456ghi789jk
+ *         restaurant: 662e37cfd331b7e36d84a1c1
  *         name: Pad Thai
+ *         picture: https://example.com/pictures/padthai.jpg
  *         price: 120
  *         type: dish
- *         description: Thai stir-fried noodles
- *         image: https://example.com/images/padthai.jpg
+ *         description: Authentic Thai stir-fried noodles
+ *         tag: ["Spicy", "Signature-dish"]
  */
 
 /**
  * @swagger
- * /menus:
+ * tags:
+ *   name: Menus
+ *   description: Manage menus inside a restaurant
+ */
+
+/**
+ * @swagger
+ * /restaurants/{restaurantId}/menus:
  *   get:
- *     summary: Get all menus
+ *     summary: Get all menus for a specific restaurant
  *     tags: [Menus]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: restaurantId
+ *         required: true
+ *         description: The restaurant ID
+ *         schema:
+ *           type: string
  *     responses:
  *       200:
- *         description: List of all menus
+ *         description: List of menus
  *         content:
  *           application/json:
  *             schema:
@@ -67,10 +102,16 @@ const { protect, authorize } = require("../middleware/auth");
  *               items:
  *                 $ref: '#/components/schemas/Menu'
  *   post:
- *     summary: Create a new menu
+ *     summary: Create a new menu for a restaurant
  *     tags: [Menus]
  *     security:
  *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: restaurantId
+ *         required: true
+ *         schema:
+ *           type: string
  *     requestBody:
  *       required: true
  *       content:
@@ -79,32 +120,36 @@ const { protect, authorize } = require("../middleware/auth");
  *             $ref: '#/components/schemas/Menu'
  *     responses:
  *       201:
- *         description: The created menu
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/Menu'
+ *         description: Menu created successfully
  */
 router.route("/")
-  .get(getMenus)
+  .get(protect, getMenus)
   .post(protect, authorize("employee", "admin"), createMenu);
 
 /**
  * @swagger
- * /menus/{id}:
+ * /restaurants/{restaurantId}/menus/{id}:
  *   get:
- *     summary: Get a menu by ID
+ *     summary: Get a specific menu by ID
  *     tags: [Menus]
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
+ *       - in: path
+ *         name: restaurantId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Restaurant ID
  *       - in: path
  *         name: id
  *         required: true
- *         description: Menu ID
  *         schema:
  *           type: string
+ *         description: Menu ID
  *     responses:
  *       200:
- *         description: The requested menu
+ *         description: Menu data
  *         content:
  *           application/json:
  *             schema:
@@ -116,11 +161,17 @@ router.route("/")
  *       - bearerAuth: []
  *     parameters:
  *       - in: path
- *         name: id
+ *         name: restaurantId
  *         required: true
- *         description: Menu ID
  *         schema:
  *           type: string
+ *         description: Restaurant ID
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Menu ID
  *     requestBody:
  *       required: true
  *       content:
@@ -129,11 +180,7 @@ router.route("/")
  *             $ref: '#/components/schemas/Menu'
  *     responses:
  *       200:
- *         description: The updated menu
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/Menu'
+ *         description: Menu updated successfully
  *   delete:
  *     summary: Delete a menu by ID
  *     tags: [Menus]
@@ -141,17 +188,17 @@ router.route("/")
  *       - bearerAuth: []
  *     parameters:
  *       - in: path
+ *         name: restaurantId
+ *         required: true
+ *       - in: path
  *         name: id
  *         required: true
- *         description: Menu ID
- *         schema:
- *           type: string
  *     responses:
- *       200:
+ *       204:
  *         description: Menu deleted successfully
  */
 router.route("/:id")
-  .get(getMenu)
+  .get(protect, getMenu)
   .put(protect, authorize("employee", "admin"), updateMenu)
   .delete(protect, authorize("employee", "admin"), deleteMenu);
 

@@ -9,7 +9,7 @@ import { MeanReview, SingleRestaurantJSON, ReviewJSON } from '../../../../../int
 import restaurant from '../management/page';
 // const pattaya = Pattaya({ weight: "400", subsets: ["thai", "latin"] });
 
-export default async function Review({ params, searchParams}: {params: { id: string }; searchParams: { page?: string };}) {
+export default async function Review({ params, searchParams}: {params: Promise<{ id: string }>; searchParams: Promise<{ page?: string }>;}) {
   const param = await params; //params should be awaited
   const searchparam = await searchParams; // `searchParams` should be awaited before using its properties
   const page = searchparam.page || '1';

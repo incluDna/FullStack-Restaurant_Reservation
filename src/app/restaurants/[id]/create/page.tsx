@@ -9,13 +9,16 @@ import { useNotice } from "@/components/NoticeContext";
 
 const tagOptions: { label: string; description: string }[] = [
   { label: "Spicy", description: "Dish is hot and flavorful with spices." },
-  { label: "Vegan", description: "No animal products." },
-  { label: "Gluten-Free", description: "No gluten." },
-  { label: "Dairy-Free", description: "No dairy products." },
-  { label: "Nut-Free", description: "Safe for nut allergies." },
-  { label: "Sweet", description: "Dessert or sweet taste." },
-  { label: "Rich in Protein", description: "Great source of protein." },
-  { label: "Vegetarian", description: "No meat, but may include dairy or eggs." },
+  { label: "Vegan", description: "Contains no animal products." },
+  { label: "Gluten-free", description: "Made without gluten-containing ingredients." },
+  { label: "Dairy-free", description: "Free from dairy products." },
+  { label: "Nut-free", description: "Prepared without nuts; safe for nut allergies." },
+  { label: "Halal", description: "Meets Halal dietary requirements." },
+  { label: "Locally-sourced", description: "Ingredients sourced from local producers." },
+  { label: "Signature-dish", description: "A special dish unique to the restaurant." },
+  { label: "Seasonal", description: "Made with seasonal ingredients." },
+  { label: "Sustainable", description: "Eco-friendly and sustainably sourced ingredients." },
+  { label: "Vegetarian", description: "No meat, may include dairy or eggs." },
 ];
 
 export default function CreateMenuPage() {

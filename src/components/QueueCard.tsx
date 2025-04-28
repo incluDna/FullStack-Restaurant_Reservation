@@ -6,14 +6,14 @@ import { useRouter } from "next/navigation";
 import { useNotice } from "./NoticeContext";
 type QueueCardProps = {
   id: string;
-  currentQueue:number
+  currentQueue: number
 };
 
 export default function QueueCard({ id, currentQueue }: QueueCardProps) {
   const [token, setToken] = useState("");
   const [role, setRole] = useState("");
   const [seatCount, setSeatCount] = useState(0);
-  const [error, setError] = useState(""); 
+  const [error, setError] = useState("");
   const router = useRouter();
   const { showNotice } = useNotice();
 
@@ -67,16 +67,27 @@ export default function QueueCard({ id, currentQueue }: QueueCardProps) {
         Get Queue
       </h2>
       <div className="flex flex-col items-center justify-center flex-grow gap-4">
-      <span className="font-semibold text-xl leading-[35px]">
-              Current queue: {currentQueue || 0}
-      </span>
+        <span className="font-semibold text-xl leading-[35px]">
+          Current queue: {currentQueue || 0}
+        </span>
         <label className="text-lg text-black">How many people?</label>
         <input
           type="number"
-          className={`w-24 h-10 text-base p-2 bg-white border ${
-            error ? "border-red-500" : "border"
-          }`}
-          onChange={(e) => setSeatCount(Number(e.target.value))}
+          min={1}
+          className={`w-24 h-10 text-base p-2 bg-white border ${error ? "border-red-500" : "border"
+            }`}
+          value={seatCount > 0 ? seatCount : ""}
+          onChange={(e) => {
+            const value = Number(e.target.value);
+            if (value >= 1 || e.target.value === "") {
+              setSeatCount(value);
+            }
+          }}
+          onKeyDown={(e) => {
+            if (e.key === "-" || e.key === "e" || e.key === "+" || e.key === ".") {
+              e.preventDefault();
+            }
+          }}
         />
       </div>
       <motion.button

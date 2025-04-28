@@ -38,7 +38,7 @@ export default function NoticePopup({ message, isVisible, isNotice = false, onCl
       }`}
     >
       <span className="text-xl">{isNotice ? "✅" : "⚠️"}</span>
-      <p className="text-center">{message}</p>
+      <p className="text-center whitespace-pre-line">{message}</p>
     </div>
   );
 }

@@ -15,11 +15,8 @@ export default function ReserveManageCard({ reserveDate, reservationID, userName
                 <div className="text-left text-3xl font-semibold">{reserveDate.toString().slice(0, 10) + ' ' + reserveDate.toString().slice(11, 16)}</div>
                 
                 <div className="text-left text-lg font-semibold">{userName}</div>
-                <div className="text-left text-lg font-semibold">{userTel}</div>
-                <div className="text-left text-lg">
-                    <span className="font-semibold">Seats Count: </span>
-                    {seatCount.toString()}
-                </div>
+                <div className="text-left text-lg font-semibold">tel: {userTel}</div>
+                <div className="text-left text-lg font-semibold">Seats Count: {seatCount.toString()}</div>
                 <div className="text-left text-lg">
                     <span className="font-semibold">Reservation ID: </span>{ reservationID}
                 </div>

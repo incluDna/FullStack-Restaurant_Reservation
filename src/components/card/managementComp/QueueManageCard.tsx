@@ -25,7 +25,7 @@ export default function QueueManageCard({ queue, handleCall, handleTick, handleD
 
   
   return (
-    <div className="relative bg-[#C2C2C2] h-[23vh] w-[40vw] flex flex-row rounded-md shadow-md overflow-hidden">
+    <div className="relative bg-white h-[23vh] w-[40vw] flex flex-row rounded-md shadow-md overflow-hidden">
       {/* Optional Loading Overlay */}
       {loading && (
         <div className="absolute inset-0 bg-black bg-opacity-30 flex items-center justify-center z-10">
@@ -34,11 +34,13 @@ export default function QueueManageCard({ queue, handleCall, handleTick, handleD
       )}
 
       {/* User and Queue Info */}
-      <div className="w-full h-full px-4 py-4 space-y-2 font-inter">
-        <p>{queue.user._id}</p>
-        <p>{queue.user.name}</p>
-        <p>{queue.user.tel}</p>
-        <p>Number of People: {queue.seatCount}</p>
+      <div className="w-full h-full px-4 py-4 space-y-2 ">
+        <p className="text-2xl font-semibold leading-none">{queue.user.name}</p>
+        <p className="text-lg font-semibold leading-none">tel: {queue.user.tel}</p>
+        <p className="text-lg font-semibold leading-none">Seats Count: {queue.seatCount}</p>
+        <div className="text-left text-lg">
+                    <span className="font-semibold">Queue ID: </span>{queue.user?._id}
+        </div>
       </div>
 
       {/* Buttons */}

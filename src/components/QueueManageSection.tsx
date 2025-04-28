@@ -116,7 +116,7 @@ export default function QueueManageSection({ token, restaurantID }: { token?: st
     }
 
     return (
-        <div className="w-1/2 min-h-full bg-blue-100 p-5 flex flex-col gap-y-5 items-center">
+        <div className="w-1/2 min-h-full bg-gray-100 p-5 flex flex-col gap-y-5 items-center">
             <div className="w-full h-fit text-center break-words text-xl font-bold">
                 Queue
             </div>

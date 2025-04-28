@@ -18,6 +18,7 @@
     "@types/redux-persist": "^4.0.0",
     "cookie": "^1.0.2",
     "dayjs": "^1.11.13",
+    "dotenv": "^16.5.0",
     "framer-motion": "^12.7.3",
     "js-cookie": "^3.0.5",
     "lucide-react": "^0.487.0",
@@ -30,9 +31,10 @@
     "redux-persist": "^6.0.0"
   },
   "devDependencies": {
+    "@playwright/test": "^1.52.0",
     "@tailwindcss/postcss": "^4.1.4",
     "@types/js-cookie": "^3.0.6",
-    "@types/node": "20.17.30",
+    "@types/node": "^20.17.30",
     "@types/react": "19.1.2",
     "@types/react-dom": "^19",
     "autoprefixer": "^10.4.20",

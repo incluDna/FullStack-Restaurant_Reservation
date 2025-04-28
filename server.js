@@ -44,9 +44,9 @@ app.use(xss());
 app.use(hpp());
 app.use(cors());
 
-// Swagger config
+// 🔥 แก้ตรงนี้นะ (swaggerOptions)
 const swaggerOptions = {
-  swaggerDefinition: {
+  definition: {
     openapi: '3.0.0',
     info: {
       title: 'SE Project API',
@@ -55,12 +55,27 @@ const swaggerOptions = {
     },
     servers: [
       {
-        url: 'http://localhost:5000/api',  
+        url: 'http://localhost:5000/api',
+      },
+    ],
+    components: {
+      securitySchemes: {
+        bearerAuth: {
+          type: 'http',
+          scheme: 'bearer',
+          bearerFormat: 'JWT',
+        },
+      },
+    },
+    security: [
+      {
+        bearerAuth: [],
       },
     ],
   },
-  apis: ['./routes/*.js'], 
+  apis: ['./routes/*.js'],
 };
+
 const swaggerDocs = swaggerJsDoc(swaggerOptions);
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 

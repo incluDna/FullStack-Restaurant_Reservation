@@ -42,16 +42,20 @@ const { protect, authorize } = require("../middleware/auth");
 
 /**
  * @swagger
- * /queue:
+ * /queues:
  *   get:
  *     summary: Get queues for user
  *     tags: [Queues]
+ *     security:
+ *       - bearerAuth: []
  *     responses:
  *       200:
  *         description: List of the user's queues.
  *   post:
  *     summary: Create a new queue
  *     tags: [Queues]
+ *     security:
+ *       - bearerAuth: []
  *     requestBody:
  *       required: true
  *       content:
@@ -69,10 +73,12 @@ router
 
 /**
  * @swagger
- * /queue/all:
+ * /queues/all:
  *   get:
  *     summary: Get queues for admin and employee
  *     tags: [Queues]
+ *     security:
+ *       - bearerAuth: []
  *     responses:
  *       200:
  *         description: List of incomplete queues.
@@ -83,10 +89,12 @@ router
 
 /**
  * @swagger
- * /queue/{id}/position:
+ * /queues/{id}/position:
  *   get:
  *     summary: Get a queue's position
  *     tags: [Queues]
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
@@ -104,10 +112,12 @@ router
 
 /**
  * @swagger
- * /queue/{id}:
+ * /queues/{id}:
  *   put:
  *     summary: Update queue status (admin/employee only)
  *     tags: [Queues]
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
@@ -127,6 +137,8 @@ router
  *   delete:
  *     summary: Delete a queue (user or employee)
  *     tags: [Queues]
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id

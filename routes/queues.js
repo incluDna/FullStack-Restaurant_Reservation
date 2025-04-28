@@ -85,6 +85,13 @@ const { protect, authorize } = require("../middleware/auth");
  *     tags: [Queues]
  *     security:
  *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: restaurantId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Restaurant ID
  *     requestBody:
  *       required: true
  *       content:
@@ -108,6 +115,13 @@ router
  *     tags: [Queues]
  *     security:
  *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: restaurantId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Restaurant ID
  *     responses:
  *       200:
  *         description: List of incomplete queues
@@ -118,13 +132,19 @@ router
 
 /**
  * @swagger
- * /queues/{id}/position:
+ * /restaurants/{restaurantId}/queues/{id}/position:
  *   get:
  *     summary: Get a queue's position
  *     tags: [Queues]
  *     security:
  *       - bearerAuth: []
  *     parameters:
+ *       - in: path
+ *         name: restaurantId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Restaurant ID
  *       - in: path
  *         name: id
  *         required: true
@@ -136,7 +156,7 @@ router
  *         description: Queue position information
  */
 router
-  .route("/:id/position")
+  .route("/restaurants/:restaurantId/queues/:id/position")
   .get(protect, getQueuePosition);
 
 /**

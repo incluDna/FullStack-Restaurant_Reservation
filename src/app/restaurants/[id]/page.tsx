@@ -125,6 +125,8 @@ export default function RestaurantInfo() {
         postalCode: restaurantData.postalCode,
         tel: restaurantData.tel,
         region: restaurantData.region,
+        openTime: restaurantData.openTime,
+        closeTime: restaurantData.closeTime
       };
 
       if (!id || !token) {

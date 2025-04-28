@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react'
 import userRegister from '@/libs/User/userRegister'
+import { setAuthCookie } from '@/libs/User/setAuthCookie'
 
 export default function Register() {
   const [name, setName] = useState('')
@@ -38,13 +39,7 @@ export default function Register() {
 
       if ("token" in res) {
         // set cookie
-        await fetch("/api/auth", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ token: res.token, role: 'user' }),
-        });
+        await setAuthCookie(res.token, 'user');
       }
 
       setSuccess('Registration successful!')
@@ -52,6 +47,8 @@ export default function Register() {
       setTelephone('')
       setEmail('')
       setPassword('')
+      
+      window.location.href = '/'
     } catch (err: any) {
       setError(err.message || "An unexpected error occurred.");
     } finally {

@@ -19,5 +19,5 @@ export default async function userRegister(userName: string, userEmail: string, 
     }
 
     const data = await response.json(); // Success response from backend
-    return { success: true, data }; // Return success response
+    return data; // Return success response
 }

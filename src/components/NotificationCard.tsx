@@ -7,12 +7,14 @@ import { getAuthCookie } from "@/libs/User/getAuthCookie";
 import pollQueuePositionAndStatus from "@/libs/Queue/pollQueuePositionAndStatus";
 import { store } from "../redux/store";
 import { updateNotification } from "@/redux/notificationSlice";
+import { useRouter } from "next/navigation";
 
 export default function NotificationCard() {
 
     const notiStatus = useSelector((state: RootState) => state.notiStatus);
     const queueNumber = useSelector((state: RootState) => state.queueNumber);
     const refreshRedux = () => {
+        console.log("re-value in redux persist by checkAuth");
         store.dispatch(updateNotification({num: -1, sta: "waiting"}));
     }
 
@@ -25,7 +27,7 @@ export default function NotificationCard() {
 
     let text = "";
     if (notiStatus === 1) {
-        if (queueNumber === 0) text = "Prepare to be called...";
+        if (queueNumber === 0) text = "Prepare to be called..";
         else text = `Waiting for ${queueNumber} queue..`;
     } else if (notiStatus === 2) {
         text = "Your queue is called !";
@@ -131,7 +133,7 @@ export default function NotificationCard() {
             h-[50px] rounded-full flex items-center justify-start content-center px-[10px] gap-[7px] shadow-md
             ${ notiStatus === 2 ? "bg-red-500" : "bg-yellow-400" }
             ${ visible && notiStatus !== 0 ? "translate-y-0 opacity-100" : "translate-y-20 opacity-0" }
-            ${ expanded ? "w-[220px]" : "w-[50px] bg-yellow-400"}`}
+            ${ expanded ? "w-[225px]" : "w-[50px] bg-yellow-400"}`}
         >               
             <Image
                 src="/images/notification.svg"

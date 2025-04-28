@@ -9,6 +9,7 @@ export default function pollQueuePositionAndStatus(token: string) {
     let cancelled = false;
     const initialState = (store.getState() as RootState);
     const refreshRedux = () => {
+        console.log("re-value in redux persist by pollQueuePositionAndStatus");
         store.dispatch(updateNotification({num: -1, sta: "waiting"}));
     }
 
@@ -55,6 +56,7 @@ export default function pollQueuePositionAndStatus(token: string) {
     // 3
     async function pollQueueStateLoop(token: string, queueID: string) {
         const ctrl = new AbortController();
+        stateVersion = -1;
 
         try {
             while (!cancelled) {               

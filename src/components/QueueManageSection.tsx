@@ -26,7 +26,7 @@ export default function QueueManageSection({ token, restaurantID }: { token?: st
     const [pleaseReload, setPleaseReload] = useState<boolean>(false);
     // this was used to force reload component when queue card appearance should be changed/updated
     const {showNotice} = useNotice();
-    
+
     if (restaurantID == null) return (
         <div className="w-1/2 h-full text-center break-words text-xl font-bold">
             Invalid Restaurant ID
@@ -53,6 +53,14 @@ export default function QueueManageSection({ token, restaurantID }: { token?: st
         };
 
         fetchQueues();
+
+        // Set interval to fetch every 3 seconds
+        const interval = setInterval(() => {
+            fetchQueues();
+        }, 4000);
+
+        // Clear interval on unmount
+        return () => clearInterval(interval);
     }, [pleaseReload]);
 
 
@@ -77,7 +85,7 @@ export default function QueueManageSection({ token, restaurantID }: { token?: st
 
         filteredQueues();
     }, [queues]);
-    
+
     const handleCall = async (queueId: string) => {
         setLoading(true);
         try {

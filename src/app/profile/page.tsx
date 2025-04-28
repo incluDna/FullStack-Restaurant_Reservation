@@ -230,7 +230,7 @@ useEffect(() => {
         {/* Right Panel - Reservations or Reviews */}
         <div className="flex flex-col gap-4 w-[75%]">
           {role == 'user' ?
-            <div className={`${showReviews ? 'max-h-[500px] ' : 'max-h-[280px] '}flex flex-col gap-4 bg-[#fff4ce] p-4 rounded-xl shadow-md w-full overflow-y-auto`}>
+            <div className={`${showReviews ? 'max-h-[500px] ' : 'max-h-[400px] '}flex flex-col gap-4 bg-[#fff4ce] p-4 rounded-xl shadow-md w-full overflow-y-auto`}>
               <h2 className="text-3xl font-bold mb-4 text-gray-800">
                 {showReviews
                   ? "Your Reviews"

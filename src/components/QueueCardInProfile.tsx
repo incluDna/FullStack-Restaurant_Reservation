@@ -60,8 +60,11 @@ export default function QueueCardInProfile({que, tokenRecieve, onDelete, restaur
       <p className="text-sm text-black">
         Location: {que.restaurant.province}
       </p>
+      <p className="text-sm text-black">
+        Number of seats: {que.seatCount}
+      </p>
 
-      <p className="text-sm text-orange-400 mt-2">
+      <p className="text-sm text-orange-400 mt-1">
         status: {que.queueStatus}
         {que.queueStatus === "waiting" ? (
     position !== null ? ` for ${position} queue(s)` : "Loading position..."

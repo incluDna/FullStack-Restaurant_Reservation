@@ -172,7 +172,7 @@ export default function ReservationCard({
             })}
           </p>
           <p className="text-sm text-black">
-            Number of people: {res.seatCount}
+            Number of seats: {res.seatCount}
           </p>
 
           {error && <p className="text-red-500 text-sm">{error}</p>}

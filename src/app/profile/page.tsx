@@ -174,9 +174,9 @@ useEffect(() => {
               <div className="text-[40px] font-semibold mb-4">
                 - Your profile -
               </div>
-              <div className="text-[33px]">Name: {user.name}</div>
-              <div className="text-[23px]">Email: {user.email}</div>
-              <div className="text-[24px]">Tel: {user.tel}</div>
+              <div className="text-[33px]">Name: {user.name?user.name:'loading...'}</div>
+              <div className="text-[23px]">Email: {user.email?user.email:'loading...'}</div>
+              <div className="text-[24px]">Tel: {user.tel?user.tel:'loading...'}</div>
               <button
                 className="bg-[#f79540] text-white py-2 px-9 rounded-md hover:bg-[#6b1313]"
                 onClick={() => {

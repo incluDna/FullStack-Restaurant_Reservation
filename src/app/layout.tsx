@@ -7,7 +7,6 @@ import { NoticeProvider } from "@/components/NoticeContext";
 
 import './global.css';
 import NotificationCard from '@/components/NotificationCard';
-import TestButton from '@/components/testButton';
 
 const agbalumo = Agbalumo({
     weight: '400',

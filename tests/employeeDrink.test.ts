@@ -46,7 +46,7 @@ test('Test-Menu Drink', async ({ page }) => {
   await expect(page.getByText('Ballerina Cappuccina2000 ฿She')).toBeVisible();
   //edited
   await page.getByRole('button', { name: 'Edit' }).nth(2).click();
-  await page.getByRole('heading', { name: 'Ballerina Cappuccina' }).getByRole('textbox').dblclick();
+  await page.getByRole('heading', { name: 'Ballerina Cappuccina' }).getByRole('textbox').click();
   await page.getByRole('heading', { name: 'Ballerina Cappuccina' }).getByRole('textbox').fill('Iced Café Latte');
   await page.getByRole('spinbutton').click();
   await page.getByRole('spinbutton').fill('55');

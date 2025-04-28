@@ -125,7 +125,7 @@ useEffect(() => {
       setEditing(false);
     } catch (err) {
       console.log(err);
-      showNotice("Failed to update profile", false);
+      showNotice("Failed to update profile.\n"+err, false);
     }
   };
   if (!token) return <p>Loading the token...</p>;

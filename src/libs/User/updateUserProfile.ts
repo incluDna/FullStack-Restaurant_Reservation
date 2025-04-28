@@ -14,8 +14,9 @@ export default async function updateUserProfile(token:string | null,
         body:JSON.stringify(updatedData)
       })
 
+    const res= await response.json();
     if(!response.ok){
-        throw new Error("cannot update user profile")
+      throw new Error(res.message);
     }
-    return await response.json();
+    return res;
 }

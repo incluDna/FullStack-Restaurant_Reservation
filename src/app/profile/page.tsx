@@ -13,6 +13,8 @@ import getReviews from "@/libs/Review/getReviews";
 import ReviewCard from "@/components/ReviewCard";
 import Link from "next/link";
 import { useNotice } from "@/components/NoticeContext";
+import { useSelector } from "react-redux";
+import { RootState } from "@/redux/store";
 export default function ProfilePage() {
   const [user, setUser] = useState<User>({
     name: "",
@@ -31,6 +33,11 @@ export default function ProfilePage() {
   const [queues, setQueues] = useState<Queue[]>([]);
   const [reviews, setReviews] = useState<Review[]>([]);
   const { showNotice } = useNotice();
+
+  // Redux
+  const reduxNotiStatus = useSelector((state: RootState) => state.notiStatus);
+  const reduxQueueNumber = useSelector((state: RootState) => state.queueNumber);
+
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
@@ -110,7 +117,7 @@ useEffect(() => {
     };
 
     fetchQueues();
-  }, [token]);
+  }, [token, reduxNotiStatus, reduxQueueNumber]);
 
   const handleFormChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });

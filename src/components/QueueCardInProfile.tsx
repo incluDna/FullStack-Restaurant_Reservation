@@ -26,15 +26,16 @@ export default function QueueCardInProfile({que, tokenRecieve, onDelete, restaur
       try {
         const pos = await getQueuePosition(token, restaurantId, queueId);
         setPosition(pos);
+        setShowReviewPrompt(que.queueStatus === "completed");
       } catch (err) {
         console.error("Error fetching position:", err);
         setPosition(null);
       }
     };
     fetchPosition();
-  }, [token, restaurantId, queueId]);
+  }, [token, restaurantId, queueId, que]);
 
-  const handleDelete = async () => {console.log('tokennnn',token, que._id);
+  const handleDelete = async () => {
     if (loading) return;
     setLoading(true);
     

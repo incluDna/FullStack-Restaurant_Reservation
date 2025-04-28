@@ -195,3 +195,30 @@ exports.deleteQueue = asyncHandler(async (req, res, next) => {
     data: {},
   });
 });
+
+exports.getQueuesAll = asyncHandler(async (req, res, next) => {
+  const { restaurantId } = req.query;
+
+  if ((req.user.role === "admin" || req.user.role === "employee") && !restaurantId) {
+    throw new APIError("Restaurant ID is required for admin/employee", 400);
+  }
+
+  let baseQuery;
+
+  if (req.user.role === "user") {
+    baseQuery = Queue.find({ user: req.user.id });
+  } else {
+    baseQuery = Queue.find({ restaurant: restaurantId });
+  }
+
+  const queues = await baseQuery
+    .sort({ createdAt: 1 })
+    .populate("user", "name tel")
+    .populate("restaurant", "name province");
+
+  res.status(200).json({
+    success: true,
+    count: queues.length,
+    data: queues,
+  });
+});

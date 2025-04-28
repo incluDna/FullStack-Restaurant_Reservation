@@ -113,7 +113,7 @@ export default function ReservationCard({
   };
 
   return (
-    <li className="bg-[#FFECAD] rounded-lg p-4 shadow-md w-[17vw] max-w-sm">
+    <li className="bg-[#FFECAD] rounded-lg p-4 shadow-md min-w-[17vw] w-fit">
       {isEditing ? (
         <div className="space-y-2">
           <div className="flex gap-2">
@@ -182,7 +182,7 @@ export default function ReservationCard({
               className="bg-orange-400 text-white px-4 py-1 rounded hover:bg-orange-500"
               onClick={() => setIsEditing(true)}
             >
-              edit
+              Edit
             </button>
             <button
               className="bg-orange-400 text-white px-4 py-1 rounded hover:bg-orange-500"

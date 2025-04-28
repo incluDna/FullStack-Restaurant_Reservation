@@ -55,7 +55,7 @@ export default function QueueCardInProfile({que, tokenRecieve, onDelete, restaur
   };
 
   return (
-    <li className="bg-[#FFECAD] rounded-lg p-4 shadow-md w-[17vw] max-w-sm">
+    <li className="bg-[#FFECAD] rounded-lg p-4 shadow-md min-w-[17vw] w-fit ">
       <h3 className="text-xl font-bold text-gray-800 mb-1">{que.restaurant.name}</h3>
       <p className="text-sm text-black">
         Location: {que.restaurant.province}

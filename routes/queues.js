@@ -1,5 +1,12 @@
 const express = require("express");
-const { getMenus, getMenu, createMenu, updateMenu, deleteMenu } = require("../controllers/menus");
+const {
+  getQueues,
+  getIncompleteQueues,
+  getQueuePosition,
+  createQueue,
+  updateQueueStatus,
+  deleteQueue,
+} = require("../controllers/queues");
 
 const router = express.Router({ mergeParams: true });
 
@@ -9,36 +16,30 @@ const { protect, authorize } = require("../middleware/auth");
  * @swagger
  * components:
  *   schemas:
- *     Menu:
+ *     Queue:
  *       type: object
  *       required:
- *         - name
- *         - price
- *         - type
  *         - restaurant
+ *         - user
+ *         - seatCount
+ *         - queueStatus
  *       properties:
  *         id:
  *           type: string
- *           description: The auto-generated id of the menu
+ *           description: Auto-generated queue ID
  *         restaurant:
  *           type: string
- *           description: Restaurant ID this menu belongs to
- *         name:
+ *           description: Restaurant ID this queue belongs to
+ *         user:
  *           type: string
- *           description: Name of the menu item
- *         price:
- *           type: number
- *           description: Price of the menu item
- *         type:
+ *           description: User ID who created the queue
+ *         seatCount:
+ *           type: integer
+ *           description: Number of seats requested
+ *         queueStatus:
  *           type: string
- *           enum: [dish, drink, set]
- *           description: Type of the menu item
- *         description:
- *           type: string
- *           description: Description of the menu item
- *         image:
- *           type: string
- *           description: URL of the menu image
+ *           enum: [waiting, seated, cancelled]
+ *           description: Status of the queue
  *         createdAt:
  *           type: string
  *           format: date-time
@@ -46,138 +47,141 @@ const { protect, authorize } = require("../middleware/auth");
  *           type: string
  *           format: date-time
  *       example:
- *         id: 60c72b2f5f1b2c001c8e4b8d
+ *         id: 66123abc456def7890ghi
  *         restaurant: 660abc1234def56789abcdef
- *         name: Pad Thai
- *         price: 120
- *         type: dish
- *         description: Thai stir-fried noodles
- *         image: https://example.com/images/padthai.jpg
+ *         user: 660abc1234def56789aaaaaa
+ *         seatCount: 4
+ *         queueStatus: waiting
  *         createdAt: "2024-04-28T09:00:00.000Z"
- *         updatedAt: "2024-04-28T09:00:00.000Z"
+ *         updatedAt: "2024-04-28T09:10:00.000Z"
  */
 
 /**
  * @swagger
  * tags:
- *   name: Menus
- *   description: The menu managing API
+ *   name: Queues
+ *   description: The queue management API
  */
 
 /**
  * @swagger
- * /restaurants/{restaurantId}/menus:
+ * /queues:
  *   get:
- *     summary: Get all menus for a restaurant
- *     tags: [Menus]
- *     parameters:
- *       - in: path
- *         name: restaurantId
- *         required: true
- *         description: ID of the restaurant
- *         schema:
- *           type: string
+ *     summary: Get queues for the current user
+ *     tags: [Queues]
+ *     security:
+ *       - bearerAuth: []
  *     responses:
  *       200:
- *         description: List of all menus
+ *         description: List of user's queues
  *         content:
  *           application/json:
  *             schema:
  *               type: array
  *               items:
- *                 $ref: '#/components/schemas/Menu'
+ *                 $ref: '#/components/schemas/Queue'
  *   post:
- *     summary: Create a new menu for a restaurant
- *     tags: [Menus]
+ *     summary: Create a new queue
+ *     tags: [Queues]
  *     security:
  *       - bearerAuth: []
- *     parameters:
- *       - in: path
- *         name: restaurantId
- *         required: true
- *         description: ID of the restaurant
- *         schema:
- *           type: string
  *     requestBody:
  *       required: true
  *       content:
  *         application/json:
  *           schema:
- *             $ref: '#/components/schemas/Menu'
+ *             $ref: '#/components/schemas/Queue'
  *     responses:
  *       201:
- *         description: Menu created successfully
+ *         description: Queue created successfully
  */
-router.route("/")
-  .get(getMenus)
-  .post(protect, authorize("employee", "admin"), createMenu);
+router
+  .route("/")
+  .get(protect, authorize("user"), getQueues)
+  .post(protect, authorize("user"), createQueue);
 
 /**
  * @swagger
- * /restaurants/{restaurantId}/menus/{id}:
+ * /queues/incomplete:
  *   get:
- *     summary: Get a menu by ID under a restaurant
- *     tags: [Menus]
- *     parameters:
- *       - in: path
- *         name: restaurantId
- *         required: true
- *         description: ID of the restaurant
- *         schema:
- *           type: string
- *       - in: path
- *         name: id
- *         required: true
- *         description: ID of the menu
- *         schema:
- *           type: string
+ *     summary: Get all incomplete queues (admin/employee only)
+ *     tags: [Queues]
+ *     security:
+ *       - bearerAuth: []
  *     responses:
  *       200:
- *         description: Menu found
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/Menu'
- *   put:
- *     summary: Update a menu by ID
- *     tags: [Menus]
+ *         description: List of incomplete queues
+ */
+router
+  .route("/incomplete")
+  .get(protect, authorize("admin", "employee"), getIncompleteQueues);
+
+/**
+ * @swagger
+ * /queues/{id}/position:
+ *   get:
+ *     summary: Get a queue's position
+ *     tags: [Queues]
  *     security:
  *       - bearerAuth: []
  *     parameters:
  *       - in: path
- *         name: restaurantId
+ *         name: id
  *         required: true
+ *         schema:
+ *           type: string
+ *         description: Queue ID
+ *     responses:
+ *       200:
+ *         description: Queue position information
+ */
+router
+  .route("/:id/position")
+  .get(protect, getQueuePosition);
+
+/**
+ * @swagger
+ * /queues/{id}:
+ *   put:
+ *     summary: Update a queue status (admin/employee only)
+ *     tags: [Queues]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
  *       - in: path
  *         name: id
  *         required: true
+ *         schema:
+ *           type: string
+ *         description: Queue ID
  *     requestBody:
  *       required: true
  *       content:
  *         application/json:
  *           schema:
- *             $ref: '#/components/schemas/Menu'
+ *             $ref: '#/components/schemas/Queue'
  *     responses:
  *       200:
- *         description: Menu updated successfully
+ *         description: Queue updated successfully
  *   delete:
- *     summary: Delete a menu by ID
- *     tags: [Menus]
+ *     summary: Delete a queue (user or employee)
+ *     tags: [Queues]
  *     security:
  *       - bearerAuth: []
  *     parameters:
  *       - in: path
- *         name: restaurantId
- *         required: true
- *       - in: path
  *         name: id
  *         required: true
+ *         schema:
+ *           type: string
+ *         description: Queue ID
  *     responses:
  *       204:
- *         description: Menu deleted successfully
+ *         description: Queue deleted successfully
  */
-router.route("/:id")
-  .get(getMenu)
-  .put(protect, authorize("employee", "admin"), updateMenu)
-  .delete(protect, authorize("employee", "admin"), deleteMenu);
+router
+  .route("/:id")
+  .put(protect, authorize("admin", "employee"), updateQueueStatus)
+  .delete(protect, authorize("user", "employee"), deleteQueue);
 
 module.exports = router;

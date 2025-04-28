@@ -7,7 +7,6 @@ import { NoticeProvider } from "@/components/NoticeContext";
 
 import './global.css';
 import NotificationCard from '@/components/NotificationCard';
-import TestButton from '@/components/testButton';
 
 const agbalumo = Agbalumo({
     weight: '400',
@@ -25,7 +24,6 @@ export default function RootLayout({
                 <ReduxProvider>
                     <NoticeProvider>
                         <TopMenu />
-                        {/* <TestButton/> */}
                         <NotificationCard />
                         <main className="pt-[60px] w-[100vw] h-[100vh]">{children}</main>
                     </NoticeProvider>

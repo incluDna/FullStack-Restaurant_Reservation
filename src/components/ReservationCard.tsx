@@ -22,8 +22,8 @@ export default function ReservationCard({
   const resDate = new Date(res.resDate);
 
   const [editData, setEditData] = useState({
-    resDate: resDate.toISOString().slice(0, 10),
-    resTime: resDate.toTimeString().slice(0, 5),
+    resDate: resDate.toString().slice(0, 10),
+    resTime: resDate.toString().slice(11, 16),
     seatCount: res.seatCount.toString(),
   });
 
@@ -164,12 +164,13 @@ export default function ReservationCard({
           </h3>
           <p className="text-sm text-black">Location: {res.restaurant.province}</p>
           <p className="text-sm text-black">
-            {resDate.toLocaleDateString("en-CA")} —{" "}
-            {resDate.toLocaleTimeString([], {
+          {resDate.toISOString().slice(0, 10)} —{" "}
+          {new Date(resDate.getTime()).toLocaleTimeString("en-US", {
               hour: "2-digit",
               minute: "2-digit",
               hour12: true,
-            })}
+              timeZone: "UTC"
+          })}
           </p>
           <p className="text-sm text-black">
             Number of seats: {res.seatCount}

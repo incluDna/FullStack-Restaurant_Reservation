@@ -147,7 +147,7 @@ router
 
 /**
  * @swagger
- * /queues/restaurants/{restaurantId}/queues/{id}/position:
+ * /restaurants/{restaurantId}/queues/{id}/position:
  *   get:
  *     summary: Get a queue's position in a restaurant
  *     tags: [Queues]
@@ -171,7 +171,7 @@ router
  *         description: Queue position information
  */
 router
-  .route("/restaurants/:restaurantId/queues/:id/position")
+   router.route("/:id/position")
   .get(protect, getQueuePosition);
 
 /**

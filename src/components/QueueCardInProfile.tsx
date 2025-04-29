@@ -63,8 +63,9 @@ export default function QueueCardInProfile({que, tokenRecieve, onDelete, restaur
   return (
     <li className="bg-[#FFECAD] relative rounded-lg p-4 shadow-md min-w-[17vw] w-fit ">
       {/* Add by Notification Dev*/}
-      {que._id === nowNotiQueue && notiStatus !== 0 && (
-      <div className={`absolute right-3 up-0 w-fit h-fit rounded-full p-1 bg-orange-400`}>
+      <div className={`absolute right-3 up-0 w-fit h-fit rounded-full p-1 bg-orange-400 transition-opacity duration-200 ease-in-out
+        ${ que._id === nowNotiQueue && notiStatus !== 0 ? "opacity-100" : "opacity-0"}
+        `}>
         <Image
           src="/images/notification.svg"
           alt="i"
@@ -72,7 +73,6 @@ export default function QueueCardInProfile({que, tokenRecieve, onDelete, restaur
           height={20}
         />
       </div>
-      )}
 
       <h3 className="text-xl font-bold text-gray-800 mb-1">{que.restaurant.name}</h3>
       <p className="text-sm text-black">

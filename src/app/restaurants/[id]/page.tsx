@@ -186,7 +186,7 @@ export default function RestaurantInfo() {
 
         {profile?.data?.role === "user" && (
           <section className="flex flex-col lg:flex-row gap-4 p-10">
-            <QueueCard id={id!} currentQueue={restaurantData.queue}/>           
+            <QueueCard id={id!} currentQueue={restaurantData.queue} thisRestaurant={restaurantData}/>           
             <ReservationCardInPageID
               restaurantData={restaurantData}
               token={token}

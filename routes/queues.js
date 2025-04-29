@@ -9,9 +9,9 @@ const {
   deleteQueue,
 } = require("../controllers/queues");
 
-const router = express.Router({ mergeParams: true });
-
 const { protect, authorize } = require("../middleware/auth");
+
+const router = express.Router({ mergeParams: true });
 
 /**
  * @swagger
@@ -66,29 +66,9 @@ const { protect, authorize } = require("../middleware/auth");
 
 /**
  * @swagger
- * /queues/all:
- *   get:
- *     summary: Get queues for the current user
- *     tags: [Queues]
- *     security:
- *       - bearerAuth: []
- *     parameters:
- *       - in: query
- *         name: restaurantId
- *         schema:
- *           type: string
- *         description: Restaurant ID (required for admin/employee, ignored for user)
- *     responses:
- *       200:
- *         description: List of user's queues
- *         content:
- *           application/json:
- *             schema:
- *               type: array
- *               items:
- *                 $ref: '#/components/schemas/Queue'
+ * /restaurants/{restaurantId}/queues:
  *   post:
- *     summary: Create a new queue
+ *     summary: Create a new queue for a restaurant
  *     tags: [Queues]
  *     security:
  *       - bearerAuth: []
@@ -109,21 +89,44 @@ const { protect, authorize } = require("../middleware/auth");
  *       201:
  *         description: Queue created successfully
  */
-
 router
   .route("/")
   .get(protect, authorize("user"), getQueues)
   .post(protect, authorize("user"), createQueue);
 
+/**
+ * @swagger
+ * /queues/all:
+ *   get:
+ *     summary: Get queues for the current user or a restaurant (admin/employee)
+ *     tags: [Queues]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: restaurantId
+ *         schema:
+ *           type: string
+ *         description: Restaurant ID (required for admin/employee, ignored for user)
+ *     responses:
+ *       200:
+ *         description: List of queues
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Queue'
+ */
 router
   .route("/all")
   .get(protect, authorize("user", "admin", "employee"), getQueuesAll);
 
 /**
  * @swagger
- * /queues/incomplete:
+ * /restaurants/{restaurantId}/queues/incomplete:
  *   get:
- *     summary: Get all incomplete queues (admin/employee only)
+ *     summary: Get all incomplete queues for a restaurant (admin/employee only)
  *     tags: [Queues]
  *     security:
  *       - bearerAuth: []
@@ -144,9 +147,9 @@ router
 
 /**
  * @swagger
- * /restaurants/{restaurantId}/queues/{id}/position:
+ * /queues/restaurants/{restaurantId}/queues/{id}/position:
  *   get:
- *     summary: Get a queue's position
+ *     summary: Get a queue's position in a restaurant
  *     tags: [Queues]
  *     security:
  *       - bearerAuth: []

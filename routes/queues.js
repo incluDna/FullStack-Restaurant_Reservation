@@ -213,5 +213,7 @@ router
  *         description: Queue deleted successfully
  */
 
+router.route("/incomplete/long-poll").get(protect, pollIncompleteQueues);
+router.route("/:id/long-poll").get(protect, pollQueueState);
 
 module.exports = router;

@@ -1,7 +1,6 @@
 const express = require("express");
 const {
   getQueues,
-  getQueuesAll,
   getIncompleteQueues,
   getQueuePosition,
   createQueue,
@@ -66,6 +65,27 @@ const router = express.Router({ mergeParams: true });
 
 /**
  * @swagger
+ * /queues:
+ *   get:
+ *     summary: Get queues for the current user or a restaurant (user)
+ *     tags: [Queues]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: List of queues
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Queue'
+ *     x-roles:
+ *       - user
+ */
+
+/**
+ * @swagger
  * /restaurants/{restaurantId}/queues:
  *   post:
  *     summary: Create a new queue for a restaurant
@@ -89,38 +109,8 @@ const router = express.Router({ mergeParams: true });
  *       201:
  *         description: Queue created successfully
  */
-router
-  .route("/")
-  .get(protect, authorize("user"), getQueues)
-  .post(protect, authorize("user"), createQueue);
 
-/**
- * @swagger
- * /queues/all:
- *   get:
- *     summary: Get queues for the current user or a restaurant (admin/employee)
- *     tags: [Queues]
- *     security:
- *       - bearerAuth: []
- *     parameters:
- *       - in: query
- *         name: restaurantId
- *         schema:
- *           type: string
- *         description: Restaurant ID (required for admin/employee, ignored for user)
- *     responses:
- *       200:
- *         description: List of queues
- *         content:
- *           application/json:
- *             schema:
- *               type: array
- *               items:
- *                 $ref: '#/components/schemas/Queue'
- */
-router
-  .route("/all")
-  .get(protect, authorize("user", "admin", "employee"), getQueuesAll);
+router.route("/").get(protect, getQueues).post(protect, authorize("user"), createQueue);
 
 /**
  * @swagger
@@ -170,8 +160,14 @@ router
  *       200:
  *         description: Queue position information
  */
+
 router
-   router.route("/:id/position")
+  .route("/:id")
+  .put(protect, authorize("admin", "employee"), updateQueueStatus)
+  .delete(protect, deleteQueue);
+
+router
+  .route("/:id/position")
   .get(protect, getQueuePosition);
 
 /**
@@ -199,7 +195,7 @@ router
  *       200:
  *         description: Queue updated successfully
  *   delete:
- *     summary: Delete a queue (user or employee)
+ *     summary: Delete a queue
  *     tags: [Queues]
  *     security:
  *       - bearerAuth: []
@@ -214,9 +210,6 @@ router
  *       204:
  *         description: Queue deleted successfully
  */
-router
-  .route("/:id")
-  .put(protect, authorize("admin", "employee"), updateQueueStatus)
-  .delete(protect, authorize("user", "employee"), deleteQueue);
+
 
 module.exports = router;

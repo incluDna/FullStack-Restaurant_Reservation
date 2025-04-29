@@ -7,9 +7,10 @@ import { useNotice } from "./NoticeContext";
 type QueueCardProps = {
   id: string;
   currentQueue: number
+  thisRestaurant: any
 };
 
-export default function QueueCard({ id, currentQueue }: QueueCardProps) {
+export default function QueueCard({ id, currentQueue, thisRestaurant }: QueueCardProps) {
   const [token, setToken] = useState("");
   const [role, setRole] = useState("");
   const [seatCount, setSeatCount] = useState(0);
@@ -40,6 +41,22 @@ export default function QueueCard({ id, currentQueue }: QueueCardProps) {
 
     if (seatCount <= 0) {
       setError("Please enter the number of people.");
+      return;
+    }
+
+    const now = new Date();
+
+    const [openHour, openMinute] = thisRestaurant.openTime.split(":").map(Number);
+    const [closeHour, closeMinute] = thisRestaurant.closeTime.split(":").map(Number);
+
+    const openTime = new Date();
+    openTime.setHours(openHour, openMinute, 0, 0);
+
+    const closeTime = new Date();
+    closeTime.setHours(closeHour, closeMinute, 0, 0);
+
+    if (now < openTime || now > closeTime) {
+      setError("The restaurant is currently closed. Please try again later.");
       return;
     }
 

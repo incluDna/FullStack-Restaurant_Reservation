@@ -9,6 +9,10 @@ const rateLimit = require("express-rate-limit");
 const hpp = require("hpp");
 const cors = require("cors");
 
+// Swagger setup
+const swaggerJsDoc = require("swagger-jsdoc");
+const swaggerUi = require("swagger-ui-express");
+
 // route files
 const restaurants = require("./routes/restaurants");
 const reservations = require("./routes/reservations");
@@ -39,6 +43,41 @@ app.use(helmet());
 app.use(xss());
 app.use(hpp());
 app.use(cors());
+
+// 🔥 แก้ตรงนี้นะ (swaggerOptions)
+const swaggerOptions = {
+  definition: {
+    openapi: '3.0.0',
+    info: {
+      title: 'SE Project API',
+      version: '1.0.0',
+      description: 'API documentation for SE project',
+    },
+    servers: [
+      {
+        url: 'http://localhost:5000/api',
+      },
+    ],
+    components: {
+      securitySchemes: {
+        bearerAuth: {
+          type: 'http',
+          scheme: 'bearer',
+          bearerFormat: 'JWT',
+        },
+      },
+    },
+    security: [
+      {
+        bearerAuth: [],
+      },
+    ],
+  },
+  apis: ['./routes/*.js'],
+};
+
+const swaggerDocs = swaggerJsDoc(swaggerOptions);
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
 // rate limiting
 const request = 200;

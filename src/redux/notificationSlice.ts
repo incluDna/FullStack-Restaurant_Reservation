@@ -4,12 +4,14 @@ export interface NotificationState {
     notiStatus: number;
     queueNumber: number;
     queueStatus: string;
+    queueId: string;
 }
 
 const initialState: NotificationState = {
     notiStatus: 0,
     queueNumber: -1,
     queueStatus: "waiting",
+    queueId: "",
 }
 
 const notificationSlice = createSlice({
@@ -22,6 +24,10 @@ const notificationSlice = createSlice({
           state.queueStatus = sta;
           updateNotiStatus(state);
         },
+        updateQueueId(state, action: PayloadAction<{id: string}>) {
+          const { id } = action.payload;
+          state.queueId = id;
+        }
     }
 });
 
@@ -47,5 +53,5 @@ const updateNotiStatus = (state:any) => {
 
 }
 
-export const { updateNotification } = notificationSlice.actions;
+export const { updateNotification, updateQueueId } = notificationSlice.actions;
 export default notificationSlice.reducer

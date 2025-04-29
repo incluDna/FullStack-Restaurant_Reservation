@@ -6,8 +6,7 @@ import { RootState } from "../redux/store";
 import { getAuthCookie } from "@/libs/User/getAuthCookie";
 import pollQueuePositionAndStatus from "@/libs/Queue/pollQueuePositionAndStatus";
 import { store } from "../redux/store";
-import { updateNotification } from "@/redux/notificationSlice";
-import { useRouter } from "next/navigation";
+import { updateNotification, updateQueueId } from "@/redux/notificationSlice";
 
 export default function NotificationCard() {
 
@@ -16,6 +15,7 @@ export default function NotificationCard() {
     const refreshRedux = () => {
         console.log("re-value in redux persist by checkAuth");
         store.dispatch(updateNotification({num: -1, sta: "waiting"}));
+        store.dispatch(updateQueueId({id: ""}));
     }
 
     // status === 1 : waiting for queue

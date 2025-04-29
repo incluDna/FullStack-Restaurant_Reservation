@@ -1,6 +1,6 @@
 import { store } from "@/redux/store";
 import { RootState } from "@/redux/store";
-import { updateNotification } from "@/redux/notificationSlice";
+import { updateNotification, updateQueueId } from "@/redux/notificationSlice";
 
 // main function to update queue position and status
 export default function pollQueuePositionAndStatus(token: string) {
@@ -11,6 +11,7 @@ export default function pollQueuePositionAndStatus(token: string) {
     const refreshRedux = () => {
         console.log("re-value in redux persist by pollQueuePositionAndStatus");
         store.dispatch(updateNotification({num: -1, sta: "waiting"}));
+        store.dispatch(updateQueueId({id: ""}));
     }
 
     let lastPosition = initialState.queueNumber || -1;
@@ -33,7 +34,8 @@ export default function pollQueuePositionAndStatus(token: string) {
                             if (queue.response.count > 0) {
                                 queueVersion = queue.response.version;
 
-                                // move to pollStateLoop until cannot find token or queueId
+                                // move to pollStateLoop until cannot find that queueId
+                                store.dispatch(updateQueueId({id: queue.response.data[0]._id}))
                                 await pollQueueStateLoop(token, queue.response.data[0]._id)
                             } else {
                                 queueVersion = queue.response.version;

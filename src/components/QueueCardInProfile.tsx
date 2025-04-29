@@ -3,6 +3,9 @@ import { Queue } from "../../interfaces";
 import { useRouter } from "next/navigation";
 import deleteQueue from "@/libs/Queue/deleteQueue";
 import getQueuePosition from "@/libs/Queue/getQueuePosition";
+import { useSelector } from "react-redux";
+import { RootState } from "../redux/store";
+import Image from "next/image";
 
 interface QueueCardInProfileProps {
   que: Queue;
@@ -20,6 +23,9 @@ export default function QueueCardInProfile({que, tokenRecieve, onDelete, restaur
   const [error, setError] = useState("");
   const [position, setPosition] = useState<number | null>(null);
   const [showReviewPrompt, setShowReviewPrompt] = useState(que.queueStatus === "completed");
+
+  const nowNotiQueue = useSelector((state: RootState) => state.queueId);
+  const notiStatus = useSelector((state: RootState) => state.notiStatus);
 
   useEffect(() => {
     const fetchPosition = async () => {
@@ -55,7 +61,19 @@ export default function QueueCardInProfile({que, tokenRecieve, onDelete, restaur
   };
 
   return (
-    <li className="bg-[#FFECAD] rounded-lg p-4 shadow-md min-w-[17vw] w-fit ">
+    <li className="bg-[#FFECAD] relative rounded-lg p-4 shadow-md min-w-[17vw] w-fit ">
+      {/* Add by Notification Dev*/}
+      {que._id === nowNotiQueue && notiStatus !== 0 && (
+      <div className={`absolute right-3 up-0 w-fit h-fit rounded-full p-1 bg-orange-400`}>
+        <Image
+          src="/images/notification.svg"
+          alt="i"
+          width={20}
+          height={20}
+        />
+      </div>
+      )}
+
       <h3 className="text-xl font-bold text-gray-800 mb-1">{que.restaurant.name}</h3>
       <p className="text-sm text-black">
         Location: {que.restaurant.province}

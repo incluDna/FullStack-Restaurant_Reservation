@@ -23,78 +23,70 @@ module.exports = router;
 
 /**
  * @swagger
- * /menus:
+ * /restaurants/{restaurantId}/menus:
  *   get:
- *     summary: Get all menus
+ *     summary: Get all menus for a specific restaurant
  *     tags: [Menus]
+ *     parameters:
+ *       - in: path
+ *         name: restaurantId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID of the restaurant
  *     responses:
  *       200:
  *         description: A list of menus
  *         content:
  *           application/json:
  *             schema:
- *               type: array
- *               items:
- *                 type: object
- *                 properties:
- *                   id:
- *                     type: string
- *                   name:
- *                     type: string
- *                   price:
- *                     type: number
- *                   type:
- *                     type: string
- *                   description:
- *                     type: string
- *                   tags:
- *                     type: array
- *                     items:
- *                       type: string
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 count:
+ *                   type: integer
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     $ref: '#/components/schemas/Menu'
+ *
  *   post:
- *     summary: Create a new menu (Employee/Admin only)
+ *     summary: Create a new menu for a restaurant
  *     tags: [Menus]
  *     security:
  *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: restaurantId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID of the restaurant
  *     requestBody:
  *       required: true
  *       content:
  *         application/json:
  *           schema:
- *             type: object
- *             required:
- *               - name
- *               - price
- *               - type
- *             properties:
- *               name:
- *                 type: string
- *               price:
- *                 type: number
- *               type:
- *                 type: string
- *               description:
- *                 type: string
- *               tags:
- *                 type: array
- *                 items:
- *                   type: string
+ *             $ref: '#/components/schemas/Menu'
  *     responses:
  *       201:
  *         description: Menu created successfully
- *       401:
- *         $ref: '#/components/responses/UnauthorizedError'
- *       403:
- *         $ref: '#/components/responses/ForbiddenError'
  */
 
 /**
  * @swagger
- * /menus/{id}:
+ * /restaurants/{restaurantId}/menus/{id}:
  *   get:
- *     summary: Get a single menu by ID
+ *     summary: Get a single menu item
  *     tags: [Menus]
  *     parameters:
+ *       - in: path
+ *         name: restaurantId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID of the restaurant
  *       - in: path
  *         name: id
  *         required: true
@@ -103,89 +95,91 @@ module.exports = router;
  *         description: Menu ID
  *     responses:
  *       200:
- *         description: Menu found
+ *         description: Menu item retrieved
  *         content:
  *           application/json:
  *             schema:
  *               type: object
  *               properties:
- *                 id:
- *                   type: string
- *                 name:
- *                   type: string
- *                 price:
- *                   type: number
- *                 type:
- *                   type: string
- *                 description:
- *                   type: string
- *                 tags:
- *                   type: array
- *                   items:
- *                     type: string
- *       404:
- *         $ref: '#/components/responses/NotFoundError'
+ *                 success:
+ *                   type: boolean
+ *                 data:
+ *                   $ref: '#/components/schemas/Menu'
+ *
  *   put:
- *     summary: Update a menu (Employee/Admin only)
+ *     summary: Update a menu item
  *     tags: [Menus]
  *     security:
  *       - bearerAuth: []
  *     parameters:
  *       - in: path
+ *         name: restaurantId
+ *         required: true
+ *         schema:
+ *           type: string
+ *       - in: path
  *         name: id
  *         required: true
  *         schema:
  *           type: string
- *         description: Menu ID
  *     requestBody:
  *       required: true
  *       content:
  *         application/json:
  *           schema:
- *             type: object
- *             properties:
- *               name:
- *                 type: string
- *               price:
- *                 type: number
- *               type:
- *                 type: string
- *               description:
- *                 type: string
- *               tags:
- *                 type: array
- *                 items:
- *                   type: string
+ *             $ref: '#/components/schemas/Menu'
  *     responses:
  *       200:
  *         description: Menu updated successfully
- *       400:
- *         description: Bad request
- *       401:
- *         $ref: '#/components/responses/UnauthorizedError'
- *       403:
- *         $ref: '#/components/responses/ForbiddenError'
- *       404:
- *         $ref: '#/components/responses/NotFoundError'
+ *
  *   delete:
- *     summary: Delete a menu (Employee/Admin only)
+ *     summary: Delete a menu item
  *     tags: [Menus]
  *     security:
  *       - bearerAuth: []
  *     parameters:
  *       - in: path
+ *         name: restaurantId
+ *         required: true
+ *         schema:
+ *           type: string
+ *       - in: path
  *         name: id
  *         required: true
  *         schema:
  *           type: string
- *         description: Menu ID
  *     responses:
  *       204:
  *         description: Menu deleted successfully
- *       401:
- *         $ref: '#/components/responses/UnauthorizedError'
- *       403:
- *         $ref: '#/components/responses/ForbiddenError'
- *       404:
- *         $ref: '#/components/responses/NotFoundError'
+ */
+
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     Menu:
+ *       type: object
+ *       required:
+ *         - name
+ *         - price
+ *         - type
+ *       properties:
+ *         id:
+ *           type: string
+ *         restaurant:
+ *           type: string
+ *         name:
+ *           type: string
+ *         picture:
+ *           type: string
+ *         price:
+ *           type: number
+ *         type:
+ *           type: string
+ *         description:
+ *           type: string
+ *         tags:
+ *           type: array
+ *           items:
+ *             type: string
  */

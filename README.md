@@ -1,5 +1,5 @@
 # Restaurant reservation web🍙🍣
 
-# Preview
+## Preview
 
 ## Contributors

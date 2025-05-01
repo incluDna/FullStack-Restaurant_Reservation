@@ -1,0 +1,43 @@
+{
+  "name": "se-project-backend-24_scam",
+  "version": "1.0.0",
+  "main": "server.js",
+  "scripts": {
+    "test": "jest",
+    "test-coverage": "jest --watchAll --coverage",
+    "test:updateMenu": "jest --coverage --collectCoverageFrom=controllers/testingAPI/updateMenu.js __tests__/updateMenu.test.js",
+    "test:createMenu": "jest --coverage --collectCoverageFrom=controllers/testingAPI/createMenu.js __tests__/createMenu.test.js",
+    "dev": "nodemon server.js",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/2110503-2564/se-project-backend-24_scam.git"
+  },
+  "author": "Group 24 - SCAM",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/2110503-2564/se-project-backend-24_scam/issues"
+  },
+  "description": "Backend for our project under the course 2110423 Software Engineering.",
+  "dependencies": {
+    "bcryptjs": "^3.0.2",
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "express-mongo-sanitize": "^2.2.0",
+    "express-rate-limit": "^7.5.0",
+    "express-xss-sanitizer": "^2.0.0",
+    "helmet": "^8.1.0",
+    "hpp": "^0.2.3",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.13.2",
+    "nodemon": "^3.1.9",
+    "swagger-jsdoc": "^6.2.8",
+    "swagger-ui-express": "^5.0.1"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0"
+  }
+}

@@ -1,0 +1,51 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Agbalumo&display=swap');
+
+@keyframes wiggle {
+  0%,
+  25% {
+    transform: rotate(5deg);
+  }
+  50% {
+    transform: rotate(0deg);
+  }
+  75% {
+    transform: rotate(-5deg);
+  }
+  100% {
+    transform: rotate(0deg);
+  }
+}
+
+.animate-wiggle {
+  animation: wiggle 0.3s ease-in-out infinite;
+}
+
+body {
+  font-family: 'Agbalumo', sans-serif;
+  line-height: 1;
+}
+
+
+@keyframes progress-bar {
+  0% {
+    left: -30%;
+    width: 30%;
+  }
+  100% {
+    left: 100%;
+    width: 30%;
+  }
+}
+
+
+.animate-progress-bar {
+  animation: progress-bar 0.8s ease-in-out infinite; 
+}
+
+
+
+

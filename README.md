@@ -12,15 +12,18 @@ web for restaurant reservation
 - admin can get all, add, update, delete all reservations
 
 #### Review restaurant ⭐⭐⭐⭐⭐
-
-user can add review for restaurant they have gone (+edit, delete own list)
-checked by reservation id
+- users can add review for restaurant they have gone (+edit, delete own list)
+- checked by reservation id
 also check: review date must be "After" reservation date
 have mean rating for each restaurant
 #### 🥐 Menu for restaurant
-
+- users can view menus in each restaurants
+- admins & employees can view, add, update, delete menu(s)
 #### 🥯 Queue reservation
-
+- users can view, add, delete their queues
+- admins can manage all queue
+- employees can manage queue only in their restaurant
+  
 web: https://scam-restaurants.vercel.app/
 
 figma:

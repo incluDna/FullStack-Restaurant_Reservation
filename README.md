@@ -5,19 +5,21 @@ web for restaurant reservation
 #### Sign-in
 - All users can register, login, logout (have role user, admin, employee)
 
+#### Restaurant
 
 #### Reservation✨
 - users can add, get, update, delete their reservations
-- admin can get all, add, update, delete all reservations and restaurants
+- admin can get all, add, update, delete all reservations
 
-info of reservations will show in each restaurant
-
-Extra credit: Review restaurant ⭐⭐⭐⭐⭐
+#### Review restaurant ⭐⭐⭐⭐⭐
 
 user can add review for restaurant they have gone (+edit, delete own list)
 checked by reservation id
 also check: review date must be "After" reservation date
 have mean rating for each restaurant
+#### 🥐 Menu for restaurant
+
+#### 🥯 Queue reservation
 
 web: https://scam-restaurants.vercel.app/
 

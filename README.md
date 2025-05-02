@@ -8,16 +8,20 @@ https://scam-restaurants.vercel.app/
 - All users can register, login, logout (have role user, admin, employee)
 
 #### Restaurant
-
+- admins & employees can manage restaurants
+- users can view all restaurants
+  
+  *manage = view, add, update, delete
 #### Reservation✨
-- users can add, get, update, delete their reservations
-- admin can get all, add, update, delete all reservations
-
+- users can manage their reservations
+- admins & employees can get all, add, update, delete all reservations
+  
 #### Review restaurant ⭐⭐⭐⭐⭐
 - users can add review for restaurant they have gone (+edit, delete own list)
 - checked by reservation id
 also check: review date must be "After" reservation date
 have mean rating for each restaurant
+
 #### 🥐 Menu for restaurant
 - users can view menus in each restaurants
 - admins & employees can view, add, update, delete menu(s)
@@ -26,12 +30,13 @@ have mean rating for each restaurant
 - admins can manage all queue
 - employees can manage queue only in their restaurant
 
-figma:
-
-sprint: https://docs.google.com/spreadsheets/d/10mpde6haH5F0jDA7-Tvn7Niwj2Tr50h0/edit?usp=drivesdk&ouid=102430769491910530403&rtpof=true&sd=true
-
 ## Preview
 
 web: https://scam-restaurants.vercel.app/
+
+## Project
+figma:
+
+sprint: https://docs.google.com/spreadsheets/d/10mpde6haH5F0jDA7-Tvn7Niwj2Tr50h0/edit?usp=drivesdk&ouid=102430769491910530403&rtpof=true&sd=true
 
 ## Contributors

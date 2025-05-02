@@ -35,6 +35,8 @@ have mean rating for each restaurant
 web: https://scam-restaurants.vercel.app/
 
 ## Project
+[frontend code](https://github.com/incluDna/FullStack-Restaurant_Reservation/blob/fa755278fa80a67a5d4bff43795d3d63929a5cec/frontend/README.md)
+
 [backend code](https://github.com/incluDna/FullStack-Restaurant_Reservation/blob/4e7c05cea4cc9bacbb432df821be117280dfc050/backend/README.md)
 
 

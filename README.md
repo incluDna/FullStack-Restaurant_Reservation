@@ -16,7 +16,7 @@ https://scam-restaurants.vercel.app/
 - users can manage their reservations
 - admins & employees can get all, add, update, delete all reservations
   
-#### Review restaurant ⭐⭐⭐⭐⭐
+#### Review restaurant
 - users can add review for restaurant they have gone (+edit, delete own list)
 - checked by reservation id
 also check: review date must be "After" reservation date

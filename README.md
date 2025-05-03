@@ -30,10 +30,6 @@ have mean rating for each restaurant
 - admins can manage all queue
 - employees can manage queue only in their restaurant
 
-## Preview
-
-web: https://scam-restaurants.vercel.app/
-
 ## Project
 [frontend code](https://github.com/incluDna/FullStack-Restaurant_Reservation/blob/fa755278fa80a67a5d4bff43795d3d63929a5cec/frontend/README.md)
 

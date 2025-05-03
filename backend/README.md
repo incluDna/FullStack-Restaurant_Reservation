@@ -1,5 +1,7 @@
 vercel: https://scam-backend.vercel.app/
 
+backend_repo: https://github.com/2110503-2564/se-project-backend-24_scam
+
 ## Prerequisites
 
 Requires [Node.js](https://nodejs.org/en) installed, including npm.

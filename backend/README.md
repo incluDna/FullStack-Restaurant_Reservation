@@ -1,3 +1,5 @@
+vercel: https://scam-backend.vercel.app/
+
 ## Prerequisites
 
 Requires [Node.js](https://nodejs.org/en) installed, including npm.

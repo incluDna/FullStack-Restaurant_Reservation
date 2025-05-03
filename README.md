@@ -1,8 +1,12 @@
 # Restaurant reservation web🍙🍣
 
-web for restaurant reservation
+web for restaurant reservation: https://scam-restaurants.vercel.app/
 
-https://scam-restaurants.vercel.app/
+### Preview: User
+![user_](https://github.com/user-attachments/assets/eef953a0-0a24-4366-9081-391dbd90acee)
+
+### Preview: Employee
+![employee_](https://github.com/user-attachments/assets/ecc735d3-803c-4e82-b9fc-fe714c0a1f7b)
 
 #### Sign-in
 - All users can register, login, logout (have role user, admin, employee)

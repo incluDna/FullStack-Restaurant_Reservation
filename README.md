@@ -9,7 +9,7 @@ web for restaurant reservation: https://scam-restaurants.vercel.app/
 ![employee_](https://github.com/user-attachments/assets/ecc735d3-803c-4e82-b9fc-fe714c0a1f7b)
 
 #### Sign-in
-- All users can register, login, logout (have role user, admin, employee)
+- All users can register, login, logout (there are user, admin, employee roles)
 
 #### Restaurant
 - admins & employees can manage restaurants
@@ -27,12 +27,12 @@ also check: review date must be "After" reservation date
 have mean rating for each restaurant
 
 #### 🥐 Menu for restaurant
-- users can view menus in each restaurants
+- users can view menu(s) in each restaurants
 - admins & employees can view, add, update, delete menu(s)
 #### 🥯 Queue reservation
 - users can view, add, delete their queues
-- admins can manage all queue
-- employees can manage queue only in their restaurant
+- admins can manage all queues
+- employees can manage queue in their restaurant ONLY
 
 ## Project
 figma: https://www.figma.com/design/WbIN6DiBIatziLBzpZIrYv/SE-SCAM-projectt?node-id=8-931&t=S8U5H2EVrzSsFxVx-1

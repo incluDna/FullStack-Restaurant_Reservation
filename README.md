@@ -39,7 +39,7 @@ figma: https://www.figma.com/design/WbIN6DiBIatziLBzpZIrYv/SE-SCAM-projectt?node
 
 sprint: https://docs.google.com/spreadsheets/d/10mpde6haH5F0jDA7-Tvn7Niwj2Tr50h0/edit?usp=drivesdk&ouid=102430769491910530403&rtpof=true&sd=true
 
-[backend code](https://github.com/incluDna/FullStack-Restaurant_Reservation/blob/4e7c05cea4cc9bacbb432df821be117280dfc050/backend/README.md) | [frontend code](https://github.com/incluDna/FullStack-Restaurant_Reservation/blob/fa755278fa80a67a5d4bff43795d3d63929a5cec/frontend/README.md)
+[backend code](https://github.com/incluDna/FullStack-Restaurant_Reservation/tree/main/backend) | [frontend code](https://github.com/incluDna/FullStack-Restaurant_Reservation/blob/fa755278fa80a67a5d4bff43795d3d63929a5cec/frontend/README.md)
 ## Contributors
 -Wannasut Pr.  [ShaneChaneShane](https://github.com/ShaneChaneShane)  `SCAM + Scrum Master👑` <br>
 -Walaiphan Tr.  [Rwtri17](https://github.com/Rwtri17)  <br>
